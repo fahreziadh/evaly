@@ -343,6 +343,7 @@ const DialogEditQuestion = ({
                         : ""
                     )}
                     toolbarClassName={cn(
+                      "sticky top-0",
                       errors.question
                         ? "border-destructive"
                         : ""
@@ -580,7 +581,6 @@ const Options = ({
         <div className="mt-4">
           <Button
             variant="outline"
-            size="sm"
             className="w-full"
             onClick={() => {
               // Determine max options based on question type

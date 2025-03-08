@@ -9,8 +9,14 @@ export async function getAllSessionByTestId(testId: string) {
       numOfQuestions: count(question.id),
     })
     .from(testSession)
-    .where(and(eq(testSession.testId, testId), isNull(testSession.deletedAt), isNull(question.deletedAt)))
-    .leftJoin(question, eq(testSession.id, question.referenceId))
+    .where(and(eq(testSession.testId, testId), isNull(testSession.deletedAt)))
+    .leftJoin(
+      question, 
+      and(
+        eq(testSession.id, question.referenceId),
+        isNull(question.deletedAt)
+      )
+    )
     .groupBy(testSession.id)
     .orderBy(testSession.order);
 

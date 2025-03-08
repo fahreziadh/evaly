@@ -20,6 +20,7 @@ interface Props {
   placeholder?: string;
   editorClassName?: string;
   toolbarClassName?: string;
+  autofocus?: boolean | 'start' | 'end' | number;
 }
 
 export const Editor = ({
@@ -30,6 +31,7 @@ export const Editor = ({
   placeholder,
   editorClassName,
   toolbarClassName,
+  autofocus = false,
 }: Props) => {
   const editor = useEditor({
     extensions: extensions({ limit: maxLength }),
@@ -61,7 +63,7 @@ export const Editor = ({
     onCreate({ editor }) {
       onContentLengthChange?.(editor.storage.characterCount.characters());
     },
-    autofocus: "end",
+    autofocus: autofocus,
   });
 
   useEffect(() => {

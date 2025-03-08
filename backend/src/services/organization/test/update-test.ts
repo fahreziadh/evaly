@@ -12,11 +12,11 @@ export async function updateTest({
   data: UpdateTest;
   organizationId: string;
 }) {
-  const updateTest = await db
+  const updatedTest = await db
     .update(test)
     .set(data)
     .where(and(eq(test.id, id), eq(test.organizationId, organizationId)))
     .returning();
 
-  return updateTest[0];
+    return updatedTest[0];
 }

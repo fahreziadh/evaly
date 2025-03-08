@@ -177,7 +177,7 @@ const CardQuestion = ({
                 className="flex flex-row flex-wrap items-start gap-3"
               >
                 <Button
-                  size={"icon-xs"}
+                  size={"icon-sm"}
                   variant={option.isCorrect ? "success" : "secondary"}
                 >
                   {option.isCorrect ? (
@@ -188,7 +188,7 @@ const CardQuestion = ({
                 </Button>
                 <span
                   className={cn(
-                    "flex-1 mt-0.5",
+                    "flex-1 mt-1",
                     option.isCorrect ? "text-foreground" : ""
                   )}
                 >

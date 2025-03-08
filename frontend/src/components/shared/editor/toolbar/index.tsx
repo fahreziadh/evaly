@@ -15,7 +15,7 @@ export const EditorToolbar = ({
   return (
     <div
       className={cn(
-        "flex flex-row flex-wrap gap-1 items-center bg-background/80 backdrop-blur-sm z-50 sticky top-0 p-3 rounded-lg rounded-b-none border",
+        "flex flex-row flex-wrap gap-1 items-center bg-background/90 backdrop-blur-md z-50 p-3 rounded-lg rounded-b-none border",
         className
       )}
     >

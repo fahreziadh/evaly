@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   pgTable,
@@ -7,6 +7,9 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { ulid } from "ulidx";
+import { testInvitation } from "./test.invitation";
+import { testSession } from "./test.session";
+import { organization, organizer } from "./organization";
 
 export const test = pgTable("test", {
   id: varchar("id", { length: 255 })
@@ -47,3 +50,16 @@ export const test = pgTable("test", {
     withTimezone: true,
   }),
 });
+
+export const testRelations = relations(test, ({ many,one }) => ({
+  invitations: many(testInvitation),
+  testSessions: many(testSession),
+  createdByOrganizer: one(organizer, {
+    fields: [test.createdByOrganizerId],
+    references: [organizer.id],
+  }),
+  organization: one(organization, {
+    fields: [test.organizationId],
+    references: [organization.id],
+  }),
+}));

@@ -11,7 +11,7 @@ const DetailTestPage = () => {
 
   return (
     <div className="container min-h-dvh pb-10">
-      <BackButton className="mb-4" fallbackUrl="/dashboard" />
+      <BackButton className="mb-2" fallbackUrl="/dashboard" />
       <Tabs defaultValue="questions" value={tabs} onValueChange={setTabs}>
         <Header />
         <TabsContent value="questions">

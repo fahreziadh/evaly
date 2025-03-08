@@ -7,6 +7,10 @@ import { updateTest } from "../../services/organization/test/update-test";
 import { createUpdateSchema } from "drizzle-typebox";
 import { test } from "../../lib/db/schema";
 import { testSessionRouter } from "./test.session.router";
+import { checkTestOwner } from "../../services/organization/test/check-test-owner";
+import { addInvitationTest } from "../../services/organization/test/add-invitation-test";
+import { getInvitationListTest } from "../../services/organization/test/get-invitation-list-test";
+import { deleteInvitationTest } from "../../services/organization/test/delete-invitation-test";
 
 export const testRouter = new Elysia().group("/test", (app) => {
   return (
@@ -97,6 +101,68 @@ export const testRouter = new Elysia().group("/test", (app) => {
         }
       )
 
+      // Add Invitation Test
+      .post(
+        "/:id/invitation",
+        async ({ params, body, organizer }) => {
+          const organizationId = organizer.organizationId;
+          const testId = params.id;
+
+          await checkTestOwner(testId, organizationId);
+          const res = await addInvitationTest(testId, body.emails);
+          return {data: res};
+        },
+        {
+          params: t.Object({
+            id: t.String(),
+          }),
+          body: t.Object({
+            emails: t.Array(t.String({ format: "email" }), {
+              minItems: 1,
+            }),
+          }),
+        }
+      )
+
+      // Get Invitation List Test
+      .get(
+        "/:id/invitation",
+        async ({ params, organizer }) => {
+          const organizationId = organizer.organizationId;
+          const testId = params.id;
+
+          await checkTestOwner(testId, organizationId);
+          const listInvitation = await getInvitationListTest(testId);
+          return {
+            data: listInvitation,
+          };
+        },
+        {
+          params: t.Object({
+            id: t.String(),
+          }),
+        }
+      )
+
+      // Delete Invitation Test
+      .delete(
+        "/:id/invitation/:email",
+        async ({ params, organizer }) => {
+          const organizationId = organizer.organizationId;
+          const testId = params.id;
+          const email = params.email;
+
+          await checkTestOwner(testId, organizationId);
+          const res = await deleteInvitationTest(testId, email);
+          return {data: res};
+        },
+        {
+          params: t.Object({
+            id: t.String(),
+            email: t.String({ format: "email" }),
+          }),
+        }
+      )
       .use(testSessionRouter)
   );
 });

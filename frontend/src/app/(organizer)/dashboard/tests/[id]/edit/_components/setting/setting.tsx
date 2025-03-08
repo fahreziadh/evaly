@@ -13,6 +13,8 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Editor } from "@/components/shared/editor/editor";
 import DialogTestDescriptionTemplate from "@/components/shared/dialog/dialog-test-description-template";
+import InviteOnly from "./invite-only";
+import { AnimatePresence, motion } from "motion/react";
 
 const Setting = () => {
   const { id: testId } = useParams();
@@ -62,7 +64,7 @@ const Setting = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col divide-y">
-        <div className="flex flex-row gap-10 pb-6">
+        <div className="flex flex-row gap-10 pb-8">
           <div className="w-2xs">
             <h1 className="font-semibold">Type</h1>
             <Label>
@@ -93,7 +95,7 @@ const Setting = () => {
           </div>
         </div>
 
-        <div className="flex flex-row gap-10 py-6">
+        <div className="flex flex-row gap-10 py-8">
           <div className="w-2xs">
             <h1 className="font-semibold">Access</h1>
             <Label>
@@ -104,12 +106,16 @@ const Setting = () => {
           <Controller
             name="access"
             control={control}
+            defaultValue="public"
             render={({ field }) => (
               <Tabs
                 className="flex-1"
                 defaultValue="public"
                 value={field.value || "public"}
-                onValueChange={field.onChange}
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  updateTest({ access: value as "public" | "invite-only" });
+                }}
               >
                 <TabsList>
                   <TabsTrigger value="public">Public</TabsTrigger>
@@ -121,12 +127,15 @@ const Setting = () => {
                     will be publicly listed on your profile.
                   </Label>
                 </TabsContent>
+                <TabsContent value="invite-only">
+                  <InviteOnly testId={testId?.toString() || ""} />
+                </TabsContent>
               </Tabs>
             )}
           />
         </div>
 
-        <div className="flex flex-row gap-10 py-6">
+        <div className="flex flex-row gap-10 py-8">
           <div className="w-2xs">
             <h1 className="font-semibold">Description</h1>
             <Label>
@@ -155,12 +164,21 @@ const Setting = () => {
           </div>
         </div>
       </div>
-
-      <div className="fixed w-full bottom-0 left-0 flex flex-row items-center justify-end gap-4 px-8 py-4 border-t bg-background">
-        <Button disabled={!isDirty} type="submit">
-          {isPendingUpdateTest ? "Saving..." : "Save changes"}
-        </Button>
-      </div>
+      <AnimatePresence>
+        {isDirty ? (
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            transition={{ duration: 0.1, ease: "easeOut" }}
+            className="fixed w-full bottom-0 left-0 flex flex-row items-center justify-end gap-4 px-8 py-4 border-t bg-background z-50"
+          >
+            <Button disabled={!isDirty} type="submit" size={"lg"}>
+              {isPendingUpdateTest ? "Saving..." : "Save changes"}
+            </Button>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </form>
   );
 };

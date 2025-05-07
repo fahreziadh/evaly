@@ -7,14 +7,10 @@ const CardSection = ({
   data,
   isSelected,
   onClick,
-  onDeleteSuccess,
-  isLastSection,
 }: {
-  data?: TestSection
+  data?: TestSection;
   onClick?: () => void;
   isSelected?: boolean;
-  onDeleteSuccess?: () => void;
-  isLastSection?: boolean;
 }) => {
   if (!data) return null;
   return (
@@ -23,14 +19,12 @@ const CardSection = ({
       onClick={onClick}
       className={cn(
         "flex border-none flex-col group/section justify-start  cursor-pointer p-3 relative select-none",
-        isSelected
-          ? "bg-secondary"
-          : "hover:bg-secondary"
+        isSelected ? "bg-secondary" : "hover:bg-secondary"
       )}
     >
       {isSelected ? (
         <div className="absolute top-2 right-2">
-          <CheckIcon size={16}/>
+          <CheckIcon size={16} />
         </div>
       ) : null}
       <span className="text-sm font-medium">
@@ -52,7 +46,8 @@ const CardSection = ({
           </span>
         )}
         <span className="flex flex-row gap-1 items-center">
-          <CircleHelp size={14} /> {JSON.stringify(data.numOfQuestions)} Questions
+          <CircleHelp size={14} /> {JSON.stringify(data.numOfQuestions)}{" "}
+          Questions
         </span>
       </div>
     </Card>

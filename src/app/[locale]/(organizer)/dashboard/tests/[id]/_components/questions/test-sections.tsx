@@ -241,10 +241,6 @@ const ListSession = () => {
               key={e.id}
               isSelected={e.id === selectedSection}
               onClick={() => setSelectedSection(e.id)}
-              onDeleteSuccess={async () => {
-                await refetch();
-              }}
-              isLastSection={data.length === 1}
             />
           </Reorder.Item>
         ))}

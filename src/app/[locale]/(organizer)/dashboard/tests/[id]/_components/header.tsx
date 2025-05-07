@@ -44,6 +44,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import { PopoverClose } from "@radix-ui/react-popover";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Header = ({ className }: { className?: string }) => {
   const [, setTabs] = useTabsState("questions");
@@ -86,6 +87,7 @@ const Header = ({ className }: { className?: string }) => {
 
   useEffect(() => {
     if (!id) return;
+    if (status !== "published") return;
     const channel = supabase.channel(id?.toString() || "");
 
     channel
@@ -104,7 +106,7 @@ const Header = ({ className }: { className?: string }) => {
     return () => {
       channel.unsubscribe();
     };
-  }, [id]);
+  }, [id, status]);
 
   const { mutate: mutateUpdateTest, isPending: isUpdatingTest } =
     trpc.organization.test.update.useMutation({
@@ -275,36 +277,44 @@ const Header = ({ className }: { className?: string }) => {
 
       {/* Tabs and Test Sections */}
       <div className="flex flex-row justify-between items-start mb-4 mt-4">
-        <div className="flex flex-row items-center">
-          <TabsList>
-            {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
-            {status === "published" || status === "finished" ? (
-              <TabsTrigger value="submissions">
-                {tOrganizer("submissionsTab")}
+        {isPendingTest ? (
+          <div className="flex flex-row gap-2 items-center">
+            <Skeleton className="w-56 h-9 rounded-md" />
+          </div>
+        ) : (
+          <div className="flex flex-row items-center">
+            <TabsList>
+              {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
+              {status === "published" || status === "finished" ? (
+                <TabsTrigger value="submissions">
+                  {tOrganizer("submissionsTab")}
+                </TabsTrigger>
+              ) : null}
+              {status === "published" ? (
+                <TabsTrigger value="share">
+                  {tOrganizer("shareTab")}
+                </TabsTrigger>
+              ) : null}
+              <TabsTrigger value="questions">
+                {tOrganizer("questionsTab")}
               </TabsTrigger>
-            ) : null}
+              <TabsTrigger value="settings">
+                {tOrganizer("settingsTab")}
+              </TabsTrigger>
+            </TabsList>
             {status === "published" ? (
-              <TabsTrigger value="share">{tOrganizer("shareTab")}</TabsTrigger>
+              <Button variant={"ghost"} className="ml-4">
+                <div
+                  className={cn(
+                    "size-2.5 bg-emerald-500 rounded-full transition-all",
+                    participantOnline.length === 0 ? "bg-foreground/15" : ""
+                  )}
+                />
+                <NumberFlow value={participantOnline.length} suffix=" Online" />
+              </Button>
             ) : null}
-            <TabsTrigger value="questions">
-              {tOrganizer("questionsTab")}
-            </TabsTrigger>
-            <TabsTrigger value="settings">
-              {tOrganizer("settingsTab")}
-            </TabsTrigger>
-          </TabsList>
-          {status === "published" ? (
-            <Button variant={"ghost"} className="ml-4">
-              <div
-                className={cn(
-                  "size-2.5 bg-emerald-500 rounded-full transition-all",
-                  participantOnline.length === 0 ? "bg-foreground/15" : ""
-                )}
-              />
-              <NumberFlow value={participantOnline.length} suffix=" Online" />
-            </Button>
-          ) : null}
-        </div>
+          </div>
+        )}
         <TestSections />
       </div>
     </div>

@@ -36,7 +36,7 @@ const SettingSection = ({
   children,
 }: SettingSectionProps) => (
   <div className="py-4 first:pt-0 last:pb-0">
-    <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-20">
+    <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-20">
       <div className="flex flex-row gap-2 flex-wrap">
         <h2 className="text-sm font-semibold">{title}</h2>
         <TooltipInfo size={"icon-xs"} variant={"ghost"} className="text-muted-foreground">{description}</TooltipInfo>

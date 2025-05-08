@@ -48,7 +48,7 @@ import { PopoverClose } from "@radix-ui/react-popover";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Header = ({ className }: { className?: string }) => {
-  const [, setTabs] = useTabsState("questions");
+  const [tabs, setTabs] = useTabsState("questions");
   const { id } = useParams();
   const router = useProgressRouter();
   const [isRedirect, setIsRedirect] = useTransition();
@@ -323,7 +323,7 @@ const Header = ({ className }: { className?: string }) => {
             ) : null}
           </div>
         )}
-        <TestSections />
+        {tabs === "questions" && <TestSections />}
       </div>
     </div>
   );

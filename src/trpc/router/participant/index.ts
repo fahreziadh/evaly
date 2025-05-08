@@ -6,10 +6,17 @@ import { ulid } from "ulidx";
 import { z } from "zod";
 import { testRouter } from "./test.router";
 import { attemptRouter } from "./attempt.router";
+import db from "@/lib/db";
+import { user } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 export const participantRouter = router({
-  profile: publicProcedure.query(({ ctx }) => {
-    return ctx;
+  profile: publicProcedure.query(async ({ ctx }) => {
+    const dataUser = await db.query.user.findFirst({
+      where: eq(user.id, ctx.user?.id ?? ""),
+    });
+
+    return { user: dataUser, session: ctx.session };
   }),
   updateProfile: participantProcedure
     .input(z.instanceof(FormData))

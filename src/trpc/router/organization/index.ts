@@ -8,11 +8,18 @@ import { uploadFileToR2 } from "@/services/common/upload-file-to-r2";
 import { deleteFileFromR2 } from "@/services/common/delete-file-from-r2";
 import { updateProfile } from "@/services/common/update-profile";
 import { ulid } from "ulidx";
+import db from "@/lib/db";
+import { eq } from "drizzle-orm";
+import { user } from "@/lib/db/schema";
 
 export const organizationRouter = router({
   // Get current profile as organizer (e.g user, session & selectedOrganization)
-  profile: organizerProcedure.query(({ ctx }) => {
-    return ctx;
+  profile: organizerProcedure.query(async ({ ctx }) => {
+    const dataUser = await db.query.user.findFirst({
+      where: eq(user.id, ctx.user?.id),
+    });
+
+    return { session: ctx.session, user: dataUser, organizer: ctx.organizer };
   }),
 
   updateProfile: organizerProcedure

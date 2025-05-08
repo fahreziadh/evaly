@@ -13,30 +13,44 @@ import { Reorder } from "motion/react";
 import DialogAddQuestion from "@/components/shared/dialog/dialog-add-question";
 import { Question } from "@/types/question";
 import { toast } from "sonner";
-import { useParams } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { trpc } from "@/trpc/trpc.client";
+import { TextShimmer } from "@/components/ui/text-shimmer";
 
 const Questions = () => {
-  const [selectedSection] = useSelectedSection();
+  const [selectedSection, setSelectedSection] = useSelectedSection();
   const [selectedQuestion, setSelectedQuestion] = useState<Question>();
   const { id: testId } = useParams();
 
   const tCommon = useTranslations("Common");
   const t = useTranslations("TestDetail");
 
-  const {
-    refetch: refetchSections,
-  } = trpc.organization.testSection.getAll.useQuery({
-    testId: testId as string,
-  });
+  const { data: dataSections, refetch: refetchSections } =
+    trpc.organization.testSection.getAll.useQuery({
+      testId: testId as string,
+    });
 
   const {
     data: dataQuestions,
     isRefetching: isRefetchingQuestions,
-  } = trpc.organization.question.getAll.useQuery({
-    referenceId: selectedSection as string,
-  });
+    isPending: isPendingQuestions,
+  } = trpc.organization.question.getAll.useQuery(
+    {
+      referenceId: selectedSection as string,
+    },
+    { enabled: !!selectedSection }
+  );
+
+  const {
+    error: errorSelectedSection,
+    isPending: isPendingSelectedSection,
+  } = trpc.organization.testSection.getById.useQuery(
+    { id: selectedSection || "" },
+    {
+      enabled: !!selectedSection,
+    }
+  );
 
   const [localQuestions, setLocalQuestions] = useState<Question[]>([]);
 
@@ -45,6 +59,12 @@ const Questions = () => {
       setLocalQuestions(dataQuestions);
     }
   }, [dataQuestions]);
+
+  useEffect(() => {
+    if (dataSections && !selectedSection) {
+      setSelectedSection(dataSections[0].id);
+    }
+  }, [dataQuestions, dataSections, selectedSection, setSelectedSection]);
 
   const onHandleChangeOrder = (
     changedQuestionOrders: {
@@ -74,6 +94,18 @@ const Questions = () => {
       return updatedQuestions.sort((a, b) => a.order - b.order);
     });
   };
+
+  if (isPendingSelectedSection){
+    return <TextShimmer>Loading detail section...</TextShimmer>
+  }
+
+  if (isPendingQuestions) {
+    return <TextShimmer>Loading questions...</TextShimmer>;
+  }
+
+  if (!isPendingSelectedSection && errorSelectedSection) {
+    return notFound();
+  }
 
   return (
     <>

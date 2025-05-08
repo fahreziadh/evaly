@@ -7,13 +7,9 @@ import { Session, User } from "better-auth/types";
 import { ZodError } from "zod";
 
 export const createContext = async ({ req }: FetchCreateContextFnOptions) => {
-  const now = Date.now();
   const sessionRes = await auth.api.getSession({
     headers: req.headers,
   });
-
-  const duration = Date.now() - now;
-  console.log(`Session took ${duration}ms`);
 
   const session: Session | undefined = sessionRes?.session;
   const user: User | undefined = sessionRes?.user;

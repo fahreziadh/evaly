@@ -9,6 +9,10 @@ export async function getSectionById(sectionId: string) {
     },
   });
 
+  if (!section) {
+    throw new Error("Section not found");
+  }
+
   const numOfQuestions = await db
     .select({
       count: count(),
@@ -17,6 +21,7 @@ export async function getSectionById(sectionId: string) {
     .where(
       and(eq(question.referenceId, sectionId), isNull(question.deletedAt))
     );
+
   return {
     ...section,
     numOfQuestions: numOfQuestions[0]?.count,

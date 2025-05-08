@@ -158,7 +158,7 @@ const Header = ({ className }: { className?: string }) => {
             <Popover>
               <PopoverTrigger className="flex flex-row items-center gap-2 cursor-pointer group">
                 <span className="font-medium text-start w-max max-w-xl truncate">
-                  {getValues("title") || "Untitled"}
+                  {watch("title") || "Untitled"}
                 </span>
                 {isPendingTest || isUpdatingTest ? (
                   <Loader2 className="animate-spin text-muted-foreground/50" />

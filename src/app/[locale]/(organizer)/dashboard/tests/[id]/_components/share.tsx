@@ -5,12 +5,8 @@ import { Image } from "@/components/ui/image";
 import {
   Copy,
   Link2,
-  Mail,
-  Share2,
-  Check,
-  QrCode,
-  Users,
-  Info,
+  Mail, Check,
+  QrCode, Info,
   Download,
   Settings,
   UserPlus,
@@ -18,7 +14,7 @@ import {
   XIcon,
   Loader2,
   SendIcon,
-  Upload,
+  Upload
 } from "lucide-react";
 import { toast } from "sonner";
 import { env } from "@/lib/env.client";
@@ -353,19 +349,9 @@ const Share = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-medium tracking-tight">Share Test</h2>
-          <p className="text-muted-foreground mt-1">
-            Share your test with participants using any of these methods
-          </p>
-        </div>
-      </div>
-
       <Card className="border">
         <CardHeader className="pb-2 border-b border-dashed">
-          <CardTitle className="flex items-center gap-2">
-            <Share2 className="h-5 w-5" />
+          <CardTitle>
             Share Options
           </CardTitle>
           <CardDescription>
@@ -786,8 +772,7 @@ const Share = () => {
 
       <Card className="border">
         <CardHeader className="pb-2 border-b border-dashed">
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
+          <CardTitle>
             Manage Access
           </CardTitle>
           <CardDescription>Control who can access your test</CardDescription>

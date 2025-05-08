@@ -6,6 +6,7 @@ import { useTabsState } from "./_hooks/use-tabs-state";
 import Share from "./_components/share";
 import Setting from "./_components/setting/setting";
 import Questions from "./_components/questions/questions";
+import Submissions from "./_components/submissions/submissions";
 
 const PageClient = () => {
   const [tab, setTab] = useTabsState("questions");
@@ -22,7 +23,7 @@ const PageClient = () => {
         <Setting />
       </TabsContent>
       <TabsContent value="submissions">
-        {/* <Submissions /> */}
+        <Submissions />
       </TabsContent>
       <TabsContent value="questions">
         <Questions />

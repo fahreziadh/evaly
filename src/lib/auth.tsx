@@ -9,12 +9,6 @@ import { render } from "@react-email/components";
 import { sendEmail } from "./email";
 
 export const auth = betterAuth({
-  session: {
-    cookieCache: {
-      enabled: true,
-      maxAge: 5 * 60, // 5 minutes
-    },
-  },
   secret: env.BETTER_AUTH_SECRET!,
   plugins: [
     emailOTP({

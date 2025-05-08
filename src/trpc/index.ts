@@ -10,7 +10,7 @@ export const createContext = async ({ req }: FetchCreateContextFnOptions) => {
   const sessionRes = await auth.api.getSession({
     headers: req.headers,
   });
-
+  
   const session: Session | undefined = sessionRes?.session;
   const user: User | undefined = sessionRes?.user;
 

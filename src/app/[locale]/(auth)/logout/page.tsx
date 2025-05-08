@@ -11,7 +11,7 @@ const Page = () => {
   useEffect(() => {
     startTransition(async () => {
       await authClient.signOut();
-      router.push("/");
+      window.location.href = "/";
     });
   }, [router]);
 

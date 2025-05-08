@@ -10,7 +10,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
       return null;
     }
     throw error;
-  });
+  })
   const isLoggedIn = !!dataUser;
 
   return (

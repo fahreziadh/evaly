@@ -171,12 +171,12 @@ const Profile = () => {
               name="image"
               render={({ field }) => (
                 <div className="relative w-max h-max">
-                  <Avatar className="size-32 rounded-none">
+                  <Avatar className="size-24 rounded-full">
                     {previewURL ? (
                       <AvatarImage
                         src={previewURL}
                         alt="Profile"
-                        className="object-cover rounded-none"
+                        className="object-cover"
                       />
                     ) : field.value ? (
                       <AvatarImage
@@ -200,7 +200,7 @@ const Profile = () => {
                   </Avatar>
                   <div className="flex flex-row gap-2 absolute right-1 bottom-1">
                     <Button
-                      variant="secondary-outline"
+                      variant="default"
                       size="icon"
                       type="button"
                       onClick={() => {

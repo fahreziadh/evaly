@@ -27,34 +27,24 @@ export default function HomePage() {
   return (
     <div className="flex flex-col bg-background">
       {/* Navigation */}
-      <header className="sticky top-0 z-50 bg-background border-b border-border/10">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md">
         <div className="flex items-center justify-between py-3 container">
           <LogoType href="/" />
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-2">
             <Link href="/schools">
-              <Button variant="ghost">{landing("forSchools")}</Button>
+              <Button variant="ghost" className="text-[15px] ">{landing("forSchools")}</Button>
             </Link>
             <Link href="/companies">
-              <Button variant="ghost">{landing("forCompanies")}</Button>
+              <Button variant="ghost" className="text-[15px] ">{landing("forCompanies")}</Button>
             </Link>
             <Link href="/pricing" className="mr-4">
-              <Button variant="ghost">{landing("pricing")}</Button>
+              <Button variant="ghost" className="text-[15px] ">{landing("pricing")}</Button>
             </Link>
-            <a
-              href="https://github.com/fahreziadh/evaly"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="outline">
-                <Github className="mr-2 h-4 w-4" />
-                {t("openSource")}
-              </Button>
-            </a>
             <DialogSelectLanguage />
             <Link href="/dashboard">
-              <Button variant="default">{t("dashboard")}</Button>
+              <Button variant="default" className="text-[15px] ">{t("dashboard")}</Button>
             </Link>
           </div>
 

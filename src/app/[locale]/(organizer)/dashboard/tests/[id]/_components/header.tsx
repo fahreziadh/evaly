@@ -38,6 +38,7 @@ import { useProgressRouter } from "@/components/shared/progress-bar";
 import TestSections from "./questions/test-sections";
 import {
   Popover,
+  PopoverAnchor,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
@@ -165,35 +166,42 @@ const Header = ({ className }: { className?: string }) => {
                   <PencilLine className="size-4 text-muted-foreground/50 group-hover:text-muted-foreground " />
                 )}
               </PopoverTrigger>
-              <PopoverContent>
-                <Input
-                  type="text"
-                  {...register("title")}
-                  className="outline-none font-medium"
-                  placeholder={isPendingTest ? "Loading..." : "Test title"}
-                  disabled={isPendingTest || isUpdatingTest}
-                />
-                <PopoverClose asChild>
-                  <Button
-                    variant={"default"}
-                    disabled={isUpdatingTest || isPendingTest || !isDirty}
-                    className="w-max mt-2"
-                    onClick={() =>
-                      mutateUpdateTest({
-                        id: id?.toString() || "",
-                        title: getValues("title"),
-                      })
-                    }
-                  >
-                    {isUpdatingTest ? (
-                      <Loader2 className="animate-spin" />
-                    ) : (
-                      <Save className="size-3.5" />
-                    )}
-                    {tCommon("saveButton")}
-                  </Button>
-                </PopoverClose>
-              </PopoverContent>
+              <PopoverAnchor>
+                <PopoverContent
+                  side="bottom"
+                  align="start"
+                  sideOffset={10}
+                  alignOffset={-10}
+                >
+                  <Input
+                    type="text"
+                    {...register("title")}
+                    className="outline-none font-medium"
+                    placeholder={isPendingTest ? "Loading..." : "Test title"}
+                    disabled={isPendingTest || isUpdatingTest}
+                  />
+                  <PopoverClose asChild>
+                    <Button
+                      variant={"default"}
+                      disabled={isUpdatingTest || isPendingTest || !isDirty}
+                      className="w-max mt-2"
+                      onClick={() =>
+                        mutateUpdateTest({
+                          id: id?.toString() || "",
+                          title: getValues("title"),
+                        })
+                      }
+                    >
+                      {isUpdatingTest ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        <Save className="size-3.5" />
+                      )}
+                      {tCommon("saveButton")}
+                    </Button>
+                  </PopoverClose>
+                </PopoverContent>
+              </PopoverAnchor>
             </Popover>
           )}
         </div>
@@ -202,7 +210,7 @@ const Header = ({ className }: { className?: string }) => {
         <>
           {/* Loading state */}
           {isPendingTest || isRefetchingTest ? (
-            <Button variant={"ghost"}>
+            <Button variant={"default"} disabled>
               <Loader2 className="animate-spin" />
               Loading...
             </Button>

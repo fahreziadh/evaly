@@ -1,6 +1,7 @@
 "use client";
 
 import LoadingScreen from "@/components/shared/loading/loading-screen";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { usePathname } from "@/i18n/navigation";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useTransition } from "react";
@@ -29,7 +30,7 @@ const Provider = ({
 
   if (!pathName || isRedirecting) return <LoadingScreen />;
 
-  return <>{children}</>;
+  return <SidebarProvider>{children}</SidebarProvider>;
 };
 
 export default Provider;

@@ -179,7 +179,7 @@
 
 @layer components {
   .dashboard-margin {
-    @apply mt-4 md:mt-8
+    @apply mt-4 md:mt-6
   }
   .custom-prose {
     @apply prose prose-base dark:prose-invert prose-neutral

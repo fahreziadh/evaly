@@ -47,7 +47,7 @@
   --warning: hsla(32, 95%, 44%, 0.151);
   --warning-foreground: hsl(32.1 94.6% 43.7%);
 
-  --success: rgba(16, 185, 129, 0.2);
+  --success: rgba(16, 185, 129, 0.098);
   --success-foreground: hsl(160.1 84.1% 39.4%);
 }
 
@@ -149,7 +149,7 @@
 
 @utility container {
   @apply mx-auto px-4;
-  @apply 2xl:max-w-[1200px] max-w-[1000px]
+  @apply 2xl:max-w-[1200px] max-w-[1100px]
 }
 
 @layer base {

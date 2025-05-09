@@ -6,7 +6,7 @@ import { useTabsState } from "./_hooks/use-tabs-state";
 import Share from "./_components/share";
 import Setting from "./_components/setting/setting";
 import Questions from "./_components/questions/questions";
-import Submissions from "./_components/(deprecated) submissions";
+import Results from "./_components/results/results";
 
 const PageClient = () => {
   const [tab, setTab] = useTabsState("questions");
@@ -18,12 +18,12 @@ const PageClient = () => {
       value={tab}
       onValueChange={setTab}
     >
-      <Header className="mb-4" />
+      <Header />
       <TabsContent value="settings">
         <Setting />
       </TabsContent>
-      <TabsContent value="submissions">
-        <Submissions />
+      <TabsContent value="results">
+        <Results />
       </TabsContent>
       <TabsContent value="questions">
         <Questions />

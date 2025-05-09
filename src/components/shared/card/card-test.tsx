@@ -25,7 +25,7 @@ const CardTest = ({
 }) => {
   const t = useTranslations("DashboardTest");
   const redirectLink = data.isPublished
-    ? `/dashboard/tests/${data.id}?tabs=submissions`
+    ? `/dashboard/tests/${data.id}?tabs=results`
     : `/dashboard/tests/${data.id}?tabs=questions`;
   return (
     <Link href={redirectLink}>
@@ -34,11 +34,9 @@ const CardTest = ({
         className="border rounded-lg transition-all duration-100 bg-card hover:shadow-md shadow-black/5 w-full active:opacity-80"
       >
         <div className="flex justify-between items-start p-3">
-          <div>
-            <h3 className="font-medium">
-              {data.title || t("untitledTestLabel")}
-            </h3>
-          </div>
+          <h3 className="font-normal">
+            {data.title || t("untitledTestLabel")}
+          </h3>
 
           <div>
             {data.isPublished && !data.finishedAt ? (

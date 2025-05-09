@@ -42,7 +42,7 @@ export const NavUserAccount = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button size={"icon"} variant={"ghost"} className="rounded-full">
-          <Avatar className="size-6 rounded-full">
+          <Avatar className="size-5 rounded-full">
             {data?.user?.image ? (
               <AvatarImage src={data?.user?.image} alt="User" asChild>
                 <Image

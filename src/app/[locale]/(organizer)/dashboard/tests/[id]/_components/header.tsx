@@ -2,7 +2,8 @@
 import { Button } from "@/components/ui/button";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Check,
+  CheckIcon,
+  CircleIcon,
   LinkIcon,
   Loader2,
   PencilLine,
@@ -46,6 +47,9 @@ import { Input } from "@/components/ui/input";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import { PopoverClose } from "@radix-ui/react-popover";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { testTypeFormatter } from "@/lib/test-type-formatter";
+import { testTypeColor } from "@/lib/test-type-formatter";
 
 const Header = ({ className }: { className?: string }) => {
   const [tabs, setTabs] = useTabsState("questions");
@@ -55,6 +59,7 @@ const Header = ({ className }: { className?: string }) => {
   const tCommon = useTranslations("Common");
   const tOrganizer = useTranslations("Organizer");
   const [participantOnline, setParticipantOnline] = useState<string[]>([]);
+  const t = useTranslations("DashboardTest");
 
   const {
     register,
@@ -64,7 +69,7 @@ const Header = ({ className }: { className?: string }) => {
     watch,
   } = useForm<UpdateTest>();
 
-  const { isPublished, finishedAt } = watch();
+  const { isPublished, finishedAt, type } = watch();
 
   const status = useMemo(() => {
     if (isPublished && finishedAt) return "finished";
@@ -207,7 +212,35 @@ const Header = ({ className }: { className?: string }) => {
         </div>
 
         {/* Right side: Status and actions */}
-        <div className="flex flex-row justify-end w-full">
+        <div className="flex flex-row justify-end w-full gap-2 items-center">
+          <Badge
+            variant={"secondary"}
+            className={testTypeColor(type)}
+            size={"lg"}
+          >
+            {testTypeFormatter(type, t)}
+          </Badge>
+          <div>
+            {status === "published" ? (
+              <Badge variant={"ghost"} size={"lg"}>
+                <CircleIcon className="fill-success-foreground stroke-success-foreground size-3" />
+                {t("activeStatus")}
+              </Badge>
+            ) : null}
+
+            {status === "draft" ? (
+              <Badge variant={"secondary"} size={"lg"}>
+                {t("draftStatus")}
+              </Badge>
+            ) : null}
+
+            {status === "finished" ? (
+              <Badge variant={"success"} size={"lg"}>
+                <CheckIcon />
+                {t("finishedStatus")}
+              </Badge>
+            ) : null}
+          </div>
           {/* Mobile Only Status */}
           {status === "published" ? (
             <Button variant={"ghost"} className="ml-4 flex md:hidden">
@@ -240,10 +273,6 @@ const Header = ({ className }: { className?: string }) => {
           ) : // Finished state
           status === "finished" ? (
             <div className="flex flex-row items-center gap-2">
-              <Button variant={"success"}>
-                <Check />
-                Finished
-              </Button>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant={"outline"}>
@@ -288,7 +317,7 @@ const Header = ({ className }: { className?: string }) => {
               testId={id?.toString() || ""}
               onPublished={(newTest) => {
                 reset(newTest);
-                setTabs("submissions");
+                setTabs("results");
               }}
             />
           ) : null}
@@ -306,8 +335,8 @@ const Header = ({ className }: { className?: string }) => {
             <TabsList>
               {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
               {status === "published" || status === "finished" ? (
-                <TabsTrigger value="submissions">
-                  {tOrganizer("submissionsTab")}
+                <TabsTrigger value="results">
+                  {tOrganizer("resultsTab")}
                 </TabsTrigger>
               ) : null}
               {status === "published" ? (

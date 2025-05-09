@@ -111,7 +111,7 @@ const CardQuestion = ({
   return (
     <Card
       className={cn(
-        "transition-all rounded-none border-transparent cursor-pointer duration-100 group",
+        "transition-all rounded-none border-transparent cursor-pointer duration-100 group bg-transparent",
         data.order === 1 ? "mt-6" : "",
         className
       )}
@@ -127,7 +127,7 @@ const CardQuestion = ({
               {t("pointValue", { number: data.pointValue })}
             </Badge>
           ) : null}
-          <Badge variant={"ghost"}>
+          <Badge variant={"secondary"}>
             {selectedType.icon && <selectedType.icon size={12} />}
             {tTestDetail(selectedType.value)}
           </Badge>

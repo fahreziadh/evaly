@@ -33,8 +33,8 @@ const Settings = () => {
   return (
     <div className="container dashboard-margin">
       <div className="flex flex-col">
-        <h1 className="font-semibold">Settings</h1>
-        <p className="text-muted-foreground">
+        <h1 className="dashboard-title">Settings</h1>
+        <p className="dashboard-description">
           Manage your account settings and preferences.
         </p>
       </div>
@@ -188,8 +188,8 @@ const Profile = () => {
                         <Image
                           src={field.value}
                           alt="Profile"
-                          width={96}
-                          height={96}
+                          width={256}
+                          height={256}
                         />
                       </AvatarImage>
                     ) : (

@@ -38,6 +38,7 @@ export async function duplicateTest(testId: string, organizationId: string) {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
+      heldAt: null
     })
     .returning();
 

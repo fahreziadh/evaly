@@ -36,12 +36,12 @@ const Page = () => {
     <div className="container dashboard-margin">
       <div className="flex flex-row justify-between">
         <div className="flex flex-col mb-8">
-          <h1 className="font-semibold">Question Bank</h1>
-          <p className="text-muted-foreground">
+          <h1 className="dashboard-title">Question Bank</h1>
+          <p className="dashboard-description">
             Create and manage your question templates.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex md:flex-row flex-col items-end justify-start md:items-start gap-2">
           <CreateQuestionTemplateButton />
           <Link href="/dashboard/question/generate">
             <Button>
@@ -175,7 +175,7 @@ const QuestionTemplateSection = ({
         filteredDataQuestionTemplate?.length > 0 ? (
           <div
             className={cn(
-              "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+              "grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6",
               gridClassName
             )}
           >

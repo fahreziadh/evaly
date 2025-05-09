@@ -1,52 +1,47 @@
 "use client";
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  SchoolIcon,
-  Sparkles,
-} from "lucide-react";
+import { ChevronsUpDown, SchoolIcon } from "lucide-react";
 
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import { trpc } from "@/trpc/trpc.client";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function NavOrganization() {
-  const { isMobile } = useSidebar();
+  // const { isMobile } = useSidebar();
   const { data, isPending } = trpc.organization.profile.useQuery();
 
-  if (isPending) return <Skeleton className="h-8 w-full" />;
+  if (isPending) return <Skeleton className="h-12 w-full" />;
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton className="bg-sidebar-accent data-[state=open]:bg-sidebar-border data-[state=open]:text-sidebar-accent-foreground">
-              <SchoolIcon className="size-4" />
-              <div className="grid flex-1 text-left text-sm leading-tight space-y-1">
-                <span className="truncate">{data?.organizer?.organization.name}</span>
+            <SidebarMenuButton
+              size={"lg"}
+              className="bg-secondary data-[state=open]:bg-sidebar-secondary data-[state=open]:text-sidebar-accent-foreground"
+            >
+              <div className="size-7 flex items-center justify-center bg-foreground/10 rounded-md">
+                <SchoolIcon className="size-5 stroke-foreground/80" />
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
+              <div className="grid flex-1 text-left text-sm leading-tight ml-1">
+                <span className="truncate">
+                  {data?.organizer?.organization.name}
+                </span>
+                <span className="text-xs text-muted-foreground">Free</span>
+              </div>
+              <ChevronsUpDown className="ml-auto size-4 stroke-muted-foreground" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
-          <DropdownMenuContent
+          {/* <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
@@ -86,7 +81,7 @@ export function NavOrganization() {
               <LogOut />
               Log out
             </DropdownMenuItem>
-          </DropdownMenuContent>
+          </DropdownMenuContent> */}
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>

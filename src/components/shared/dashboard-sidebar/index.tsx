@@ -1,8 +1,8 @@
 import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
 } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
 import { NavOrganization } from "./nav-organization";
@@ -11,7 +11,7 @@ import NavLinks from "./nav-links";
 const DashboardSidebar = () => {
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader className="gap-4">
         <NavUser />
         <NavOrganization />
       </SidebarHeader>

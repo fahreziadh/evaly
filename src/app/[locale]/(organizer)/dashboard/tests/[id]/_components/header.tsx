@@ -145,7 +145,7 @@ const Header = ({ className }: { className?: string }) => {
 
   return (
     <div className={cn(className)}>
-      <div className="flex flex-row justify-between items-start">
+      <div className="flex md:flex-row flex-col-reverse gap-2 justify-between items-start">
         <div className="flex flex-row gap-2 items-center">
           <BackButton href={`/dashboard/tests`} />
 
@@ -207,7 +207,19 @@ const Header = ({ className }: { className?: string }) => {
         </div>
 
         {/* Right side: Status and actions */}
-        <>
+        <div className="flex flex-row justify-end w-full">
+          {/* Mobile Only Status */}
+          {status === "published" ? (
+            <Button variant={"ghost"} className="ml-4 flex md:hidden">
+              <div
+                className={cn(
+                  "size-2.5 bg-emerald-500 rounded-full transition-all",
+                  participantOnline.length === 0 ? "bg-foreground/15" : ""
+                )}
+              />
+              <NumberFlow value={participantOnline.length} suffix=" Online" />
+            </Button>
+          ) : null}
           {/* Loading state */}
           {isPendingTest || isRefetchingTest ? (
             <Button variant={"default"} disabled>
@@ -280,17 +292,17 @@ const Header = ({ className }: { className?: string }) => {
               }}
             />
           ) : null}
-        </>
+        </div>
       </div>
 
       {/* Tabs and Test Sections */}
-      <div className="flex flex-row justify-between items-start mb-4 mt-4">
+      <div className="flex md:flex-row flex-col gap-2 justify-between items-start mb-4 mt-4">
         {isPendingTest ? (
           <div className="flex flex-row gap-2 items-center">
             <Skeleton className="w-56 h-9 rounded-md" />
           </div>
         ) : (
-          <div className="flex flex-row items-center">
+          <div className="flex md:flex-row flex-col md:items-center">
             <TabsList>
               {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
               {status === "published" || status === "finished" ? (
@@ -310,8 +322,10 @@ const Header = ({ className }: { className?: string }) => {
                 {tOrganizer("settingsTab")}
               </TabsTrigger>
             </TabsList>
+
+            {/* Desktop Only Status */}
             {status === "published" ? (
-              <Button variant={"ghost"} className="ml-4">
+              <Button variant={"ghost"} className="ml-4 hidden md:flex">
                 <div
                   className={cn(
                     "size-2.5 bg-emerald-500 rounded-full transition-all",

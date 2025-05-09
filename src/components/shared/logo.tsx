@@ -13,6 +13,7 @@ export const LogoType = ({ className, href = "/" }: Props) => {
   return (
     <Link href={href} className={cn("flex items-center gap-2", className)}>
       <Logo />
+      <span className="font-extrabold font-mono">Evaly</span>
     </Link>
   );
 };

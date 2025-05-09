@@ -6,15 +6,15 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: hsl(0 0% 100%);
-  --foreground: hsl(0 0% 10%);
+  --background: hsl(0 0% 99%);
+  --foreground: hsl(0 0% 20%);
   --card: hsl(0 0% 100%);
   --card-foreground: hsl(0 0% 10%);
   --popover: hsl(0 0% 100%);
   --popover-foreground: hsl(0 0% 10%);
   --primary: hsl(0, 0%, 20%);
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(0 0% 97%);
+  --secondary: hsl(0 0% 95%);
   --secondary-foreground: hsl(0 0% 25.1%);
   --muted: hsl(0 0% 95%);
   --muted-foreground: hsl(0 0% 50%);
@@ -32,7 +32,7 @@
   --chart-5: hsl(27 87% 67%);
   --radius: 0.6rem;
 
-  --sidebar: hsl(0, 0%, 100%);
+  --sidebar: hsl(0, 0%, 98%);
   --sidebar-foreground: hsl(240 5.3% 26.1%);
   --sidebar-primary: hsl(240 5.9% 10%);
   --sidebar-primary-foreground: hsl(0 0% 98%);
@@ -148,11 +148,8 @@
 }
 
 @utility container {
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  max-width: 1000px;
+  @apply mx-auto px-4;
+  @apply 2xl:max-w-[1200px] max-w-[1000px]
 }
 
 @layer base {
@@ -178,8 +175,14 @@
 }
 
 @layer components {
+  .dashboard-title {
+    @apply font-semibold md:text-xl
+  }
+  .dashboard-description {
+    @apply text-muted-foreground font-medium text-sm md:text-base
+  }
   .dashboard-margin {
-    @apply mt-4 md:mt-6
+    @apply mt-4 md:mt-8
   }
   .custom-prose {
     @apply prose prose-base dark:prose-invert prose-neutral

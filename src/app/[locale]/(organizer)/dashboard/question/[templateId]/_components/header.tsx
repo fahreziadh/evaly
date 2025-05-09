@@ -57,10 +57,10 @@ const Header = ({ templateId }: { templateId: string }) => {
 
   return (
     <form
-      className="flex flex-row justify-between items-start"
+      className="flex flex-col gap-4 md:flex-row justify-between items-start"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-row gap-2 items-center">
         <BackButton href={`/dashboard/question`} />
         <Controller
           control={control}
@@ -70,7 +70,7 @@ const Header = ({ templateId }: { templateId: string }) => {
               value={field.value || ""}
               onChange={field.onChange}
               disabled={isLoadingQuestionTemplate || isUpdatingQuestionTemplate}
-              className="outline-none text-xl font-medium max-w-xl w-full md:w-xl"
+              className="outline-none font-medium max-w-xl w-full md:w-xl"
               placeholder="Add question template title"
             />
           )}
@@ -90,7 +90,7 @@ const Header = ({ templateId }: { templateId: string }) => {
           </Button>
         ) : null}
       </div>
-      <div className="flex flex-row gap-2">
+      <div className="flex flex-row gap-2 justify-end w-full">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button variant={"ghost"} size={"icon-sm"}>

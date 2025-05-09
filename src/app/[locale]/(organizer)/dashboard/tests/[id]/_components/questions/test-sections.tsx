@@ -75,7 +75,7 @@ const TestSections = ({ className }: { className?: string }) => {
   }
 
   return (
-    <div className="flex flex-row gap-2 items-center">
+    <div className="flex flex-row-reverse md:flex-row gap-2 items-center">
       <DialogDeleteSection
         disabled={isRefetching || isPending}
         isLastSection={data?.length === 1}

@@ -2,7 +2,6 @@ import { Test } from "@/types/test";
 import { Link } from "../progress-bar";
 import { Badge } from "@/components/ui/badge";
 import {
-  Calendar,
   CheckIcon,
   CircleIcon,
   CircleUserIcon,
@@ -32,11 +31,13 @@ const CardTest = ({
     <Link href={redirectLink}>
       <div
         key={data.id}
-        className="border rounded-md transition-all duration-100 bg-card w-full hover:shadow-sm active:opacity-80"
+        className="border rounded-lg transition-all duration-100 bg-card hover:shadow-md shadow-black/5 w-full active:opacity-80"
       >
-        <div className="flex justify-between items-start p-4">
+        <div className="flex justify-between items-start p-3">
           <div>
-            <h3 className="font-medium">{data.title || t("untitledTestLabel")}</h3>
+            <h3 className="font-medium">
+              {data.title || t("untitledTestLabel")}
+            </h3>
           </div>
 
           <div>
@@ -60,7 +61,7 @@ const CardTest = ({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-6 text-sm px-4 py-2 border-t text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-6 text-sm px-4 pb-3 text-muted-foreground">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant={"secondary"} className={testTypeColor(data.type)}>
               {testTypeFormatter(data.type, t)}
@@ -80,12 +81,11 @@ const CardTest = ({
                 : `${data.invitations} ${t("participantsLabel")}`}
             </span>
           </div>
-          <div className="flex items-center gap-1">
-            <Calendar size={14} />
-            <span>
-              {t("createdOnLabel")}{dayjs(data.createdAt).format("DD MMM YYYY")}
-            </span>
-          </div>
+          {data.heldAt && (
+            <div className="flex items-center gap-1">
+              Held on {dayjs(data.heldAt).format("DD MMM YYYY")}
+            </div>
+          )}
 
           <div className="ml-auto flex gap-1">
             <Button variant={"ghost"} size={"icon-xs"}>

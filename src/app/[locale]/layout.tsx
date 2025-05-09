@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title:
-    "Evaly: Innovative assessment solution | Design customized evaluations, knowledge checks, and certification tests",
+    "Evaly: Making Online Exams Easy, Secure, and Smart",
   description:
     "Evaly is an innovative assessment solution that allows you to design customized evaluations, knowledge checks, and certification tests.",
 };

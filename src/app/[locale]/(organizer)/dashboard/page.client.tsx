@@ -31,11 +31,15 @@ const DashboardPageClient = () => {
     limit: queryStates.limit,
   });
   const queryClient = useQueryClient();
-  const queryKey = getQueryKey(trpc.organization.test.getAll, {
-    page: queryStates.page,
-    limit: queryStates.limit,
-  }, "query");
-  
+  const queryKey = getQueryKey(
+    trpc.organization.test.getAll,
+    {
+      page: queryStates.page,
+      limit: queryStates.limit,
+    },
+    "query"
+  );
+
   const tests = data?.data;
   const pagination = data?.pagination;
 
@@ -43,7 +47,10 @@ const DashboardPageClient = () => {
     return (
       <div className="container">
         <div className="flex flex-row items-start justify-between mb-10">
-          <h1 className="font-semibold">{t("dashboardTitle")}</h1>
+          <div>
+            <h1 className="dashboard-title">{t("dashboardTitle")}</h1>
+            <p className="dashboard-description">{t("dashboardDescription")}</p>
+          </div>
           <DialogCreateTest />
         </div>
         <LoadingTest />
@@ -67,10 +74,8 @@ const DashboardPageClient = () => {
     <div className="container">
       <div className="flex flex-row items-start justify-between">
         <div>
-          <h1 className="font-semibold">{t("dashboardTitle")}</h1>
-          <p className="text-muted-foreground">
-            {t("dashboardDescription")}
-          </p>
+          <h1 className="dashboard-title">{t("dashboardTitle")}</h1>
+          <p className="dashboard-description">{t("dashboardDescription")}</p>
         </div>
         <DialogCreateTest />
       </div>
@@ -92,11 +97,10 @@ const DashboardPageClient = () => {
                   queryClient.setQueryData(queryKey, {
                     data: newData,
                     pagination: {
-                        ...pagination,
-                        totalPages: newData.length,
-                      },
-                    }
-                  );
+                      ...pagination,
+                      totalPages: newData.length,
+                    },
+                  });
                 }}
               />
             </motion.div>

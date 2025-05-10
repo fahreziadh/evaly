@@ -394,7 +394,8 @@
     "resetButton": "Reset",
     "genericUpdateError": "Failed to update test. Please try again later.",
     "add": "Add",
-    "close": "Close"
+    "close": "Close",
+    "deleteSuccess": "Deleted successfully"
   },
   "Navbar": {
     "dashboard": "Dashboard",

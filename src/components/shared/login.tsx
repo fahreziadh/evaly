@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth.client";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
@@ -18,28 +18,28 @@ import {
 } from "../ui/dialog";
 import { Link } from "./progress-bar";
 import { useTranslations } from "next-intl";
-import { useSearchParams } from "next/navigation";
-import { trpc } from "@/trpc/trpc.client";
+import { redirect, useSearchParams } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 const LogIn = () => {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { data, isPending } = trpc.organization.profile.useQuery()
+  const isAuthenticated = useQuery(api.auth.isAuthenticated);
   const t = useTranslations("Auth");
   const tCommon = useTranslations("Common");
 
   const searchParams = useSearchParams();
-  const callbackURL = searchParams.get("callbackURL")
+  const callbackURL = searchParams.get("callbackURL");
 
-  useEffect(() => {
-    if (data?.user) {
-      window.location.href = callbackURL || "/dashboard";
-    }
-  }, [data, callbackURL]);
-
-  if (isPending) {
+  if (isAuthenticated === undefined) {
     return <LoadingScreen />;
+  }
+
+  if (isAuthenticated) {
+    return redirect(callbackURL || "/dashboard");
   }
 
   return (
@@ -51,21 +51,7 @@ const LogIn = () => {
 
       <div className="max-w-sm w-full">
         <div className="flex flex-wrap items-center gap-2 w-full mb-8 pb-8 border-b border-dashed">
-          <Button
-            variant="outline"
-            type="button"
-            className="gap-2 flex-1 w-full py-4"
-            onClick={async () => {
-              await authClient.signIn.social({
-                provider: "google",
-                callbackURL:
-                  callbackURL || `${window.location.origin}/dashboard`,
-              });
-            }}
-          >
-            <GoogleIcon />
-            {t("signInWithGoogle")}
-          </Button>
+          <GoogleLogin />
         </div>
 
         <form
@@ -222,5 +208,40 @@ const GoogleIcon = () => {
         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
       />
     </svg>
+  );
+};
+
+const GoogleLogin = () => {
+  const t = useTranslations("Auth");
+  const { signIn } = useAuthActions();
+  const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const callbackURL = searchParams.get("callbackURL");
+
+  const handleSignIn = async () => {
+    setIsLoading(true);
+    await signIn("google", {
+      redirectTo: callbackURL || `${window.location.origin}/dashboard`,
+    });
+    setIsLoading(false);
+  };
+
+  return (
+    <Button
+      variant="outline"
+      type="button"
+      className="gap-2 flex-1 w-full py-4"
+      onClick={handleSignIn}
+      disabled={isLoading}
+    >
+      {isLoading ? (
+        <Loader2 size={16} className="animate-spin" />
+      ) : (
+        <>
+          <GoogleIcon />
+          {t("signInWithGoogle")}
+        </>
+      )}
+    </Button>
   );
 };

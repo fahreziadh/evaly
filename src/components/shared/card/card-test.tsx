@@ -1,11 +1,10 @@
-import { Test } from "@/types/test";
+import { DataModel } from "convex/_generated/dataModel";
 import { Link } from "../progress-bar";
 import { Badge } from "@/components/ui/badge";
 import {
   CheckIcon,
   CircleIcon,
   CircleUserIcon,
-  Clock,
   PencilLine,
 } from "lucide-react";
 import dayjs from "dayjs";
@@ -13,24 +12,17 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import DialogDeleteTest from "../dialog/dialog-delete-test";
 import { testTypeColor, testTypeFormatter } from "@/lib/test-type-formatter";
-import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
-const CardTest = ({
-  data,
-  onDelete,
-}: {
-  data: Test;
-  onDelete?: () => void;
-}) => {
+const CardTest = ({ data }: { data: DataModel["test"]["document"] }) => {
   const t = useTranslations("DashboardTest");
   const redirectLink = data.isPublished
-    ? `/dashboard/tests/${data.id}?tabs=results`
-    : `/dashboard/tests/${data.id}?tabs=questions`;
+    ? `/dashboard/tests/${data._id}?tabs=results`
+    : `/dashboard/tests/${data._id}?tabs=questions`;
   return (
     <Link href={redirectLink}>
       <div
-        key={data.id}
+        key={data._id}
         className="border rounded-lg transition-all duration-100 bg-card hover:shadow-md shadow-black/5 w-full active:opacity-80"
       >
         <div className="flex justify-between items-start p-3">
@@ -64,19 +56,17 @@ const CardTest = ({
             <Badge variant={"secondary"} className={testTypeColor(data.type)}>
               {testTypeFormatter(data.type, t)}
             </Badge>
-            {Number(data.duration || "0") > 0 ? (
+            {/* {Number(data.duration || "0") > 0 ? (
               <Badge variant={"secondary"}>
                 <Clock size={14} />
                 <span>{`${data.duration}m`}</span>
               </Badge>
-            ) : null}
+            ) : null} */}
           </div>
           <div className="flex items-center gap-1">
             <CircleUserIcon size={14} />
             <span>
-              {data.access === "public"
-                ? t("publicAccess")
-                : `${data.invitations} ${t("participantsLabel")}`}
+              {data.access === "public" ? t("publicAccess") : `Private`}
             </span>
           </div>
           {data.heldAt && (
@@ -90,13 +80,7 @@ const CardTest = ({
               <PencilLine />
             </Button>
             <Separator orientation="vertical" />
-            <DialogDeleteTest
-              testId={data.id}
-              onSuccess={() => {
-                toast.success(t("testDeletedMessage"));
-                onDelete?.();
-              }}
-            />
+            <DialogDeleteTest testId={data._id} />
           </div>
         </div>
       </div>

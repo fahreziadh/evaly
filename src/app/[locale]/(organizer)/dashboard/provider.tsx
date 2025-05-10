@@ -3,32 +3,38 @@
 import LoadingScreen from "@/components/shared/loading/loading-screen";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { usePathname } from "@/i18n/navigation";
-import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useTransition } from "react";
+import { api } from "convex/_generated/api";
+import { useMutation, useQuery } from "convex/react";
+import { redirect, useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
-const Provider = ({
-  children,
-  isLoggedIn,
-}: {
-  children: React.ReactNode;
-  isLoggedIn: boolean;
-}) => {
-  const pathName = usePathname();
-  const [isRedirecting, startRedirecting] = useTransition();
-  const { locale } = useParams();
-  const router = useRouter();
+const Provider = ({ children }: { children: React.ReactNode }) => {
+  const isAuthenticated = useQuery(api.auth.isAuthenticated);
+  const profile = useQuery(api.organizer.profile.getProfile);
+  const createInitialOrganization = useMutation(api.organizer.profile.createInitialOrganization);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!isLoggedIn && pathName) {
-      startRedirecting(() => {
-        router.replace(
-          `/${locale}/login?callbackURL=${encodeURIComponent(`${pathName}`)}`
-        );
+    if (isAuthenticated && profile && profile.selectedOrganizationId === undefined) {
+      setIsLoading(true);
+      createInitialOrganization().then(() => {
+        setIsLoading(false);
       });
     }
-  }, [pathName, locale, router, isLoggedIn]);
+  }, [isAuthenticated, profile, createInitialOrganization]);
 
-  if (!pathName || isRedirecting) return <LoadingScreen />;
+  const pathName = usePathname();
+  const { locale } = useParams();
+
+  if (isAuthenticated === undefined) return <LoadingScreen />;
+  if (profile === undefined) return <LoadingScreen />;
+  if (isLoading) return <LoadingScreen />;
+
+  if (isAuthenticated === false) {
+    return redirect(
+      `/${locale}/login?callbackURL=${encodeURIComponent(`${pathName}`)}`
+    );
+  }
 
   return <SidebarProvider>{children}</SidebarProvider>;
 };

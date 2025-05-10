@@ -14,30 +14,34 @@ import { cn } from "@/lib/utils";
 import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { trpc } from "@/trpc/trpc.client";
 import { toast } from "sonner";
+import { useMutation } from "convex/react";
+import { api } from "convex/_generated/api";
+import { Id } from "convex/_generated/dataModel";
 
 const DialogDeleteTest = ({
   className,
   testId,
-  onSuccess,
 }: {
   className?: string;
-  testId: string;
-  onSuccess?: () => void;
+  testId: Id<"test">;
 }) => {
   const [open, setOpen] = useState(false);
   const t = useTranslations("TestDialogs");
   const tCommon = useTranslations("Common");
-  const { mutate, isPending } = trpc.organization.test.delete.useMutation({
-    onSuccess() {
-      onSuccess?.();
+  const deleteTest = useMutation(api.organizer.test.deleteTest);
+
+  const onDeleteTest = async () => {
+    try {
+      deleteTest({ testId });
+      toast.success(tCommon("deleteSuccess"));
       setOpen(false);
-    },
-    onError(error,) {
-      toast.error(tCommon(error.message));
-    },
-  });
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : tCommon("genericError")
+      );
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -70,12 +74,8 @@ const DialogDeleteTest = ({
           <DialogClose asChild>
             <Button variant={"secondary"}>{tCommon("backButton")}</Button>
           </DialogClose>
-          <Button
-            variant={"destructive"}
-            onClick={() => mutate({ id: testId })}
-            disabled={isPending}
-          >
-            {isPending ? tCommon("deletingStatus") : tCommon("deleteButton")}
+          <Button variant={"destructive"} onClick={onDeleteTest}>
+            {tCommon("deleteButton")}
           </Button>
         </DialogFooter>
       </DialogContent>

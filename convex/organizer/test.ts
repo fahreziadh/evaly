@@ -61,6 +61,7 @@ export const getTests = query({
         q.eq("organizationId", organizationId)
       )
       .filter((q) => q.eq(q.field("deletedAt"), undefined))
+      .order("desc")
       .collect();
 
     return tests;
@@ -99,5 +100,38 @@ export const deleteTest = mutation({
     await ctx.db.patch(args.testId, {
       deletedAt: Date.now(),
     });
+  },
+});
+
+export const getTestById = query({
+  args: {
+    testId: v.id("test"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return null;
+    }
+
+    const user = await ctx.db.get(userId);
+    if (!user) {
+      return null;
+    }
+
+    const organizationId = user.selectedOrganizationId;
+    if (!organizationId) {
+      return null;
+    }
+
+    const test = await ctx.db.get(args.testId);
+    if (!test) {
+      return null;
+    }
+
+    if (test.organizationId !== organizationId) {
+      return null;
+    }
+
+    return test;
   },
 });

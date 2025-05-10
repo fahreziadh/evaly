@@ -25,17 +25,12 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo } from "react";
 import { trpc } from "@/trpc/trpc.client";
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
-import { UpdateTest } from "@/types/test";
 import DialogPublishTest from "@/components/shared/dialog/dialog-publish-test";
 import { useTabsState } from "../_hooks/use-tabs-state";
-import supabase from "@/lib/supabase";
 import { cn } from "@/lib/utils";
-import NumberFlow from "@number-flow/react";
-import { useProgressRouter } from "@/components/shared/progress-bar";
 import TestSections from "./questions/test-sections";
 import {
   Popover,
@@ -50,103 +45,40 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { testTypeFormatter } from "@/lib/test-type-formatter";
 import { testTypeColor } from "@/lib/test-type-formatter";
-
+import { useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
+import { DataModel, Id } from "convex/_generated/dataModel";
 const Header = ({ className }: { className?: string }) => {
   const [tabs, setTabs] = useTabsState("questions");
   const { id } = useParams();
-  const router = useProgressRouter();
-  const [isRedirect, setIsRedirect] = useTransition();
-  const tCommon = useTranslations("Common");
   const tOrganizer = useTranslations("Organizer");
-  const [participantOnline, setParticipantOnline] = useState<string[]>([]);
   const t = useTranslations("DashboardTest");
+  const dataTest = useQuery(api.organizer.test.getTestById, {
+    testId: id as Id<"test">,
+  });
 
-  const {
-    register,
-    reset,
-    formState: { isDirty },
-    getValues,
-    watch,
-  } = useForm<UpdateTest>();
-
-  const { isPublished, finishedAt, type } = watch();
 
   const status = useMemo(() => {
-    if (isPublished && finishedAt) return "finished";
-    if (isPublished && !finishedAt) return "published";
+    if (dataTest?.isPublished && dataTest?.finishedAt) return "finished";
+    if (dataTest?.isPublished && !dataTest?.finishedAt) return "published";
     return "draft";
-  }, [isPublished, finishedAt]);
-
-  const {
-    data: dataTest,
-    isPending: isPendingTest,
-    isRefetching: isRefetchingTest,
-    refetch: refetchTest,
-  } = trpc.organization.test.getById.useQuery({ id: id?.toString() || "" });
+  }, [dataTest]);
 
   useEffect(() => {
     if (dataTest) {
-      reset(dataTest);
+      // reset(dataTest);
       document.title = dataTest.title || "Untitled";
     }
-  }, [dataTest, reset]);
-
-  useEffect(() => {
-    if (!id) return;
-    if (status !== "published") return;
-    const channel = supabase.channel(id?.toString() || "");
-
-    channel
-      .on("presence", { event: "sync" }, () => {
-        const users = Object.keys(channel.presenceState());
-        setParticipantOnline([...new Set(users)]);
-      })
-      .on("presence", { event: "join" }, ({ key, newPresences }) => {
-        console.log("Join", key, newPresences);
-      })
-      .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
-        console.log("Leave", key, leftPresences);
-      });
-    channel.subscribe(() => {});
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, [id, status]);
-
-  const { mutate: mutateUpdateTest, isPending: isUpdatingTest } =
-    trpc.organization.test.update.useMutation({
-      onSuccess() {
-        toast.success("Test updated successfully");
-        refetchTest();
-      },
-    });
-
-  const { mutate: mutateReopenTest, isPending: isReopeningTest } =
-    trpc.organization.test.duplicateTest.useMutation({
-      onSuccess(data) {
-        setIsRedirect(() => {
-          router.push(`/dashboard/tests/${data.id}`);
-          router.push(`/dashboard/tests/${data.id}`);
-        });
-      },
-      onError(error) {
-        toast.error(error.message || tCommon("genericUpdateError"));
-      },
-    });
+  }, [dataTest]);
 
   const reopenTest = () => {
-    mutateReopenTest({ id: id?.toString() || "" });
+    // TODO: Implement reopen test
   };
 
   const copyLinkToShare = () => {
-    navigator.clipboard.writeText(`${env.NEXT_PUBLIC_URL}/s/${dataTest?.id}`);
+    navigator.clipboard.writeText(`${env.NEXT_PUBLIC_URL}/s/${dataTest?._id}`);
     toast.success("Link copied to clipboard", { position: "top-right" });
   };
-
-  if (!isPendingTest && !dataTest) {
-    return null;
-  }
 
   return (
     <div className={cn(className)}>
@@ -155,70 +87,23 @@ const Header = ({ className }: { className?: string }) => {
           <BackButton href={`/dashboard/tests`} />
 
           {/* Title and save button */}
-          {isPendingTest ? (
+          {dataTest === undefined ? (
             <TextShimmer className="animate-pulse  font-medium">
               Loading...
             </TextShimmer>
-          ) : (
-            <Popover>
-              <PopoverTrigger className="flex flex-row items-center gap-2 cursor-pointer group">
-                <span className="font-medium text-start w-max max-w-xl truncate">
-                  {watch("title") || "Untitled"}
-                </span>
-                {isPendingTest || isUpdatingTest ? (
-                  <Loader2 className="animate-spin text-muted-foreground/50" />
-                ) : (
-                  <PencilLine className="size-4 text-muted-foreground/50 group-hover:text-muted-foreground " />
-                )}
-              </PopoverTrigger>
-              <PopoverAnchor>
-                <PopoverContent
-                  side="bottom"
-                  align="start"
-                  sideOffset={10}
-                  alignOffset={-10}
-                >
-                  <Input
-                    type="text"
-                    {...register("title")}
-                    className="outline-none font-medium"
-                    placeholder={isPendingTest ? "Loading..." : "Test title"}
-                    disabled={isPendingTest || isUpdatingTest}
-                  />
-                  <PopoverClose asChild>
-                    <Button
-                      variant={"default"}
-                      disabled={isUpdatingTest || isPendingTest || !isDirty}
-                      className="w-max mt-2"
-                      onClick={() =>
-                        mutateUpdateTest({
-                          id: id?.toString() || "",
-                          title: getValues("title"),
-                        })
-                      }
-                    >
-                      {isUpdatingTest ? (
-                        <Loader2 className="animate-spin" />
-                      ) : (
-                        <Save className="size-3.5" />
-                      )}
-                      {tCommon("saveButton")}
-                    </Button>
-                  </PopoverClose>
-                </PopoverContent>
-              </PopoverAnchor>
-            </Popover>
-          )}
+          ) : dataTest !== null ? (
+            <DialogEditTest dataTest={dataTest} />
+          ) : null}
         </div>
 
         {/* Right side: Status and actions */}
         <div className="flex flex-row justify-end w-full gap-2 items-center">
           <Badge
             variant={"secondary"}
-            className={testTypeColor(type)}
+            className={testTypeColor(dataTest?.type)}
             size={"lg"}
           >
-            {testTypeFormatter(type, t)}
+            {testTypeFormatter(dataTest?.type, t)}
           </Badge>
           <div>
             {status === "published" ? (
@@ -241,20 +126,8 @@ const Header = ({ className }: { className?: string }) => {
               </Badge>
             ) : null}
           </div>
-          {/* Mobile Only Status */}
-          {status === "published" ? (
-            <Button variant={"ghost"} className="ml-4 flex md:hidden">
-              <div
-                className={cn(
-                  "size-2.5 bg-emerald-500 rounded-full transition-all",
-                  participantOnline.length === 0 ? "bg-foreground/15" : ""
-                )}
-              />
-              <NumberFlow value={participantOnline.length} suffix=" Online" />
-            </Button>
-          ) : null}
           {/* Loading state */}
-          {isPendingTest || isRefetchingTest ? (
+          {dataTest === undefined ? (
             <Button variant={"default"} disabled>
               <Loader2 className="animate-spin" />
               Loading...
@@ -265,58 +138,21 @@ const Header = ({ className }: { className?: string }) => {
               <Button variant={"ghost"} size={"icon"} onClick={copyLinkToShare}>
                 <LinkIcon />
               </Button>
-              <EndTestButton
-                refetchTest={refetchTest}
+              {/* <EndTestButton
                 id={id?.toString() || ""}
-              />
+              /> */}
             </div>
           ) : // Finished state
           status === "finished" ? (
-            <div className="flex flex-row items-center gap-2">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant={"outline"}>
-                    <RotateCcw />
-                    Re-open test
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>
-                      You are about to re-open the test.
-                    </DialogTitle>
-                    <DialogDescription>
-                      This action will re-create a completely new test with the
-                      same questions and settings, just like duplicating the
-                      test.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <Button variant={"outline"}>Cancel</Button>
-                    </DialogClose>
-                    <Button
-                      variant={"default"}
-                      onClick={reopenTest}
-                      disabled={isReopeningTest || isRedirect}
-                    >
-                      {isReopeningTest || isRedirect ? (
-                        <Loader2 className="animate-spin" />
-                      ) : (
-                        <RotateCcw />
-                      )}
-                      Re-open test
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </div>
+            dataTest !== null ? (
+              <DialogReopenTest dataTest={dataTest} onReopened={reopenTest} />
+            ) : null
           ) : // Draft state
           status === "draft" ? (
             <DialogPublishTest
               testId={id?.toString() || ""}
-              onPublished={(newTest) => {
-                reset(newTest);
+              onPublished={() => {
+                // reset(newTest);
                 setTabs("results");
               }}
             />
@@ -326,7 +162,7 @@ const Header = ({ className }: { className?: string }) => {
 
       {/* Tabs and Test Sections */}
       <div className="flex md:flex-row flex-col gap-2 justify-between items-start mb-4 mt-4">
-        {isPendingTest ? (
+        {dataTest === undefined ? (
           <div className="flex flex-row gap-2 items-center">
             <Skeleton className="w-56 h-9 rounded-md" />
           </div>
@@ -351,19 +187,6 @@ const Header = ({ className }: { className?: string }) => {
                 {tOrganizer("settingsTab")}
               </TabsTrigger>
             </TabsList>
-
-            {/* Desktop Only Status */}
-            {status === "published" ? (
-              <Button variant={"ghost"} className="ml-4 hidden md:flex">
-                <div
-                  className={cn(
-                    "size-2.5 bg-emerald-500 rounded-full transition-all",
-                    participantOnline.length === 0 ? "bg-foreground/15" : ""
-                  )}
-                />
-                <NumberFlow value={participantOnline.length} suffix=" Online" />
-              </Button>
-            ) : null}
           </div>
         )}
         {tabs === "questions" && <TestSections />}
@@ -438,4 +261,106 @@ const EndTestButton = ({
   );
 };
 
+const DialogReopenTest = ({
+  dataTest,
+  onReopened,
+}: {
+  dataTest?: DataModel["test"]["document"];
+  onReopened: () => void;
+}) => {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant={"outline"}>
+          <RotateCcw />
+          Re-open test
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>You are about to re-open the test.</DialogTitle>
+          <DialogDescription>
+            This action will re-create a completely new test with the same
+            questions and settings, just like duplicating the test.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant={"outline"}>Cancel</Button>
+          </DialogClose>
+          <Button
+            variant={"default"}
+            onClick={onReopened}
+            disabled={dataTest === undefined}
+          >
+            {dataTest === undefined ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <RotateCcw />
+            )}
+            Re-open test
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const DialogEditTest = ({
+  dataTest,
+}: {
+  dataTest: DataModel["test"]["document"];
+}) => {
+  const tCommon = useTranslations("Common");
+return  <Popover>
+  <PopoverTrigger className="flex flex-row items-center gap-2 cursor-pointer group">
+    <span className="font-medium text-start w-max max-w-xl truncate">
+      {/* {watch("title") || "Untitled"} */}
+    </span>
+    {dataTest === undefined ? (
+      <Loader2 className="animate-spin text-muted-foreground/50" />
+    ) : (
+      <PencilLine className="size-4 text-muted-foreground/50 group-hover:text-muted-foreground " />
+    )}
+  </PopoverTrigger>
+  <PopoverAnchor>
+    <PopoverContent
+      side="bottom"
+      align="start"
+      sideOffset={10}
+      alignOffset={-10}
+    >
+      <Input
+        type="text"
+        // {...register("title")}
+        className="outline-none font-medium"
+        placeholder={
+          dataTest === undefined ? "Loading..." : "Test title"
+        }
+        disabled={dataTest === undefined}
+      />
+      <PopoverClose asChild>
+        <Button
+          variant={"default"}
+          className="w-max mt-2"
+          onClick={
+            () => {}
+            // mutateUpdateTest({
+            //   id: id?.toString() || "",
+            //   title: getValues("title"),
+            // })
+          }
+        >
+          {dataTest === undefined ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            <Save className="size-3.5" />
+          )}
+          {tCommon("saveButton")}
+        </Button>
+      </PopoverClose>
+    </PopoverContent>
+  </PopoverAnchor>
+</Popover>
+};
 export default Header;

@@ -3,17 +3,14 @@ import LoadingTest from "@/components/shared/loading/loading-test";
 import { FileSpreadsheet } from "lucide-react";
 import DialogCreateTest from "@/components/shared/dialog/dialog-create-test";
 import CardTest from "@/components/shared/card/card-test";
-import { AnimatePresence, motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 
 const DashboardPageClient = () => {
-
   const t = useTranslations("DashboardTest");
 
-  const data = useQuery(api.organizer.test.getTests)
-
+  const data = useQuery(api.organizer.test.getTests);
 
   if (data === undefined) {
     return (
@@ -52,22 +49,9 @@ const DashboardPageClient = () => {
         <DialogCreateTest />
       </div>
       <div className="flex flex-col mt-10 min-h-dvh gap-4">
-        <AnimatePresence>
-          {data.map((e) => (
-            <motion.div
-              key={e._id}
-              layout
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.1 }}
-            >
-              <CardTest
-                data={e}
-                key={e._id}
-              />
-            </motion.div>
-          ))}
-        </AnimatePresence>
+        {data.map((e) => (
+          <CardTest data={e} key={e._id} />
+        ))}
       </div>
     </div>
   );

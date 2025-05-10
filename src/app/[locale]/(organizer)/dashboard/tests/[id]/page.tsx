@@ -1,12 +1,12 @@
 "use client";
 
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Tabs } from "@/components/ui/tabs";
 import Header from "./_components/header";
 import { useTabsState } from "./_hooks/use-tabs-state";
-import Share from "./_components/share";
-import Setting from "./_components/setting/setting";
-import Questions from "./_components/questions/questions";
-import Results from "./_components/results/results";
+// import Share from "./_components/share";
+// import Setting from "./_components/setting/setting";
+// import Questions from "./_components/questions/questions";
+// import Results from "./_components/results/results";
 
 const PageClient = () => {
   const [tab, setTab] = useTabsState("questions");
@@ -19,7 +19,7 @@ const PageClient = () => {
       onValueChange={setTab}
     >
       <Header />
-      <TabsContent value="settings">
+      {/* <TabsContent value="settings">
         <Setting />
       </TabsContent>
       <TabsContent value="results">
@@ -30,7 +30,7 @@ const PageClient = () => {
       </TabsContent>
       <TabsContent value="share">
         <Share />
-      </TabsContent>
+      </TabsContent> */}
     </Tabs>
   );
 };

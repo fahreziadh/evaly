@@ -45,9 +45,14 @@ const TestSections = ({ className }: { className?: string }) => {
   const [selectedSection, setSelectedSection] = useSelectedSection();
 
   const { data, isPending, isRefetching, refetch } =
-    trpc.organization.testSection.getAll.useQuery({
-      testId: id as string,
-    });
+    trpc.organization.testSection.getAll.useQuery(
+      {
+        testId: id as string,
+      },
+      {
+        enabled: !!id,
+      }
+    );
 
   const selectedSectionData = useMemo(() => {
     if (!selectedSection || !data) return null;
@@ -170,14 +175,24 @@ const ListSession = () => {
   const [selectedSection, setSelectedSection] = useSelectedSection();
 
   const { data, isPending, isRefetching, refetch } =
-    trpc.organization.testSection.getAll.useQuery({
-      testId: id as string,
-    });
+    trpc.organization.testSection.getAll.useQuery(
+      {
+        testId: id as string,
+      },
+      {
+        enabled: !!id,
+      }
+    );
 
   const { refetch: refetchSectionById } =
-    trpc.organization.testSection.getById.useQuery({
-      id: selectedSection as string,
-    });
+    trpc.organization.testSection.getById.useQuery(
+      {
+        id: selectedSection as string,
+      },
+      {
+        enabled: !!selectedSection,
+      }
+    );
 
   const [orderedData, setOrderedData] = useState<typeof data>([]);
 

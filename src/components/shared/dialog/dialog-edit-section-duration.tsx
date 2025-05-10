@@ -31,14 +31,24 @@ const DialogEditSectionDuration = ({
     data: dataSection,
     isRefetching: isRefetchingSection,
     refetch: refetchSection,
-  } = trpc.organization.testSection.getById.useQuery({
-    id: sectionId as string,
-  });
+  } = trpc.organization.testSection.getById.useQuery(
+    {
+      id: sectionId as string,
+    },
+    {
+      enabled: !!sectionId,
+    }
+  );
 
   const { refetch: refetchSections } =
-    trpc.organization.testSection.getAll.useQuery({
-      testId: testId as string,
-    });
+    trpc.organization.testSection.getAll.useQuery(
+      {
+        testId: testId as string,
+      },
+      {
+        enabled: !!testId,
+      }
+    );
 
   const { mutate: updateSection, isPending: isPendingUpdateSection } =
     trpc.organization.testSection.update.useMutation({

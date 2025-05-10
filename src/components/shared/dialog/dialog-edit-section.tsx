@@ -38,14 +38,24 @@ const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
     data: dataSection,
     refetch: refetchSection,
     isRefetching: isRefetchingSection,
-  } = trpc.organization.testSection.getById.useQuery({
-    id: sectionId,
-  });
+  } = trpc.organization.testSection.getById.useQuery(
+    {
+      id: sectionId,
+    },
+    {
+      enabled: !!sectionId,
+    }
+  );
 
   const { refetch: refetchSections } =
-    trpc.organization.testSection.getAll.useQuery({
-      testId: dataSection?.testId as string,
-    });
+    trpc.organization.testSection.getAll.useQuery(
+      {
+        testId: dataSection?.testId as string,
+      },
+      {
+        enabled: !!dataSection?.testId,
+      }
+    );
 
   useEffect(() => {
     if (dataSection) {

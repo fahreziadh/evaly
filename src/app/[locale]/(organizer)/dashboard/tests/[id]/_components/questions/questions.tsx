@@ -27,9 +27,14 @@ const Questions = () => {
   const t = useTranslations("TestDetail");
 
   const { data: dataSections, refetch: refetchSections } =
-    trpc.organization.testSection.getAll.useQuery({
-      testId: testId as string,
-    });
+    trpc.organization.testSection.getAll.useQuery(
+      {
+        testId: testId as string,
+      },
+      {
+        enabled: !!testId,
+      }
+    );
 
   const {
     data: dataQuestions,

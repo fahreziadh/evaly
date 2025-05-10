@@ -22,6 +22,7 @@
     "@ai-sdk/react": "1.2.9",
     "@elysiajs/eden": "^1.2.0",
     "@libsql/client": "^0.14.0",
+    "@next/bundle-analyzer": "^15.3.2",
     "@number-flow/react": "^0.5.9",
     "@radix-ui/react-accordion": "^1.2.3",
     "@radix-ui/react-avatar": "^1.1.3",

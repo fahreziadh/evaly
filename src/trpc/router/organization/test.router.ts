@@ -135,7 +135,7 @@ export const testRouter = router({
         email: z.string().email(),
       })
     )
-    .mutation(async ({input }) => {
+    .mutation(async ({ input }) => {
       const testId = input.id;
       const email = input.email;
 
@@ -169,7 +169,7 @@ export const testRouter = router({
       return await publishUnpublishTest(testId, isPublished, organizationId);
     }),
 
-    duplicateTest: organizerProcedure // aka re-open test
+  duplicateTest: organizerProcedure // aka re-open test
     .input(
       z.object({
         id: z.string(),
@@ -182,6 +182,7 @@ export const testRouter = router({
       return await duplicateTest(testId, organizationId);
     }),
 
+  // Deprecated
   getTestResults: organizerProcedure
     .input(
       z.object({
@@ -194,6 +195,7 @@ export const testRouter = router({
       return await getTestSubmissions(testId);
     }),
 
+  // Deprecated
   getTestResultsByParticipant: organizerProcedure
     .input(
       z.object({
@@ -207,4 +209,12 @@ export const testRouter = router({
 
       return await getSubmissionDetailsByEmail(testId, email);
     }),
+
+  getResults: organizerProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({}) => {}),
 });

@@ -211,7 +211,7 @@ const CardQuestionTemplate = ({
   };
 }) => {
   return (
-    <Link href={`/dashboard/question/${template.id}`}>
+    <Link href={`/dashboard/question/template?templateId=${template.id}`}>
       <Card
         className={cn(
           "overflow-hidden group border-border h-full hover:shadow-2xl hover:shadow-black/5",

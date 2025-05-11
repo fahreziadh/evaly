@@ -1,11 +1,20 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, GripVertical, Trash2, XIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  GripVertical,
+  Loader2,
+  PlusIcon,
+  SaveIcon,
+  Trash2,
+  XIcon,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { DialogClose } from "@/components/ui/dialog";
-import { DialogFooter } from "@/components/ui/dialog";
 import QuestionTypeSelection from "@/components/shared/question-type-selection";
-import { Editor } from "@/components/shared/editor/editor";
 import { Separator } from "@/components/ui/separator";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -17,13 +26,6 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { nanoid } from "nanoid";
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerNavbar,
-  DrawerTitle,
-} from "@/components/ui/drawer";
-import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -32,25 +34,45 @@ import { useTranslations } from "next-intl";
 import { DataModel, Id } from "convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
+import BackButton from "@/components/shared/back-button";
+import { useQueryState } from "nuqs";
+import { TextShimmer } from "@/components/ui/text-shimmer";
+import { Editor } from "@/components/shared/editor/editor";
+import { question } from "convex/schemas/question";
+import { Badge } from "@/components/ui/badge";
+import LoadingScreen from "@/components/shared/loading/loading-screen";
 
 dayjs.extend(relativeTime);
 
 const MAX_QUESTION_LENGTH = 3000;
 const MIN_QUESTION_LENGTH = 10;
 
-const DialogEditQuestion = ({
-  questionId,
-  onClose,
-}: {
-  questionId?: Id<"question">;
-  onClose?: () => void;
-}) => {
+const EditQuestion = () => {
+  const [questionId] = useQueryState("questionId");
   const t = useTranslations("Questions");
   const tCommon = useTranslations("Common");
-  const [open, setOpen] = useState(false);
   const [questionTextLength, setQuestionTextLength] = useState(0);
-  const updateQuestion = useMutation(api.organizer.question.update);
-  
+  const updateQuestion = useMutation(
+    api.organizer.question.update
+  ).withOptimisticUpdate((localStore, args) => {
+    const question = localStore.getQuery(api.organizer.question.getById, {
+      id: args.id,
+    });
+
+    if (!question) return;
+
+    localStore.setQuery(
+      api.organizer.question.getById,
+      {
+        id: args.id,
+      },
+      {
+        ...question,
+        ...args.data,
+      }
+    );
+  });
+
   const question = useQuery(api.organizer.question.getById, {
     id: questionId as Id<"question">,
   });
@@ -67,8 +89,9 @@ const DialogEditQuestion = ({
     reValidateMode: "onChange",
   });
 
-  const { type, allowMultipleAnswers, options } = watch();
-  const isOptionsType = type === "multiple-choice" || type === "yes-or-no";
+  const { allowMultipleAnswers, options } = watch();
+  const isOptionsType =
+    question?.type === "multiple-choice" || question?.type === "yes-or-no";
 
   // Validate options
   const validateOptions = () => {
@@ -113,17 +136,10 @@ const DialogEditQuestion = ({
   useEffect(() => {
     if (question) {
       reset(question);
-      setOpen(true);
-    } else {
-      onClose?.();
-      setOpen(false);
     }
-  }, [question, reset, onClose]);
+  }, [question, reset]);
 
-  const onSubmit = async (
-    data: DataModel["question"]["document"],
-    saveAndClose?: boolean
-  ) => {
+  const onSubmit = async (data: DataModel["question"]["document"]) => {
     if (!question?._id) return;
 
     // Validate options
@@ -172,302 +188,260 @@ const DialogEditQuestion = ({
       }
     }
 
-    const updatedQuestion = await updateQuestion({
+    await updateQuestion({
       id: question._id,
       data: {
         question: data.question,
         options: data.options,
       },
     });
-
-    if (saveAndClose) {
-      closeDialog(!updatedQuestion); // if the question is not updated, then the dialog is not dirty
-    }
   };
 
-  const closeDialog = (isDirty?: boolean) => {
-    if (isDirty) {
-      const confirmed = window.confirm(
-        "Are you sure you want to close? Any unsaved changes will be lost."
-      );
-      if (!confirmed) return;
-      setOpen(false);
-      onClose?.();
-    } else {
-      setOpen(false);
-      onClose?.();
-    }
-  };
+  if (question === undefined) {
+    return <LoadingScreen />;
+  }
 
   return (
-    <Drawer
-      direction="bottom"
-      open={open}
-      onOpenChange={(e) => {
-        if (!e) {
-          closeDialog(isDirty);
-        } else {
-          setOpen(true);
-        }
-      }}
-    >
-      <DrawerContent className="sm:max-w-none h-dvh flex flex-col p-0 gap-0">
-        <DrawerNavbar
-          onBack={() => closeDialog(isDirty)}
-          title={`Edit Question #${question?.order}`}
-        />
-
-        <div className="flex flex-col overflow-y-auto pb-10">
-          <DrawerHeader className="container max-w-4xl">
-            <DrawerTitle className="flex justify-between items-center">
-              <div className="flex flex-row gap-2 items-center">
-                <Controller
-                  control={control}
-                  name="type"
-                  render={({ field }) => (
-                    <QuestionTypeSelection
-                      value={field.value || undefined}
-                      onValueChange={(value) => {
-                        field.onChange(value);
-
-                        // if the question type is changed, then reset the options with the default options of the new question type
-                        const defaultOptions = getDefaultOptions(value);
-                        if (defaultOptions) {
-                          setValue("options", defaultOptions);
-                          setValue("allowMultipleAnswers", false);
-                          clearErrors();
-                        }
-                      }}
-                    />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="pointValue"
-                  rules={{
-                    validate: (value) => {
-                      if (
-                        typeof value === "number" &&
-                        (value == 0 || value > 100)
-                      ) {
-                        return "Point value must be between 0 and 100";
-                      }
-                      return true;
-                    },
-                  }}
-                  render={({ field }) =>
-                    typeof field.value === "number" ? (
-                      <div className="flex flex-row gap-2 items-center relative">
-                        <Label className="absolute left-2.5 text-xs text-muted-foreground/80 pt-0.5">
-                          {t("point")}
-                        </Label>
-                        <Input
-                          type="number"
-                          className={cn(
-                            "w-28 pl-12 h-7",
-                            errors.pointValue ? "border-destructive" : ""
-                          )}
-                          min={0}
-                          max={100}
-                          placeholder="0"
-                          value={
-                            field.value === 0 && !field.value ? "" : field.value
-                          }
-                          onChange={(e) => {
-                            const value =
-                              e.target.value === ""
-                                ? 0
-                                : Number(e.target.value);
-                            field.onChange(value);
-                          }}
-                        />
-                        <Button
-                          variant={"ghost"}
-                          size={"icon-xxs"}
-                          className="absolute right-1"
-                          onClick={() => {
-                            setValue("pointValue", undefined, {
-                              shouldDirty: true,
-                            });
-                          }}
-                        >
-                          <XIcon className="size-3" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <Button
-                        onClick={() => {
-                          field.onChange(5);
-                        }}
-                        variant={"secondary"}
-                        size={"sm"}
-                      >
-                        {t("addPoint")}
-                      </Button>
-                    )
-                  }
-                />
-                {errors.pointValue && (
-                  <span className="text-xs text-destructive">
-                    {errors.pointValue.message}
-                  </span>
-                )}
-              </div>
-            </DrawerTitle>
-          </DrawerHeader>
-
-          <div className="container max-w-4xl pb-10">
-            <Controller
-              control={control}
-              name="question"
-              rules={{
-                validate: () => {
-                  if (questionTextLength < MIN_QUESTION_LENGTH) {
-                    return `Question text must be at least ${MIN_QUESTION_LENGTH} characters`;
-                  }
-                  if (questionTextLength > MAX_QUESTION_LENGTH) {
-                    return `Question text must be less than ${MAX_QUESTION_LENGTH} characters`;
-                  }
-                  return true;
-                },
+    <div className="container dashboard-margin">
+      <div className="flex flex-row w-full justify-between items-start">
+        <div className="flex flex-row gap-2 items-center">
+          <BackButton />
+          <h1 className="">Back to test details</h1>
+        </div>
+        <div className="flex flex-row gap-2">
+          {isDirty && (
+            <Button
+              disabled={!isDirty}
+              variant={"outline"}
+              onClick={() => {
+                reset();
               }}
-              render={({ field }) => (
-                <>
-                  <Editor
-                    onContentLengthChange={setQuestionTextLength}
-                    value={field.value || ""}
-                    onChange={field.onChange}
-                    placeholder="Type your question here..."
-                    editorClassName={cn(
-                      errors.question ? "border-destructive" : ""
-                    )}
-                    toolbarClassName={cn(
-                      "sticky top-0",
-                      errors.question ? "border-destructive" : ""
-                    )}
-                  />
-                  <span
-                    className={cn(
-                      "text-xs text-muted-foreground mt-2",
-                      errors.question ? "text-destructive" : ""
-                    )}
-                  >
-                    <span>
-                      {questionTextLength} / {MAX_QUESTION_LENGTH}
-                    </span>
-                    {errors.question ? (
-                      <span className="ml-2">- {errors.question?.message}</span>
-                    ) : null}
-                  </span>
-                </>
-              )}
-            />
+            >
+              {tCommon("resetButton")}
+            </Button>
+          )}
+          <Button
+            disabled={!isDirty}
+            variant={isDirty ? "default" : "secondary"}
+            onClick={handleSubmit((data) => {
+              onSubmit(data);
+            })}
+          >
+            <SaveIcon />
+            {tCommon("saveButton")}
+          </Button>
+        </div>
+      </div>
 
-            {isOptionsType ? (
-              <div className="mt-8 mb-6 flex flex-row items-center gap-2">
-                <Label className="text-sm text-muted-foreground">
-                  {t("selectCorrectAnswer")}
-                </Label>
-                <Separator className="flex-1" />
-                {options && options?.length > 2 ? (
-                  <div className="flex flex-row items-center gap-2">
-                    <Label className="text-sm text-muted-foreground">
-                      {t("allowMultipleAnswers")}
-                    </Label>
-                    <Switch
-                      checked={allowMultipleAnswers === true}
-                      onCheckedChange={(value) => {
-                        if (
-                          value === false &&
-                          (options?.filter((option) => option.isCorrect)
-                            .length || 0) > 1
-                        ) {
-                          setValue(
-                            "options",
-                            options?.map((option) => ({
-                              ...option,
-                              isCorrect: false,
-                            })),
-                            { shouldDirty: true }
-                          );
-                        }
-                        setValue("allowMultipleAnswers", value);
-                      }}
-                    />
-                  </div>
-                ) : null}
-              </div>
-            ) : null}
+      <div className="flex flex-row gap-2 justify-between items-center">
+        <div className="flex flex-row gap-2 items-center mb-3 mt-6">
+          <Badge variant={"default"} size={"lg"}>
+            {question === undefined ? "##" : `#${question?.order}`}
+          </Badge>
+          <Controller
+            control={control}
+            name="type"
+            render={({ field }) => (
+              <QuestionTypeSelection
+                value={field.value || undefined}
+                onValueChange={(value) => {
+                  field.onChange(value);
 
-            {isOptionsType ? (
-              <Controller
-                control={control}
-                name="options"
-                rules={{
-                  validate: validateOptions,
+                  // if the question type is changed, then reset the options with the default options of the new question type
+                  const defaultOptions = getDefaultOptions(value);
+                  if (defaultOptions) {
+                    setValue("options", defaultOptions);
+                    setValue("allowMultipleAnswers", false);
+                    clearErrors();
+                  }
                 }}
-                render={({ field }) => (
-                  <>
-                    <Options
-                      value={field.value || []}
-                      onChange={(value) => {
-                        field.onChange(value);
-                      }}
-                      type={type}
-                      allowMultipleAnswers={allowMultipleAnswers === true}
-                    />
-                    {errors.options && (
-                      <span className="text-xs text-destructive mt-2">
-                        {errors.options.message}
-                      </span>
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="pointValue"
+            rules={{
+              validate: (value) => {
+                if (typeof value === "number" && (value == 0 || value > 100)) {
+                  return "Point value must be between 0 and 100";
+                }
+                return true;
+              },
+            }}
+            render={({ field }) =>
+              typeof field.value === "number" ? (
+                <div className="flex flex-row gap-2 items-center relative">
+                  <Label className="absolute left-2.5 text-xs text-muted-foreground/80 pt-0.5">
+                    {t("point")}
+                  </Label>
+                  <Input
+                    type="number"
+                    className={cn(
+                      "w-28 pl-12 h-7",
+                      errors.pointValue ? "border-destructive" : ""
                     )}
-                  </>
+                    min={0}
+                    max={100}
+                    placeholder="0"
+                    value={field.value === 0 && !field.value ? "" : field.value}
+                    onChange={(e) => {
+                      const value =
+                        e.target.value === "" ? 0 : Number(e.target.value);
+                      field.onChange(value);
+                    }}
+                  />
+                  <Button
+                    variant={"ghost"}
+                    size={"icon-xs"}
+                    className="absolute right-1"
+                    onClick={() => {
+                      setValue("pointValue", undefined, {
+                        shouldDirty: true,
+                      });
+                    }}
+                  >
+                    <XIcon className="size-3" />
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  onClick={() => {
+                    field.onChange(5);
+                  }}
+                  variant={"secondary"}
+                  className="hidden"
+                >
+                  <PlusIcon />
+                  {t("addPoint")}
+                </Button>
+              )
+            }
+          />
+          {errors.pointValue && (
+            <span className="text-xs text-destructive">
+              {errors.pointValue.message}
+            </span>
+          )}
+        </div>
+        {question ? (
+          <Pagination referenceId={question?.referenceId as Id<"test">} />
+        ) : (
+          <TextShimmer>Loading...</TextShimmer>
+        )}
+      </div>
+
+      <div className="pb-4">
+        <Controller
+          control={control}
+          name="question"
+          rules={{
+            validate: () => {
+              if (questionTextLength < MIN_QUESTION_LENGTH) {
+                return `Question text must be at least ${MIN_QUESTION_LENGTH} characters`;
+              }
+              if (questionTextLength > MAX_QUESTION_LENGTH) {
+                return `Question text must be less than ${MAX_QUESTION_LENGTH} characters`;
+              }
+              return true;
+            },
+          }}
+          render={({ field }) => (
+            <div className="relative">
+              <Editor
+                disabled={question === undefined}
+                onContentLengthChange={setQuestionTextLength}
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="Type your question here..."
+                editorClassName={cn(
+                  errors.question ? "border-destructive" : ""
+                )}
+                toolbarClassName={cn(
+                  "sticky top-0",
+                  errors.question ? "border-destructive" : ""
                 )}
               />
+              <p className="absolute bottom-3 right-3 text-xs text-muted-foreground">
+                {questionTextLength} / {MAX_QUESTION_LENGTH}
+              </p>
+              <span
+                className={cn(
+                  "text-xs text-muted-foreground mt-2",
+                  errors.question ? "text-destructive" : ""
+                )}
+              >
+                {errors.question ? (
+                  <span className="ml-2">{errors.question?.message}</span>
+                ) : null}
+              </span>
+            </div>
+          )}
+        />
+        {isOptionsType ? (
+          <div className="mt-8 mb-6 flex flex-row items-center gap-2">
+            <Label className="text-sm text-muted-foreground">
+              {t("selectCorrectAnswer")}
+            </Label>
+            <Separator className="flex-1" />
+            {options && options?.length > 2 ? (
+              <div className="flex flex-row items-center gap-2">
+                <Label className="text-sm text-muted-foreground">
+                  {t("allowMultipleAnswers")}
+                </Label>
+                <Switch
+                  checked={allowMultipleAnswers === true}
+                  onCheckedChange={(value) => {
+                    if (
+                      value === false &&
+                      (options?.filter((option) => option.isCorrect).length ||
+                        0) > 1
+                    ) {
+                      setValue(
+                        "options",
+                        options?.map((option) => ({
+                          ...option,
+                          isCorrect: false,
+                        })),
+                        { shouldDirty: true }
+                      );
+                    }
+                    setValue("allowMultipleAnswers", value);
+                  }}
+                />
+              </div>
             ) : null}
           </div>
-        </div>
+        ) : null}
 
-        <DialogFooter className="border-t px-0 py-3 border-dashed fixed bottom-0 left-0 right-0 bg-background">
-          <div className="flex flex-row justify-between w-full z-50 container max-w-4xl">
-            <div className="flex flex-row gap-2">
-              <DialogClose asChild>
-                <Button variant={"secondary"}>{tCommon("backButton")}</Button>
-              </DialogClose>
-              {isDirty ? (
-                <Button
-                  variant={"ghost"}
-                  onClick={() => {
-                    if (question) {
-                      reset(question);
-                    }
+        {isOptionsType ? (
+          <Controller
+            control={control}
+            name="options"
+            rules={{
+              validate: validateOptions,
+            }}
+            render={({ field }) => (
+              <>
+                <Options
+                  value={field.value || []}
+                  onChange={(value) => {
+                    field.onChange(value);
                   }}
-                >
-                  {tCommon("resetButton")}
-                </Button>
-              ) : null}
-            </div>
-            <div className="flex flex-row gap-2">
-              {isDirty ? (
-                <Button
-                  variant={"ghost"}
-                  onClick={handleSubmit((data) => onSubmit(data, true))}
-                  disabled={!isDirty}
-                >
-                  {tCommon("saveAndCloseButton")}
-                </Button>
-              ) : null}
-              <Button
-                onClick={handleSubmit((data) => onSubmit(data, false))}
-                disabled={!isDirty}
-              >
-                {tCommon("saveButton")}
-              </Button>
-            </div>
-          </div>
-        </DialogFooter>
-      </DrawerContent>
-    </Drawer>
+                  type={question?.type}
+                  allowMultipleAnswers={allowMultipleAnswers === true}
+                />
+                {errors.options && (
+                  <span className="text-xs text-destructive mt-2">
+                    {errors.options.message}
+                  </span>
+                )}
+              </>
+            )}
+          />
+        ) : null}
+      </div>
+    </div>
   );
 };
 
@@ -719,4 +693,57 @@ const OptionItem = ({
   );
 };
 
-export default DialogEditQuestion;
+export default EditQuestion;
+
+const Pagination = ({ referenceId }: { referenceId: string }) => {
+  const [questionId, setQuestionId] = useQueryState("questionId");
+
+  const questions = useQuery(api.organizer.question.getAllByReferenceId, {
+    referenceId,
+  });
+  const currentQuestion = useMemo(() => {
+    return questions?.find((question) => question._id === questionId);
+  }, [questions, questionId]);
+
+  return (
+    <div className="flex flex-row items-center gap-2">
+      <Button
+        variant={"outline"}
+        size={"icon-sm"}
+        disabled={currentQuestion?.order === 1}
+        onClick={() => {
+          if (!currentQuestion) return;
+          const previousQuestion = questions?.[currentQuestion?.order - 2];
+          if (previousQuestion) {
+            setQuestionId(previousQuestion._id);
+          }
+        }}
+      >
+        <ChevronLeft />
+      </Button>
+      {question && currentQuestion ? (
+        <div className="gap-0.5 flex flex-row items-center text-sm select-none">
+          {currentQuestion?.order}
+          <span className="text-xs">/</span>
+          {questions?.length}
+        </div>
+      ) : (
+        <Loader2 className="size-4 animate-spin" />
+      )}
+      <Button
+        variant={"outline"}
+        size={"icon-sm"}
+        disabled={currentQuestion?.order === questions?.length}
+        onClick={() => {
+          if (!currentQuestion) return;
+          const nextQuestion = questions?.[currentQuestion?.order];
+          if (nextQuestion) {
+            setQuestionId(nextQuestion._id);
+          }
+        }}
+      >
+        <ChevronRight />
+      </Button>
+    </div>
+  );
+};

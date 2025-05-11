@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Search, Info, Filter, Loader2, RefreshCw } from "lucide-react";
@@ -28,12 +28,12 @@ import { columns } from "./columns";
 import { ExportDialog } from "./export-dialog";
 import { Label } from "@/components/ui/label";
 import { trpc } from "@/trpc/trpc.client";
+import { Id } from "convex/_generated/dataModel";
 
 dayjs.extend(relativeTime);
 
 const Submissions = () => {
-  const params = useParams();
-  const testId = params.id as string;
+  const testId = useSearchParams().get("testId") as Id<"test">;
 
   const [refetchInterval, setRefetchInterval] = useQueryState(
     "refetchInterval",

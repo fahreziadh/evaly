@@ -1,10 +1,18 @@
-import { Loader2 } from "lucide-react";
+"use client";
+
+import { TextShimmer } from "@/components/ui/text-shimmer";
+import { motion } from "framer-motion";
 
 const LoadingScreen = () => {
   return (
-    <div className="flex justify-center items-center h-screen">
-      <Loader2 className="size-12 animate-spin duration-1000" />
-    </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex justify-center items-center h-screen bg-background"
+    >
+      <TextShimmer className="text-2xl font-medium">Loading...</TextShimmer>
+    </motion.div>
   );
 };
 

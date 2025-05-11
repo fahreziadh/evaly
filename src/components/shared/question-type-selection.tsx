@@ -9,14 +9,12 @@ import { useTranslations } from "next-intl";
 const QuestionTypeSelection = ({
   value,
   onValueChange,
-  size = "xs",
   variant = "outline",
   className,
   readonly = false,
 }: {
   value?: QuestionType | null
   onValueChange?: (value: QuestionType) => void;
-  size?: React.ComponentProps<typeof Button>["size"];
   variant?: React.ComponentProps<typeof Button>["variant"];
   className?: string;
   readonly?: boolean;
@@ -33,7 +31,7 @@ const QuestionTypeSelection = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size={size} disabled={readonly} variant={variant} className={cn("cursor-default disabled:opacity-100", className)}>
+        <Button disabled={readonly} variant={variant} className={cn("cursor-default disabled:opacity-100", className)}>
           {SelectedIcon && <SelectedIcon size={16} className="mr-1" />}
           {tTestDetail(selectedType?.value) || tTestDetail("multiple-choice")} 
         </Button>

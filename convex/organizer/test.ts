@@ -1,6 +1,7 @@
 import { v } from "convex/values";
-import { mutation, query } from "../_generated/server";
+import { mutation, query, QueryCtx } from "../_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { Id } from "../_generated/dataModel";
 
 export const createTest = mutation({
   args: {
@@ -31,6 +32,12 @@ export const createTest = mutation({
       isPublished: false,
       showResultImmediately: false,
       type: args.type,
+    });
+
+    await ctx.db.insert("testSection", {
+      order: 1,
+      testId: test,
+      title: "",
     });
 
     return test;
@@ -73,29 +80,7 @@ export const deleteTest = mutation({
     testId: v.id("test"),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      throw new Error("User not found");
-    }
-
-    const user = await ctx.db.get(userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    const organizationId = user.selectedOrganizationId;
-    if (!organizationId) {
-      throw new Error("Organization not found");
-    }
-
-    const test = await ctx.db.get(args.testId);
-    if (!test) {
-      throw new Error("Test not found");
-    }
-
-    if (test.organizationId !== organizationId) {
-      throw new Error("You are not allowed to delete this test");
-    }
+    await checkAccess(ctx, args.testId);
 
     await ctx.db.patch(args.testId, {
       deletedAt: Date.now(),
@@ -108,30 +93,70 @@ export const getTestById = query({
     testId: v.id("test"),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      return null;
-    }
-
-    const user = await ctx.db.get(userId);
-    if (!user) {
-      return null;
-    }
-
-    const organizationId = user.selectedOrganizationId;
-    if (!organizationId) {
-      return null;
-    }
+    await checkAccess(ctx, args.testId);
 
     const test = await ctx.db.get(args.testId);
-    if (!test) {
-      return null;
-    }
 
-    if (test.organizationId !== organizationId) {
+    if (!test) {
       return null;
     }
 
     return test;
   },
 });
+
+export const updateTest = mutation({
+  args: {
+    testId: v.id("test"),
+    data: v.object({
+      title: v.string(),
+      access: v.union(v.literal("public"), v.literal("private")),
+      showResultImmediately: v.boolean(),
+      isPublished: v.boolean(),
+      type: v.union(v.literal("live"), v.literal("self-paced")),
+      description: v.string(),
+    }),
+  },
+  handler: async (ctx, args) => {
+    await checkAccess(ctx, args.testId);
+
+    await ctx.db.patch(args.testId, {
+      title: args.data.title,
+      access: args.data.access,
+      showResultImmediately: args.data.showResultImmediately,
+      isPublished: args.data.isPublished,
+      type: args.data.type,
+      description: args.data.description,
+    });
+  },
+});
+
+async function checkAccess(ctx: QueryCtx, testId: Id<"test">) {
+  const userId = await getAuthUserId(ctx);
+  if (!userId) {
+    throw new Error("User not found");
+  }
+
+  const user = await ctx.db.get(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  // check if the test is available
+  const test = await ctx.db.get(testId);
+  if (!test) {
+    throw new Error("Test not found");
+  }
+
+  const organizationId = user.selectedOrganizationId;
+  if (!organizationId) {
+    throw new Error("Organization not found");
+  }
+
+  // check if the user is the owner of the test
+  if (test.organizationId !== organizationId) {
+    throw new Error("You are not allowed to access this test");
+  }
+
+  return true;
+}

@@ -10,15 +10,15 @@ export const QUESTION_TYPES = [
   "dropdown",
   "matching-pairs",
   "slider-scale",
-  "ranking",
-  "hotspot",
-  "drag-and-drop",
-  "matrix",
-  "likert-scale",
-  "open-ended",
-  "code-snippet",
-  "math-formula",
-  "drawing"
+  // "ranking",
+  // "hotspot",
+  // "drag-and-drop",
+  // "matrix",
+  // "likert-scale",
+  // "open-ended",
+  // "code-snippet",
+  // "math-formula",
+  // "drawing"
 ] as const;
 
 export type QuestionType = (typeof QUESTION_TYPES)[number]; 

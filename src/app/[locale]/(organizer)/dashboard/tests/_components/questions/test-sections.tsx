@@ -9,7 +9,7 @@ import {
   PointerIcon,
 } from "lucide-react";
 import { useSelectedSection } from "../../_hooks/use-selected-section";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useMemo, useState } from "react";
 import CardSection from "@/components/shared/card/card-section";
@@ -36,30 +36,26 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { TooltipMessage } from "@/components/ui/tooltip";
-import DialogEditSection from "@/components/shared/dialog/dialog-edit-section";
 import DialogDeleteSection from "@/components/shared/dialog/dialog-delete-section";
+import { useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
+import { Id } from "convex/_generated/dataModel";
 
 const TestSections = ({ className }: { className?: string }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { id } = useParams();
+  const testId = useSearchParams().get("testId") as Id<"test">;
   const [selectedSection, setSelectedSection] = useSelectedSection();
 
-  const { data, isPending, isRefetching, refetch } =
-    trpc.organization.testSection.getAll.useQuery(
-      {
-        testId: id as string,
-      },
-      {
-        enabled: !!id,
-      }
-    );
+  const data = useQuery(api.organizer.testSection.getByTestId, {
+    testId: testId as Id<"test">,
+  });
 
   const selectedSectionData = useMemo(() => {
     if (!selectedSection || !data) return null;
-    return data.find((e) => e.id === selectedSection);
+    return data.find((e) => e._id === selectedSection);
   }, [selectedSection, data]);
 
-  if (isPending) {
+  if (data === undefined) {
     return (
       <div className="flex flex-row gap-2 items-center">
         <Skeleton className="w-40 h-8 rounded-md" />
@@ -82,22 +78,10 @@ const TestSections = ({ className }: { className?: string }) => {
   return (
     <div className="flex flex-row-reverse md:flex-row gap-2 items-center">
       <DialogDeleteSection
-        disabled={isRefetching || isPending}
         isLastSection={data?.length === 1}
         sectionId={selectedSection as string}
-        onSuccess={() => {
-          refetch();
-          if (selectedSectionData?.id === selectedSection) {
-            const nearestSection = data?.find(
-              (section) => section.id !== selectedSectionData?.id
-            );
-            if (nearestSection) {
-              setSelectedSection(nearestSection.id);
-            }
-          }
-        }}
       />
-      <DialogEditSection sectionId={selectedSection as string} />
+      {/* <DialogEditSection sectionId={selectedSection as string} /> */}
       <AddSession />
 
       <div className={cn("flex flex-row", className)}>
@@ -109,7 +93,7 @@ const TestSections = ({ className }: { className?: string }) => {
 
             const previousSection = data?.find((e) => e.order === order - 1);
             if (previousSection) {
-              setSelectedSection(previousSection.id);
+              setSelectedSection(previousSection._id);
             }
           }}
           disabled={selectedSectionData?.order === 1}
@@ -155,7 +139,7 @@ const TestSections = ({ className }: { className?: string }) => {
 
             const nextSection = data?.find((e) => e.order === order + 1);
             if (nextSection) {
-              setSelectedSection(nextSection.id);
+              setSelectedSection(nextSection._id);
             }
           }}
           disabled={selectedSectionData?.order === data?.length}
@@ -171,28 +155,12 @@ const TestSections = ({ className }: { className?: string }) => {
 };
 
 const ListSession = () => {
-  const { id } = useParams();
+  const testId = useSearchParams().get("testId") as Id<"test">;
   const [selectedSection, setSelectedSection] = useSelectedSection();
 
-  const { data, isPending, isRefetching, refetch } =
-    trpc.organization.testSection.getAll.useQuery(
-      {
-        testId: id as string,
-      },
-      {
-        enabled: !!id,
-      }
-    );
-
-  const { refetch: refetchSectionById } =
-    trpc.organization.testSection.getById.useQuery(
-      {
-        id: selectedSection as string,
-      },
-      {
-        enabled: !!selectedSection,
-      }
-    );
+  const data = useQuery(api.organizer.testSection.getByTestId, {
+    testId: testId as Id<"test">,
+  });
 
   const [orderedData, setOrderedData] = useState<typeof data>([]);
 
@@ -204,7 +172,7 @@ const ListSession = () => {
 
   useEffect(() => {
     if (data?.length && !selectedSection) {
-      setSelectedSection(data[0].id);
+      setSelectedSection(data[0]._id);
     }
   }, [data, selectedSection, setSelectedSection]);
 
@@ -212,13 +180,11 @@ const ListSession = () => {
     trpc.organization.testSection.updateOrder.useMutation();
 
   const onChangeOrder = async () => {
-    const sectionIds = orderedData?.map((e) => e.id) || [];
-    await updateOrder({ testId: id as string, order: sectionIds });
-    await refetch();
-    await refetchSectionById();
+    const sectionIds = orderedData?.map((e) => e._id) || [];
+    await updateOrder({ testId: testId as string, order: sectionIds });
   };
 
-  if (isPending) {
+  if (data === undefined) {
     return (
       <div className="flex flex-col gap-2">
         <Skeleton className="w-full h-20" />
@@ -238,7 +204,7 @@ const ListSession = () => {
       <Reorder.Group
         className={cn(
           "flex flex-col gap-2 max-h-[60vh]",
-          isRefetching || isPendingUpdateOrder ? "animate-pulse opacity-80" : ""
+          isPendingUpdateOrder ? "animate-pulse opacity-80" : ""
         )}
         axis="y"
         values={orderedData}
@@ -246,16 +212,16 @@ const ListSession = () => {
       >
         {orderedData?.map((e) => (
           <Reorder.Item
-            key={e.id}
+            key={e._id}
             value={e}
             onDragEnd={onChangeOrder}
             dragListener={isPendingUpdateOrder ? false : true}
           >
             <CardSection
               data={e}
-              key={e.id}
-              isSelected={e.id === selectedSection}
-              onClick={() => setSelectedSection(e.id)}
+              key={e._id}
+              isSelected={e._id === selectedSection}
+              onClick={() => setSelectedSection(e._id)}
             />
           </Reorder.Item>
         ))}
@@ -266,7 +232,7 @@ const ListSession = () => {
 };
 
 const AddSession = ({ children }: { children?: React.ReactNode }) => {
-  const { id } = useParams();
+  const testId = useSearchParams().get("testId") as Id<"test">;
   const [, setSelectedSection] = useSelectedSection();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedId, setSelectedId] = useState("");
@@ -275,7 +241,7 @@ const AddSession = ({ children }: { children?: React.ReactNode }) => {
     refetch,
     isPending: isPendingSession,
     isRefetching: isRefetchingSection,
-  } = trpc.organization.testSection.getAll.useQuery({ testId: id as string });
+  } = trpc.organization.testSection.getAll.useQuery({ testId: testId as string });
 
   const { mutateAsync, isPending: isPendingCreateSection } =
     trpc.organization.testSection.create.useMutation();
@@ -289,7 +255,7 @@ const AddSession = ({ children }: { children?: React.ReactNode }) => {
 
   async function onUseTemplate() {
     if (!selectedId) return;
-    const createdSection = await mutateAsync({ testId: id as string });
+    const createdSection = await mutateAsync({ testId: testId as string });
     if (!createdSection?.sections?.length) {
       toast.error("Something went wrong!");
       return;
@@ -372,7 +338,7 @@ const AddSession = ({ children }: { children?: React.ReactNode }) => {
                   className="w-max"
                   disabled={isPendingCreateSection || isRefetchingSection}
                   onClick={async () => {
-                    const data = await mutateAsync({ testId: id as string });
+                    const data = await mutateAsync({ testId: testId as string });
                     const sectionId = data?.sections[0]?.id;
                     setIsOpen(false);
                     if (sectionId) {

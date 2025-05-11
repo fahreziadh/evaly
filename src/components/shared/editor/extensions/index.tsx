@@ -11,10 +11,11 @@ import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import CodeBlock from "./code-block";
 import { createLowlight, all } from "lowlight";
+import Placeholder from '@tiptap/extension-placeholder';
 
 const lowlight = createLowlight(all);
 
-export const extensions = (params: { limit?: number }) => [
+export const extensions = (params: { limit?: number, placeholder?: string }) => [
   TextStyle.configure(),
   StarterKit.configure({
     bulletList: {
@@ -63,5 +64,8 @@ export const extensions = (params: { limit?: number }) => [
   }).configure({
     lowlight,
     HTMLAttributes: { class: cx("rounded-lg border border-muted font-mono") },
+  }),
+  Placeholder.configure({
+    placeholder: params.placeholder || "Write something...",
   }),
 ];

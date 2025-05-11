@@ -11,7 +11,7 @@ import {
   Save,
   TimerOff,
 } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { env } from "@/lib/env.client";
 import BackButton from "@/components/shared/back-button";
@@ -45,18 +45,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { testTypeFormatter } from "@/lib/test-type-formatter";
 import { testTypeColor } from "@/lib/test-type-formatter";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { DataModel, Id } from "convex/_generated/dataModel";
+import { useForm } from "react-hook-form";
 const Header = ({ className }: { className?: string }) => {
   const [tabs, setTabs] = useTabsState("questions");
-  const { id } = useParams();
+  const testId = useSearchParams().get("testId") as Id<"test">;
   const tOrganizer = useTranslations("Organizer");
   const t = useTranslations("DashboardTest");
   const dataTest = useQuery(api.organizer.test.getTestById, {
-    testId: id as Id<"test">,
+    testId: testId as Id<"test">,
   });
-
 
   const status = useMemo(() => {
     if (dataTest?.isPublished && dataTest?.finishedAt) return "finished";
@@ -65,8 +65,7 @@ const Header = ({ className }: { className?: string }) => {
   }, [dataTest]);
 
   useEffect(() => {
-    if (dataTest) {
-      // reset(dataTest);
+    if (dataTest?.title) {
       document.title = dataTest.title || "Untitled";
     }
   }, [dataTest]);
@@ -84,16 +83,9 @@ const Header = ({ className }: { className?: string }) => {
     <div className={cn(className)}>
       <div className="flex md:flex-row flex-col-reverse gap-2 justify-between items-start">
         <div className="flex flex-row gap-2 items-center">
-          <BackButton href={`/dashboard/tests`} />
+          <BackButton href={`/dashboard`} />
 
-          {/* Title and save button */}
-          {dataTest === undefined ? (
-            <TextShimmer className="animate-pulse  font-medium">
-              Loading...
-            </TextShimmer>
-          ) : dataTest !== null ? (
-            <DialogEditTest dataTest={dataTest} />
-          ) : null}
+          <DialogEditTest dataTest={dataTest} />
         </div>
 
         {/* Right side: Status and actions */}
@@ -150,7 +142,7 @@ const Header = ({ className }: { className?: string }) => {
           ) : // Draft state
           status === "draft" ? (
             <DialogPublishTest
-              testId={id?.toString() || ""}
+              testId={testId?.toString() || ""}
               onPublished={() => {
                 // reset(newTest);
                 setTabs("results");
@@ -195,6 +187,7 @@ const Header = ({ className }: { className?: string }) => {
   );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const EndTestButton = ({
   refetchTest,
   id,
@@ -309,58 +302,98 @@ const DialogReopenTest = ({
 const DialogEditTest = ({
   dataTest,
 }: {
-  dataTest: DataModel["test"]["document"];
+  dataTest?: DataModel["test"]["document"] | null;
 }) => {
   const tCommon = useTranslations("Common");
-return  <Popover>
-  <PopoverTrigger className="flex flex-row items-center gap-2 cursor-pointer group">
-    <span className="font-medium text-start w-max max-w-xl truncate">
-      {/* {watch("title") || "Untitled"} */}
-    </span>
-    {dataTest === undefined ? (
-      <Loader2 className="animate-spin text-muted-foreground/50" />
-    ) : (
-      <PencilLine className="size-4 text-muted-foreground/50 group-hover:text-muted-foreground " />
-    )}
-  </PopoverTrigger>
-  <PopoverAnchor>
-    <PopoverContent
-      side="bottom"
-      align="start"
-      sideOffset={10}
-      alignOffset={-10}
-    >
-      <Input
-        type="text"
-        // {...register("title")}
-        className="outline-none font-medium"
-        placeholder={
-          dataTest === undefined ? "Loading..." : "Test title"
-        }
-        disabled={dataTest === undefined}
-      />
-      <PopoverClose asChild>
-        <Button
-          variant={"default"}
-          className="w-max mt-2"
-          onClick={
-            () => {}
-            // mutateUpdateTest({
-            //   id: id?.toString() || "",
-            //   title: getValues("title"),
-            // })
-          }
+  const { register, reset, getValues } = useForm<DataModel["test"]["document"]>();
+  const updateTest = useMutation(
+    api.organizer.test.updateTest
+  ).withOptimisticUpdate((localStore, args) => {
+    const currentValue = localStore.getQuery(api.organizer.test.getTestById, {
+      testId: args.testId,
+    });
+    if (!currentValue) return;
+    localStore.setQuery(
+      api.organizer.test.getTestById,
+      { testId: args.testId },
+      {
+        ...currentValue,
+        ...args.data,
+      }
+    );
+  });
+
+  const handleSubmit = (data: DataModel["test"]["document"]) => {
+    if (!dataTest?._id) return;
+    updateTest({
+      testId: dataTest?._id,
+      data: {
+        title: data.title,
+        access: data.access,
+        showResultImmediately: data.showResultImmediately,
+        isPublished: data.isPublished,
+        type: data.type,
+        description: data.description || "",
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (dataTest) {
+      reset(dataTest);
+    }
+  }, [dataTest, reset]);
+
+  if (dataTest === undefined)
+    return (
+      <TextShimmer className="animate-pulse  font-medium">
+        Loading...
+      </TextShimmer>
+    );
+
+  return (
+    <Popover>
+      <PopoverTrigger className="flex flex-row items-center gap-2 cursor-pointer group">
+        <span className="font-medium text-start w-max max-w-xl truncate">
+          {dataTest?.title || "Untitled"}
+        </span>
+        {dataTest === undefined ? (
+          <Loader2 className="animate-spin text-muted-foreground/50" />
+        ) : (
+          <PencilLine className="size-4 text-muted-foreground/50 group-hover:text-muted-foreground " />
+        )}
+      </PopoverTrigger>
+      <PopoverAnchor>
+        <PopoverContent
+          side="bottom"
+          align="start"
+          sideOffset={10}
+          alignOffset={-10}
         >
-          {dataTest === undefined ? (
-            <Loader2 className="animate-spin" />
-          ) : (
-            <Save className="size-3.5" />
-          )}
-          {tCommon("saveButton")}
-        </Button>
-      </PopoverClose>
-    </PopoverContent>
-  </PopoverAnchor>
-</Popover>
+          <Input
+            type="text"
+            {...register("title")}
+            className="outline-none font-medium"
+            placeholder={dataTest === undefined ? "Loading..." : "Test title"}
+            disabled={dataTest === undefined}
+          />
+          <PopoverClose asChild>
+            <Button
+              variant={"default"}
+              className="w-max mt-2"
+              onClick={() => handleSubmit(getValues())}
+            >
+              {dataTest === undefined ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Save className="size-3.5" />
+              )}
+              {tCommon("saveButton")}
+            </Button>
+          </PopoverClose>
+        </PopoverContent>
+      </PopoverAnchor>
+    </Popover>
+  );
 };
 export default Header;

@@ -20,7 +20,8 @@ interface Props {
   placeholder?: string;
   editorClassName?: string;
   toolbarClassName?: string;
-  autofocus?: boolean | 'start' | 'end' | number;
+  autofocus?: boolean | "start" | "end" | number;
+  disabled?: boolean;
 }
 
 export const Editor = ({
@@ -32,15 +33,17 @@ export const Editor = ({
   editorClassName,
   toolbarClassName,
   autofocus = false,
+  disabled = false,
 }: Props) => {
   const editor = useEditor({
-    extensions: extensions({ limit: maxLength }),
+    extensions: extensions({ limit: maxLength, placeholder: placeholder }),
     immediatelyRender: false,
     editorProps: {
       attributes: {
         class: cn(
           "custom-prose focus:outline-none outline-none rounded-b-md border p-4 md:p-6  relative w-full min-h-[140px]  border-t-0 min-w-full",
-          editorClassName
+          editorClassName,
+          disabled && "animate-pulse opacity-50"
         ),
       },
       transformPastedText: (text) => {
@@ -51,8 +54,7 @@ export const Editor = ({
         return removeColorStyleHtml(html);
       },
       handleKeyDown: (view, event) => handleCommandNavigation(event),
-      handlePaste: (view, event) =>
-        handleImagePaste(view, event, uploadFn),
+      handlePaste: (view, event) => handleImagePaste(view, event, uploadFn),
       handleDrop: (view, event, _slice, moved) =>
         handleImageDrop(view, event, moved, uploadFn),
     },
@@ -67,22 +69,23 @@ export const Editor = ({
   });
 
   useEffect(() => {
-    if (!editor || !value) return;
-    if (editor.getHTML() !== value) {
-      editor.commands.setContent(value);
-    }
-  }, [editor, value]);
+    if (!editor || value === undefined) return;
+    editor.commands.setContent(value);
+    onContentLengthChange?.(editor.storage.characterCount.characters());
+  }, [editor, value, onContentLengthChange]);
 
   return (
     <div>
       <EditorContext.Provider value={{ editor }}>
         {editor && (
-          <EditorToolbar editor={editor} className={cn("rounded-t-md",toolbarClassName)}  />
+          <EditorToolbar
+            editor={editor}
+            className={cn("rounded-t-md", toolbarClassName)}
+          />
         )}
         <EditorContent
           editor={editor}
           className={cn("h-full", editorClassName)}
-          placeholder={placeholder}
         />
         <ImageResizer />
       </EditorContext.Provider>

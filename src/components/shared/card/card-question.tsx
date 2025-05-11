@@ -4,25 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { questionTypes } from "@/constants/question-type";
 import { cn } from "@/lib/utils";
-import { trpc } from "@/trpc/trpc.client";
-import { Question } from "@/types/question";
-import {
-  ArrowDown,
-  ArrowUp,
-  CheckIcon,
-  Loader2,
-  MousePointerClick,
-} from "lucide-react";
+import { DataModel } from "convex/_generated/dataModel";
+import { ArrowDown, ArrowUp, CheckIcon, MousePointerClick } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
-import { toast } from "sonner";
 
 const CardQuestion = ({
   className,
   hideOptions = false,
   data,
   onClickEdit,
-  onChangeOrder,
+  onMoveUp,
+  onMoveDown,
   onDeleteSuccess,
   previousQuestionId,
   nextQuestionId,
@@ -30,77 +22,18 @@ const CardQuestion = ({
 }: {
   className?: string;
   hideOptions?: boolean;
-  data?: Question;
+  data?: DataModel["question"]["document"];
   previousQuestionId?: string;
   nextQuestionId?: string;
   onClickEdit?: () => void;
-  onChangeOrder?: (questions: { questionId: string; order: number }[]) => void;
   onDeleteSuccess?: () => void;
   previewOnly?: boolean;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
 }) => {
   const t = useTranslations("Questions");
   const tTestDetail = useTranslations("TestDetail");
-  const tCommon = useTranslations("Common");
-  const [isMoving, setIsMoving] = useState<"up" | "down">();
 
-  const {
-    mutateAsync: updateBetweenQuestion,
-    isPending: isPendingUpdateBetweenQuestion,
-  } = trpc.organization.question.updateOrder.useMutation({
-    onSuccess() {
-      toast.success(t("questionOrderUpdated"));
-    },
-    onError(error) {
-      toast.error(error.message || tCommon("genericUpdateError"));
-    },
-  });
-
-  const handleMove = async (direction: "up" | "down") => {
-    if (!data) return;
-    const currentId = data.id;
-    setIsMoving(direction);
-
-    // For moving up, we swap with the previous question
-    // For moving down, we swap with the next question
-    // The index of the question is not important, we just need to swap the order of the questions based on the order-key of the questions
-    let questions: { questionId: string; order: number }[] = [];
-
-    if (direction === "up") {
-      questions = [
-        {
-          questionId: currentId,
-          order: data.order - 1,
-        },
-        {
-          questionId: previousQuestionId as string,
-          order: data.order,
-        },
-      ];
-    } else {
-      questions = [
-        {
-          questionId: currentId,
-          order: data.order + 1,
-        },
-        {
-          questionId: nextQuestionId as string,
-          order: data.order,
-        },
-      ];
-    }
-
-    // We already checked for undefined IDs above, so we can safely assert these are strings
-    await updateBetweenQuestion(questions)
-      .catch((error: unknown) => {
-        toast.error(
-          error instanceof Error ? error.message : "An unknown error occurred"
-        );
-      })
-      .then(() => {
-        setIsMoving(undefined);
-        onChangeOrder?.(questions);
-      });
-  };
   const selectedType =
     data?.type && questionTypes[data.type]
       ? questionTypes[data.type]
@@ -147,17 +80,12 @@ const CardQuestion = ({
               <Button
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleMove("up");
+                  onMoveUp?.();
                 }}
                 size={"icon-xs"}
                 variant={"ghost"}
-                disabled={isPendingUpdateBetweenQuestion && isMoving === "up"}
               >
-                {isMoving === "up" ? (
-                  <Loader2 className="text-muted-foreground animate-spin" />
-                ) : (
-                  <ArrowUp className="text-muted-foreground" />
-                )}
+                <ArrowUp className="text-muted-foreground" />
               </Button>
             ) : null}
 
@@ -165,26 +93,18 @@ const CardQuestion = ({
               <Button
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleMove("down");
+                  onMoveDown?.();
                 }}
                 size={"icon-xs"}
                 variant={"ghost"}
-                disabled={
-                  (isPendingUpdateBetweenQuestion && isMoving === "down") ||
-                  !nextQuestionId
-                }
               >
-                {isMoving === "down" ? (
-                  <Loader2 className="text-muted-foreground animate-spin" />
-                ) : (
-                  <ArrowDown className="text-muted-foreground" />
-                )}
+                <ArrowDown className="text-muted-foreground" />
               </Button>
             ) : null}
 
             <DialogDeleteQuestion
               className="ml-2"
-              questionId={data.id}
+              questionId={data._id}
               onSuccess={() => {
                 onDeleteSuccess?.();
               }}
@@ -194,7 +114,7 @@ const CardQuestion = ({
       </CardHeader>
       <CardContent className="p-0 pt-4">
         <div
-          className="custom-prose max-w-full max-h-[220px] min-h-[40px] h-max overflow-y-auto line-clamp-4"
+          className="custom-prose max-w-full max-h-[220px] h-max line-clamp-6"
           dangerouslySetInnerHTML={{
             __html:
               !data.question || data.question === "<p></p>"
@@ -214,19 +134,16 @@ const CardQuestion = ({
                     : "text-muted-foreground"
                 )}
               >
-                {option.isCorrect ? (
-                  <span className="lowercase">
-                    {String.fromCharCode(65 + i)}.
-                  </span>
-                ) : (
-                  <span className="text-muted-foreground lowercase">
-                    {String.fromCharCode(65 + i)}.
-                  </span>
-                )}
-                <span>
-                  {option.text || t("option", { number: i + 1 })}
-                </span>
-                {option.isCorrect ? <CheckIcon size={13} /> : null}
+                <div
+                  className={cn(
+                    "prose prose-sm lg:prose-base dark:prose-invert prose-neutral max-w-full",
+                    option.isCorrect ? "text-emerald-600 font-medium" : "text-muted-foreground"
+                  )}
+                  dangerouslySetInnerHTML={{
+                    __html: `${String.fromCharCode(65 + i).toLowerCase()}. ${option.text || t("option", { number: i + 1 })}`,
+                  }}
+                />
+                {option.isCorrect ? <CheckIcon className="size-4 mt-1" /> : null}
               </div>
             ))}
           </div>

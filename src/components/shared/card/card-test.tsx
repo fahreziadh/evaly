@@ -17,8 +17,8 @@ import { useTranslations } from "next-intl";
 const CardTest = ({ data }: { data: DataModel["test"]["document"] }) => {
   const t = useTranslations("DashboardTest");
   const redirectLink = data.isPublished
-    ? `/dashboard/tests/${data._id}?tabs=results`
-    : `/dashboard/tests/${data._id}?tabs=questions`;
+    ? `/dashboard/tests?testId=${data._id}&tabs=results`
+    : `/dashboard/tests?testId=${data._id}&tabs=questions`;
   return (
     <Link href={redirectLink}>
       <div

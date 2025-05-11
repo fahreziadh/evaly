@@ -1,5 +1,5 @@
 import { useState, useRef, useMemo } from "react";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import { Image } from "@/components/ui/image";
 import {
@@ -51,6 +51,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { trpc } from "@/trpc/trpc.client";
+import { Id } from "convex/_generated/dataModel";
 
 // Define types for invited participants
 interface InvitedParticipant {
@@ -63,8 +64,7 @@ interface InvitedParticipant {
 }
 
 const Share = () => {
-  const { id } = useParams();
-  const testId = id as string;
+  const testId = useSearchParams().get("testId") as Id<"test">;
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("link");
   const qrCodeRef = useRef<HTMLDivElement>(null);
@@ -74,7 +74,7 @@ const Share = () => {
   const [isLogoUpdating, setIsLogoUpdating] = useState(false);
 
   const { data: test } = trpc.organization.test.getById.useQuery({
-    id: id?.toString() || "",
+    id: testId,
   });
 
   const { data: submissionsData } = trpc.organization.test.getTestResults.useQuery({

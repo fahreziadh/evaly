@@ -4,6 +4,8 @@ import { users } from "./schemas/users";
 import { organization } from "./schemas/organization";
 import { organizer } from "./schemas/organizer";
 import { test } from "./schemas/test";
+import { question } from "./schemas/question";
+import { testSection } from "./schemas/test.section";
 
 export default defineSchema({
   ...authTables,
@@ -11,4 +13,6 @@ export default defineSchema({
   organization,
   organizer,
   test,
+  testSection,
+  question,
 });

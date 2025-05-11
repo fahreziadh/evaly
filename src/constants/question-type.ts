@@ -1,5 +1,4 @@
 import {
-  CheckSquare, // Single choice
   ToggleLeft, // Point based
   AlignLeft, // Text field
   Upload, // File upload
@@ -20,14 +19,14 @@ import {
   FileText, // Open-ended
   Braces, // Code snippet
   PenTool,
-  HandIcon
+  HandIcon, CopyCheck
 } from "lucide-react";
 
 export const questionTypes = {
   "multiple-choice": {
     value: "multiple-choice",
     label: "Multiple Choice",
-    icon: CheckSquare,
+    icon: CopyCheck,
     group: "choice",
     isHidden: false
   },

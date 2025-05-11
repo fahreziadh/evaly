@@ -2,14 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { questionTypes } from "@/constants/question-type";
-import { getDefaultOptions } from "@/lib/get-default-options";
-import {
-  Loader2,
-  LockIcon,
-  PencilIcon,
-  Plus,
-  SparklesIcon
-} from "lucide-react";
+import { LockIcon, PencilIcon, Plus, SparklesIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import GenerateQuestionInputPrompt from "../generate-question-input-prompt";
 import {
@@ -25,62 +18,47 @@ import {
 import ImportQuestions from "../import-questions";
 import { useTranslations } from "next-intl";
 import UseTemplate from "../use-template";
-import { trpc } from "@/trpc/trpc.client";
-import { InsertQuestion, Question, QuestionType } from "@/types/question";
-import { toast } from "sonner";
+import { QuestionType } from "@/types/question";
+import { useMutation } from "convex/react";
+import { api } from "convex/_generated/api";
+import { Id } from "convex/_generated/dataModel";
 
 const DialogAddQuestion = ({
   order = 1,
   referenceId,
-  onSuccessCreateQuestion,
   triggerButton,
   showTabsOption = true,
   testId,
+  onSuccessCreateQuestion,
 }: {
   testId?: string;
   order?: number;
   referenceId: string;
-  onSuccessCreateQuestion?: (question: Question[]) => void;
   triggerButton?: React.ReactNode;
   showTabsOption?: boolean;
+  onSuccessCreateQuestion?: (questionId: Id<"question">) => void;
 }) => {
   const t = useTranslations("TestDetail");
   const tCommon = useTranslations("Common");
-
+  const [selectedType, setSelectedType] = useState<QuestionType>();
   const [isOpen, setIsOpen] = useState(false);
-  const [typeSelected, setTypeSelected] = useState<QuestionType>();
+  const createTest = useMutation(api.organizer.question.createInitialQuestions);
 
-  const { mutate: mutateCreateQuestion, isPending: isPendingCreateQuestion } =
-    trpc.organization.question.create.useMutation({
-      onSuccess(data) {
-        if (data?.length) {
-          onSuccessCreateQuestion?.(data);
-        }
-      },
-      onSettled() {
-        setTypeSelected(undefined);
-        setIsOpen(false);
-      },
-      onError(error) {
-        toast.error(error.message);
-      },
-    });
-
-  const handleCreateQuestion = (type: QuestionType) => {
+  const handleCreateQuestion = async (type: QuestionType) => {
     if (!order) return;
-    setTypeSelected(type);
-
-    const question: InsertQuestion = {
+    setSelectedType(type);
+    createTest({
       referenceId,
-      order,
       type,
-    };
-
-    if (type === "multiple-choice" || type === "yes-or-no") {
-      question.options = getDefaultOptions(type);
-    }
-
-    mutateCreateQuestion({ questions: [question], referenceId });
+      order,
+    }).then((questionId) => {
+      if (questionId) {
+        onSuccessCreateQuestion?.(questionId);
+      }
+    }).finally(() => {
+      setSelectedType(undefined);
+      setIsOpen(false);
+    });
   };
 
   const groupedQuestionTypes = useMemo(() => {
@@ -143,20 +121,13 @@ const DialogAddQuestion = ({
                           key={type.value}
                           variant={"outline"}
                           className="group justify-start"
-                          disabled={
-                            type.isHidden ||
-                            (isPendingCreateQuestion &&
-                              typeSelected === type.value)
-                          }
+                          disabled={type.isHidden || selectedType === type.value}
                           onClick={() =>
                             handleCreateQuestion(type.value as QuestionType)
                           }
                         >
                           {type.isHidden ? (
                             <LockIcon className="size-3.5" />
-                          ) : isPendingCreateQuestion &&
-                            typeSelected === type.value ? (
-                            <Loader2 className="animate-spin size-4" />
                           ) : (
                             <type.icon className="size-4" />
                           )}

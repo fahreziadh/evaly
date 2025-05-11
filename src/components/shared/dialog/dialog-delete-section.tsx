@@ -10,47 +10,37 @@ import {
 } from "@/components/ui/dialog";
 import { TooltipMessage } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { trpc } from "@/trpc/trpc.client";
+import { api } from "convex/_generated/api";
+import { Id } from "convex/_generated/dataModel";
+import { useMutation } from "convex/react";
 import { Trash2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { toast } from "sonner";
 
 const DialogDeleteSection = ({
   className,
-  disabled = false,
   sectionId,
-  onSuccess,
   isLastSection = false,
 }: {
   className?: string;
-  disabled?: boolean;
-  dialogTrigger?: React.ReactNode;
   sectionId: string;
-  onSuccess: () => void;
   isLastSection?: boolean;
 }) => {
   const t = useTranslations("TestDetail");
   const tCommon = useTranslations("Common");
 
   const [open, setOpen] = useState(false);
-  const { mutate: deleteSection, isPending } =
-    trpc.organization.testSection.delete.useMutation({
-      onSuccess: () => {
-        onSuccess();
-        setOpen(false);
-      },
-      onError: (error) => {
-        toast.error(error.message);
-      },
-    });
+  const deleteSection = useMutation(api.organizer.testSection.remove)
+  
+    const onHandleDelete = () => {
+      deleteSection({ sectionId: sectionId as Id<"testSection"> })
+    }
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <div>
           <TooltipMessage message="Delete section">
             <Button
-              disabled={disabled}
               size={"icon"}
               variant={"ghost"}
               className={cn(className)}
@@ -81,10 +71,10 @@ const DialogDeleteSection = ({
           </Button>
           <Button
             variant={"destructive"}
-            disabled={isPending || isLastSection}
-            onClick={() => deleteSection({ id: sectionId })}
+            disabled={isLastSection}
+            onClick={onHandleDelete}
           >
-            {isPending ? tCommon("deletingStatus") : tCommon("deleteButton")}
+            {tCommon("deleteButton")}
           </Button>
         </DialogFooter>
       </DialogContent>

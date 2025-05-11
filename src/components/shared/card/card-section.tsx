@@ -1,21 +1,21 @@
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { CheckIcon, CircleHelp, ClockIcon } from "lucide-react";
-import { TestSection } from "@/types/test";
+import { DataModel } from "convex/_generated/dataModel";
 
 const CardSection = ({
   data,
   isSelected,
   onClick,
 }: {
-  data?: TestSection;
+  data?: DataModel["testSection"]["document"] & { numOfQuestions: number };
   onClick?: () => void;
   isSelected?: boolean;
 }) => {
   if (!data) return null;
   return (
     <Card
-      key={data.id}
+      key={data._id}
       onClick={onClick}
       className={cn(
         "flex border-none flex-col group/section justify-start  cursor-pointer p-3 relative select-none",

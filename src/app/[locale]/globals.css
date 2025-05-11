@@ -12,7 +12,7 @@
   --card-foreground: hsl(0 0% 10%);
   --popover: hsl(0 0% 100%);
   --popover-foreground: hsl(0 0% 10%);
-  --primary: hsl(0, 0%, 20%);
+  --primary: hsl(0, 0%, 25%);
   --primary-foreground: hsl(0, 0%, 100%);
   --secondary: hsl(0 0% 95%);
   --secondary-foreground: hsl(0 0% 25.1%);
@@ -188,14 +188,18 @@
     @apply prose prose-base dark:prose-invert prose-neutral
        prose-li:leading-normal prose-li:m-0  
        prose-headings:mb-3 prose-headings:mt-0 
-       prose-h1:text-3xl prose-h1:mt-14  prose-h1:mb-10
-       prose-h2:text-2xl prose-h2:mt-12  prose-h2:mb-6  
-       prose-h3:text-xl prose-h3:mt-10 prose-h3:mb-4
+       prose-h1:text-xl prose-h1:mt-8 prose-h1:mb-5
+       prose-h2:text-lg prose-h2:mt-6 prose-h2:mb-3 
+       prose-h3:text-base prose-h3:mt-5 prose-h3:mb-2
        prose-p:my-6 prose-p:leading-normal prose-p:text-foreground
        prose-a:text-foreground prose-a:underline-offset-4 prose-a:decoration-1 prose-a:decoration-foreground/30 prose-a:cursor-pointer prose-a:font-medium
        prose-img:my-2; 
   }
   
+  .custom-prose :where(h1 strong, h2 strong, h3 strong) {
+    @apply font-semibold;
+  }
+
   .custom-prose > h1:first-child {
     margin-top: 0;
   }
@@ -220,6 +224,13 @@
     /* :first-child {
       margin-top: 0;
     } */
+    p.is-editor-empty:first-child::before {
+      color: var(--muted-foreground);
+      content: attr(data-placeholder);
+      float: left;
+      height: 0;
+      pointer-events: none;
+    }
   
     pre {
       background: var(--code-background);
@@ -286,7 +297,7 @@
       }
   
       .hljs-strong {
-        font-weight: 700;
+        font-weight: 600;
       }
     }
   }

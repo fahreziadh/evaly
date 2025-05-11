@@ -488,6 +488,7 @@
     "sectionSelectionMode": "Section Selection Mode",
     "sectionSelectionModeDescription": "Control how candidates will navigate through the test sections.",
     "public": "Public",
+    "private": "Private",
     "inviteOnly": "Invite Only",
     "sequential": "Sequential",
     "random": "Random",
@@ -520,7 +521,9 @@
     "participantsAdded": "participants added",
     "participantRemoved": "Participant removed",
     "resultVisibility": "Result Visibility",
-    "resultVisibilityDescription": "Control when participants can see their test results."
+    "resultVisibilityDescription": "Control when participants can see their test results.",
+    "showResultImmediately": "Show Result Immediately",
+    "showResultImmediatelyDescription": "Let participants see their test results immediately after they complete the test."
   },
   "ComingSoonPage": {
     "title": "Coming Soon!",

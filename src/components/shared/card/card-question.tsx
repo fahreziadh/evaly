@@ -80,6 +80,7 @@ const CardQuestion = ({
               <Button
                 onClick={(e) => {
                   e.stopPropagation();
+                  e.preventDefault();
                   onMoveUp?.();
                 }}
                 size={"icon-xs"}
@@ -93,6 +94,7 @@ const CardQuestion = ({
               <Button
                 onClick={(e) => {
                   e.stopPropagation();
+                  e.preventDefault();
                   onMoveDown?.();
                 }}
                 size={"icon-xs"}
@@ -123,7 +125,7 @@ const CardQuestion = ({
           }}
         />
         {!hideOptions ? (
-          <div className="flex flex-col gap-y-3 gap-x-10 text-sm mt-4 mb-2">
+          <div className="flex flex-col gap-y-1 gap-x-10 text-sm mt-4 mb-2">
             {data.options?.map((option, i) => (
               <div
                 key={option.id || `option-${i}`}

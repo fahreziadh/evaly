@@ -15,10 +15,6 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = useQuery(api.auth.isAuthenticated);
   const profile = useQuery(api.organizer.profile.getProfile);
 
-  useEffect(() => {
-    console.log(isAuthenticated);
-  }, [isAuthenticated]);
-
   const createInitialOrganization = useMutation(
     api.organizer.profile.createInitialOrganization
   );

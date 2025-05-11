@@ -18,26 +18,11 @@ import { toast } from "sonner";
 const DialogDeleteQuestion = ({
   className,
   disabled = false,
-  dialogTrigger = (
-    <Button
-      disabled={disabled}
-      size={"icon-xxs"}
-      variant={"ghost"}
-      
-      className={cn("text-muted-foreground", className)}
-      onClick={(e) => {
-        e.stopPropagation();
-      }}
-    >
-      <Trash2Icon />
-    </Button>
-  ),
   questionId,
   onSuccess,
 }: {
   className?: string;
   disabled?: boolean;
-  dialogTrigger?: React.ReactNode;
   questionId: string;
   onSuccess: () => void;
 }) => {
@@ -45,20 +30,40 @@ const DialogDeleteQuestion = ({
   const tCommon = useTranslations("Common");
   const [open, setOpen] = useState(false);
 
-  const { mutate: deleteQuestion, isPending } = trpc.organization.question.delete.useMutation({
-    mutationKey: ["delete-question"],
-    onSuccess: () => {
-      onSuccess();
-      setOpen(false);
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const { mutate: deleteQuestion, isPending } =
+    trpc.organization.question.delete.useMutation({
+      mutationKey: ["delete-question"],
+      onSuccess: () => {
+        onSuccess();
+        setOpen(false);
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{dialogTrigger}</DialogTrigger>
-      <DialogContent>
+      <DialogTrigger asChild>
+        <Button
+          disabled={disabled}
+          size={"icon-xxs"}
+          variant={"ghost"}
+          className={cn("text-muted-foreground", className)}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            setOpen(true);
+          }}
+        >
+          <Trash2Icon />
+        </Button>
+      </DialogTrigger>
+      <DialogContent
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
         <DialogHeader>
           <DialogTitle>{t("deleteQuestionTitle")}</DialogTitle>
           <DialogDescription>

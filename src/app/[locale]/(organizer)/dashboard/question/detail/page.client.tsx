@@ -199,7 +199,9 @@ const EditQuestion = () => {
   };
 
   return (
-    <div className="container dashboard-margin">
+    <div
+      className="container dashboard-margin"
+    >
       <div className="flex flex-row w-full justify-between items-start">
         <div className="flex flex-row gap-2 items-center">
           <BackButton />
@@ -232,8 +234,10 @@ const EditQuestion = () => {
 
       <div className="flex flex-row gap-2 justify-between items-center mt-4">
         <div className="flex flex-row gap-2 items-center mb-3">
-          <Badge variant={"default"} size={"lg"}>
-            {question === undefined ? "##" : `#${question?.order}`}
+          <Badge variant={"outline"} size={"lg"}>
+            {question === undefined
+              ? "Question #"
+              : `Question ${question?.order}`}
           </Badge>
           <Controller
             control={control}

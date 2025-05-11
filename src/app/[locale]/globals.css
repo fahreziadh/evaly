@@ -196,6 +196,10 @@
        prose-img:my-2; 
   }
   
+  .custom-prose :where(h1, h2, h3) {
+    @apply font-semibold;
+  }
+
   .custom-prose :where(h1 strong, h2 strong, h3 strong) {
     @apply font-semibold;
   }

@@ -44,7 +44,7 @@ const DialogCreateTest = () => {
         return;
       }
       setIsPending(false);
-      router.push(`/dashboard/tests/${test}?tabs=questions`);
+      router.push(`/dashboard/tests?testId=${test}&tabs=questions`);
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : tCommon("genericError")

@@ -1,5 +1,13 @@
-import { getAuthUserId } from "@convex-dev/auth/server";
+import { getAuthSessionId, getAuthUserId, } from "@convex-dev/auth/server";
 import { mutation, query } from "../_generated/server";
+
+export const isAuthenticated = query({
+  args: {},
+  handler: async (ctx) => {
+    const sessionId = await getAuthSessionId(ctx);
+    return sessionId
+  },
+});
 
 export const getProfile = query({
   args: {},

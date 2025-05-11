@@ -40,7 +40,6 @@ import { TextShimmer } from "@/components/ui/text-shimmer";
 import { Editor } from "@/components/shared/editor/editor";
 import { question } from "convex/schemas/question";
 import { Badge } from "@/components/ui/badge";
-import LoadingScreen from "@/components/shared/loading/loading-screen";
 
 dayjs.extend(relativeTime);
 
@@ -76,6 +75,8 @@ const EditQuestion = () => {
   const question = useQuery(api.organizer.question.getById, {
     id: questionId as Id<"question">,
   });
+
+  const isLoading = question === undefined;
 
   const {
     control,
@@ -197,10 +198,6 @@ const EditQuestion = () => {
     });
   };
 
-  if (question === undefined) {
-    return <LoadingScreen />;
-  }
-
   return (
     <div className="container dashboard-margin">
       <div className="flex flex-row w-full justify-between items-start">
@@ -233,8 +230,8 @@ const EditQuestion = () => {
         </div>
       </div>
 
-      <div className="flex flex-row gap-2 justify-between items-center">
-        <div className="flex flex-row gap-2 items-center mb-3 mt-6">
+      <div className="flex flex-row gap-2 justify-between items-center mt-4">
+        <div className="flex flex-row gap-2 items-center mb-3">
           <Badge variant={"default"} size={"lg"}>
             {question === undefined ? "##" : `#${question?.order}`}
           </Badge>
@@ -351,7 +348,7 @@ const EditQuestion = () => {
               <Editor
                 disabled={question === undefined}
                 onContentLengthChange={setQuestionTextLength}
-                value={field.value}
+                value={field.value || ""}
                 onChange={field.onChange}
                 placeholder="Type your question here..."
                 editorClassName={cn(
@@ -378,7 +375,8 @@ const EditQuestion = () => {
             </div>
           )}
         />
-        {isOptionsType ? (
+
+        {isOptionsType && !isLoading ? (
           <div className="mt-8 mb-6 flex flex-row items-center gap-2">
             <Label className="text-sm text-muted-foreground">
               {t("selectCorrectAnswer")}
@@ -414,7 +412,7 @@ const EditQuestion = () => {
           </div>
         ) : null}
 
-        {isOptionsType ? (
+        {isOptionsType && options ? (
           <Controller
             control={control}
             name="options"

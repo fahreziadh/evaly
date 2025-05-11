@@ -237,11 +237,6 @@ const AddSession = ({ children }: { children?: React.ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedId, setSelectedId] = useState("");
   const tCommon = useTranslations("Common");
-  const {
-    refetch,
-    isPending: isPendingSession,
-    isRefetching: isRefetchingSection,
-  } = trpc.organization.testSection.getAll.useQuery({ testId: testId as string });
 
   const { mutateAsync, isPending: isPendingCreateSection } =
     trpc.organization.testSection.create.useMutation();
@@ -275,7 +270,6 @@ const AddSession = ({ children }: { children?: React.ReactNode }) => {
       setIsOpen(false);
       if (sectionId) {
         setSelectedSection(sectionId);
-        refetch();
       }
     }
   }
@@ -297,12 +291,10 @@ const AddSession = ({ children }: { children?: React.ReactNode }) => {
                   variant={"ghost"}
                   size={"icon"}
                   disabled={
-                    isPendingCreateSection ||
-                    isRefetchingSection ||
-                    isPendingSession
+                    isPendingCreateSection
                   }
                 >
-                  {isPendingCreateSection || isRefetchingSection ? (
+                  {isPendingCreateSection ? (
                     <Loader2 className="animate-spin" />
                   ) : (
                     <PlusIcon className="size-4" />
@@ -336,18 +328,17 @@ const AddSession = ({ children }: { children?: React.ReactNode }) => {
                 <Button
                   variant={"outline"}
                   className="w-max"
-                  disabled={isPendingCreateSection || isRefetchingSection}
+                  disabled={isPendingCreateSection}
                   onClick={async () => {
                     const data = await mutateAsync({ testId: testId as string });
                     const sectionId = data?.sections[0]?.id;
                     setIsOpen(false);
                     if (sectionId) {
                       setSelectedSection(sectionId);
-                      refetch();
                     }
                   }}
                 >
-                  {isPendingCreateSection || isRefetchingSection ? (
+                  {isPendingCreateSection ? (
                     <Loader2 className="animate-spin" />
                   ) : (
                     <PlusIcon />

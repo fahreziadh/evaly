@@ -182,7 +182,7 @@
     @apply text-muted-foreground font-medium text-sm md:text-base
   }
   .dashboard-margin {
-    @apply mt-4 md:mt-8
+    @apply mt-4 md:mt-6
   }
   .custom-prose {
     @apply prose prose-base dark:prose-invert prose-neutral

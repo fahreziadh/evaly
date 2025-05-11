@@ -13,6 +13,7 @@ import { ImageResizer } from "./extensions/image-resizer";
 import { cn } from "@/lib/utils";
 
 interface Props {
+  disabled?: boolean;
   value?: string;
   onChange?: (value: string) => void;
   maxLength?: number;
@@ -21,7 +22,6 @@ interface Props {
   editorClassName?: string;
   toolbarClassName?: string;
   autofocus?: boolean | "start" | "end" | number;
-  disabled?: boolean;
 }
 
 export const Editor = ({
@@ -69,9 +69,12 @@ export const Editor = ({
   });
 
   useEffect(() => {
-    if (!editor || value === undefined) return;
-    editor.commands.setContent(value);
-    onContentLengthChange?.(editor.storage.characterCount.characters());
+    console.log(value)
+    if (!editor || !value) return;
+    if (editor.getHTML() !== value) {
+      editor.commands.setContent(value);
+      onContentLengthChange?.(editor.storage.characterCount.characters());
+    }
   }, [editor, value, onContentLengthChange]);
 
   return (
@@ -86,6 +89,7 @@ export const Editor = ({
         <EditorContent
           editor={editor}
           className={cn("h-full", editorClassName)}
+          placeholder={placeholder}
         />
         <ImageResizer />
       </EditorContext.Provider>

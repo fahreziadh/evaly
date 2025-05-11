@@ -77,7 +77,7 @@ export const createInitialQuestions = mutation({
       organizationId,
       referenceId: args.referenceId,
       order: args.order,
-      question: "",
+      question: "<p></p>", // default question
       options,
     });
 

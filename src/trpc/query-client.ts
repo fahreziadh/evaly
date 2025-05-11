@@ -9,18 +9,6 @@ import superjson from "superjson";
       defaultOptions: {
         queries: {
           refetchOnWindowFocus: false,
-          retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // 1s, 2s, 4s, 8s, 16s, 30s
-          retry: (failureCount, error) => {
-            if (error?.message === "UNAUTHORIZED") {
-              return false;
-            }
-            
-            if (failureCount >= 3) {
-              return false;
-            }
-           
-            return true;
-          },
         },
         dehydrate: {
           serializeData: superjson.serialize,

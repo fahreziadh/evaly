@@ -18,7 +18,7 @@ import {
 } from "../ui/dialog";
 import { Link } from "./progress-bar";
 import { useTranslations } from "next-intl";
-import { redirect, useSearchParams } from "next/navigation";
+import { useSearchParams, redirect } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { useAuthActions } from "@convex-dev/auth/react";
@@ -32,7 +32,7 @@ const LogIn = () => {
   const tCommon = useTranslations("Common");
 
   const searchParams = useSearchParams();
-  const callbackURL = searchParams.get("callbackURL");
+  const callbackURL = searchParams.get("callbackUrl");
 
   if (isAuthenticated === undefined) {
     return <LoadingScreen />;

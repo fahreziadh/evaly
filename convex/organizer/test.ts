@@ -48,7 +48,7 @@ export const getTests = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) {
+    if (userId === null) {
       return [];
     }
 
@@ -93,8 +93,6 @@ export const getTestById = query({
     testId: v.id("test"),
   },
   handler: async (ctx, args) => {
-    await checkAccess(ctx, args.testId);
-
     const test = await ctx.db.get(args.testId);
 
     if (!test) {

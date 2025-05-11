@@ -47,16 +47,6 @@ const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
     }
   );
 
-  const { refetch: refetchSections } =
-    trpc.organization.testSection.getAll.useQuery(
-      {
-        testId: dataSection?.testId as string,
-      },
-      {
-        enabled: !!dataSection?.testId,
-      }
-    );
-
   useEffect(() => {
     if (dataSection) {
       reset(dataSection);
@@ -67,7 +57,6 @@ const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
     trpc.organization.testSection.update.useMutation({
       onSuccess: async () => {
         await refetchSection();
-        refetchSections();
         setOpen(false);
       },
     });

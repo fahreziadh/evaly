@@ -154,7 +154,7 @@ const Questions = ({ selectedSection }: { selectedSection: string }) => {
           })}
         </Reorder.Group>
       ) : (
-        <div className="flex flex-col p-6 gap-4 bg-card border rounded-md">
+        <div className="flex flex-col p-6 gap-4 bg-card rounded-md">
           <h1>{t("noQuestionFound")}</h1>
           <DialogAddQuestion
             testId={testId as string}

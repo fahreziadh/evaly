@@ -12,9 +12,6 @@ import { useSearchParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useMemo, useState } from "react";
 import CardSection from "@/components/shared/card/card-section";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Reorder } from "motion/react";
-import { trpc } from "@/trpc/trpc.client";
 import { Badge } from "@/components/ui/badge";
 import {
   Popover,
@@ -112,7 +109,7 @@ const TestSections = ({ className }: { className?: string }) => {
               </TooltipMessage>
             </div>
           </PopoverTrigger>
-          <PopoverContent>
+          <PopoverContent className="p-2 bg-background">
             <ListSession />
           </PopoverContent>
         </Popover>
@@ -162,14 +159,6 @@ const ListSession = () => {
     }
   }, [data, selectedSection, setSelectedSection]);
 
-  const { mutateAsync: updateOrder, isPending: isPendingUpdateOrder } =
-    trpc.organization.testSection.updateOrder.useMutation();
-
-  const onChangeOrder = async () => {
-    const sectionIds = orderedData?.map((e) => e._id) || [];
-    await updateOrder({ testId: testId as string, order: sectionIds });
-  };
-
   if (data === undefined) {
     return (
       <div className="flex flex-col gap-2">
@@ -186,34 +175,16 @@ const ListSession = () => {
   }
 
   return (
-    <ScrollArea>
-      <Reorder.Group
-        className={cn(
-          "flex flex-col gap-2 max-h-[60vh]",
-          isPendingUpdateOrder ? "animate-pulse opacity-80" : ""
-        )}
-        axis="y"
-        values={orderedData}
-        onReorder={setOrderedData}
-      >
-        {orderedData?.map((e) => (
-          <Reorder.Item
-            key={e._id}
-            value={e}
-            onDragEnd={onChangeOrder}
-            dragListener={isPendingUpdateOrder ? false : true}
-          >
-            <CardSection
-              data={e}
-              key={e._id}
-              isSelected={e._id === selectedSection}
-              onClick={() => setSelectedSection(e._id)}
-            />
-          </Reorder.Item>
-        ))}
-      </Reorder.Group>
-      <ScrollBar />
-    </ScrollArea>
+    <div className="max-h-[60vh] overflow-y-auto flex flex-col gap-1">
+      {orderedData?.map((e) => (
+        <CardSection
+          data={e}
+          key={e._id}
+          isSelected={e._id === selectedSection}
+          onClick={() => setSelectedSection(e._id)}
+        />
+      ))}
+    </div>
   );
 };
 
@@ -251,7 +222,7 @@ const AddSession = () => {
           <Loader2 className="animate-spin" />
         ) : (
           <>
-            <PlusIcon className="size-4"/>
+            <PlusIcon className="size-4" />
             {testSections?.length && testSections.length > 1
               ? null
               : "Multi-section"}

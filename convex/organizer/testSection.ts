@@ -12,13 +12,21 @@ export const getByTestId = query({
       .withIndex("by_test_id", (q) => q.eq("testId", args.testId))
       .filter((q) => q.lte(q.field("deletedAt"), 0))
       .collect();
-
-    const questions = await ctx.db
+    
+    const dataWithNumOfQuestions = await Promise.all(data.map(async (e) => {
+      const questions = await ctx.db
       .query("question")
-      .withIndex("by_reference_id", (q) => q.eq("referenceId", args.testId))
+      .withIndex("by_reference_id", (q) => q.eq("referenceId", e._id))
+      .filter((q) => q.lte(q.field("deletedAt"), 0))
       .collect();
 
-    return data.map((e) => ({ ...e, numOfQuestions: questions.length }));
+      return {
+        ...e,
+        numOfQuestions: questions.length,
+      };
+    }));
+
+    return dataWithNumOfQuestions;
   },
 });
 

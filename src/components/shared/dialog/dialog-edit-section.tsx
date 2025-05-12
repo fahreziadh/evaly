@@ -11,64 +11,43 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { CircleHelpIcon, Loader2, PencilIcon } from "lucide-react";
+import { PencilIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { UpdateTestSection } from "@/types/test";
-import { toast } from "sonner";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { trpc } from "@/trpc/trpc.client";
+import { useForm } from "react-hook-form";
 import { TooltipMessage } from "@/components/ui/tooltip";
+import { DataModel } from "convex/_generated/dataModel";
+import { api } from "convex/_generated/api";
+import { useMutation } from "convex/react";
 
-const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
+const DialogEditSection = ({
+  testSection,
+}: {
+  testSection: DataModel["testSection"]["document"];
+}) => {
   const [open, setOpen] = useState(false);
+  const updateSection = useMutation(api.organizer.testSection.update);
+
   const {
     register,
     handleSubmit,
     reset,
-    control,
     formState: { isDirty },
-  } = useForm<UpdateTestSection>();
-
-  const {
-    data: dataSection,
-    refetch: refetchSection,
-    isRefetching: isRefetchingSection,
-  } = trpc.organization.testSection.getById.useQuery(
-    {
-      id: sectionId,
-    },
-    {
-      enabled: !!sectionId,
-    }
-  );
+  } = useForm<DataModel["testSection"]["document"]>();
 
   useEffect(() => {
-    if (dataSection) {
-      reset(dataSection);
+    if (testSection) {
+      reset(testSection);
     }
-  }, [dataSection, reset]);
+  }, [testSection, reset]);
 
-  const { mutate: updateSection, isPending: isPendingUpdateSection } =
-    trpc.organization.testSection.update.useMutation({
-      onSuccess: async () => {
-        await refetchSection();
-        setOpen(false);
-      },
-    });
-
-  const onSubmit = (data: UpdateTestSection) => {
+  const onSubmit = (data: DataModel["testSection"]["document"]) => {
     updateSection({
-      id: sectionId,
+      sectionId: testSection._id,
       data: {
-        ...data,
-        duration: data.duration || 0, // Ensure duration is a number, not null or undefined
+        title: data.title,
       },
     });
+    setOpen(false);
   };
 
   return (
@@ -93,7 +72,7 @@ const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
         </DialogHeader>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-6 mt-4"
+          className="flex flex-col gap-6"
         >
           <div className="flex flex-col gap-2">
             <Label>Title</Label>
@@ -102,81 +81,8 @@ const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
               {...register("title")}
             />
           </div>
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row gap-2 items-center">
-              <Label>Duration</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant={"ghost"} size={"icon-xs"}>
-                    <CircleHelpIcon />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent>
-                  If you want participants to be able to finish the test
-                  whenever they want, you can leave the duration empty.
-                </PopoverContent>
-              </Popover>
-            </div>
-            <Controller
-              control={control}
-              name="duration"
-              render={({ field }) => {
-                const hours = Math.floor((field.value || 0) / 60);
-                const minutes = (field.value || 0) % 60 || 0;
-                return (
-                  <>
-                    <div className="flex flex-row gap-4">
-                      <div>
-                        <Label>Hours</Label>
-                        <Input
-                          type="number"
-                          className="w-20"
-                          min={0}
-                          max={23}
-                          placeholder="0-23"
-                          value={hours === 0 && !hours ? "" : hours}
-                          onChange={(e) => {
-                            if (Number(e.target.value) > 23) {
-                              toast.error("Hours must be between 0 and 23");
-                              return;
-                            }
-                            const value =
-                              e.target.value === ""
-                                ? 0
-                                : Number(e.target.value);
-                            field.onChange(value * 60 + minutes);
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <Label>Minutes</Label>
-                        <Input
-                          type="number"
-                          className="w-20"
-                          value={minutes === 0 && !minutes ? "" : minutes}
-                          min={0}
-                          max={59}
-                          placeholder="0-59"
-                          onChange={(e) => {
-                            const value =
-                              e.target.value === ""
-                                ? 0
-                                : Number(e.target.value);
-                            if (value > 59) {
-                              toast.error("Minutes must be between 0 and 59");
-                              return;
-                            }
-                            field.onChange(value + hours * 60);
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </>
-                );
-              }}
-            />
-          </div>
-          <div className="flex flex-col gap-2">
+
+          <div className="hidden flex-col gap-2">
             <Label>Description (Optional)</Label>
             <Textarea
               placeholder="Type section's description here..."
@@ -192,17 +98,8 @@ const DialogEditSection = ({ sectionId }: { sectionId: string }) => {
             >
               Back
             </Button>
-            <Button
-              disabled={
-                isPendingUpdateSection || !isDirty || isRefetchingSection
-              }
-              type="submit"
-            >
-              {isPendingUpdateSection || isRefetchingSection ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                "Save & exit"
-              )}
+            <Button disabled={!isDirty} type="submit">
+              Save & exit
             </Button>
           </DialogFooter>
         </form>

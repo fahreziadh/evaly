@@ -11,14 +11,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { trpc } from "@/trpc/trpc.client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
 
 export function NavOrganization() {
   // const { isMobile } = useSidebar();
-  const { data, isPending } = trpc.organization.profile.useQuery();
+ const data = useQuery(api.organizer.profile.getProfile)
 
-  if (isPending) return <Skeleton className="h-12 w-full" />;
+  if (data === undefined) return <Skeleton className="h-12 w-full" />;
 
   return (
     <SidebarMenu>
@@ -34,7 +35,7 @@ export function NavOrganization() {
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight ml-1">
                 <span className="truncate">
-                  {data?.organizer?.organization.name}
+                  {data?.organization?.name}
                 </span>
                 <span className="text-xs text-muted-foreground">Free</span>
               </div>

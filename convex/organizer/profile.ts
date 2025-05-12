@@ -1,11 +1,13 @@
-import { getAuthSessionId, getAuthUserId, } from "@convex-dev/auth/server";
+import { getAuthSessionId, getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "../_generated/server";
+import { Id } from "../_generated/dataModel";
+import { v } from "convex/values";
 
 export const isAuthenticated = query({
   args: {},
   handler: async (ctx) => {
     const sessionId = await getAuthSessionId(ctx);
-    return sessionId
+    return sessionId;
   },
 });
 
@@ -20,8 +22,51 @@ export const getProfile = query({
       .query("users")
       .withIndex("by_id", (q) => q.eq("_id", userId))
       .first();
+    
+    let organizer;
+    let organization;
 
-    return user;
+    if (user?.selectedOrganizerId) {
+      organizer = await ctx.db
+        .query("organizer")
+        .withIndex("by_id", (q) => q.eq("_id", user?.selectedOrganizerId as Id<"organizer">))
+        .first();
+    }
+
+    if (user?.selectedOrganizationId) {
+      organization = await ctx.db
+        .query("organization")
+        .withIndex("by_id", (q) => q.eq("_id", user?.selectedOrganizationId as Id<"organization">))
+        .first();
+    }
+
+    return {
+      ...user,
+      organizer,
+      organization,
+    };
+  },
+});
+
+export const updateProfile = mutation({
+  args: {
+    name: v.string(),
+    image: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return undefined;
+    }
+
+    await ctx.db.patch(userId, {
+      name: args.name,
+      image: args.image,
+    });
+
+    return {
+      success: true,
+    };
   },
 });
 

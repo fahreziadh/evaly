@@ -22,6 +22,7 @@ import { useSearchParams, redirect } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { useAuthActions } from "@convex-dev/auth/react";
+import Image from "next/image";
 
 const LogIn = () => {
   const [email, setEmail] = useState("");
@@ -43,141 +44,169 @@ const LogIn = () => {
   }
 
   return (
-    <>
-      <h1 className="text-3xl font-semibold">{t("welcomeMessage")}</h1>
-      <h2 className="mb-10 text-muted-foreground mt-4 text-center">
-        {t("welcomeMessageDescription")}
-      </h2>
+    <div className="flex flex-row">
+      <div className="flex-1 min-h-screen flex flex-col items-center justify-center container">
+        <div className="w-full max-w-md">
+          <h1 className="text-3xl font-bold text-primary">
+            {t("welcomeMessage")}
+          </h1>
+          <h2 className="mb-6 text-muted-foreground mt-2">
+            {t("welcomeMessageDescription")}
+          </h2>
 
-      <div className="max-w-sm w-full">
-        <div className="flex flex-wrap items-center gap-2 w-full mb-8 pb-8 border-b border-dashed">
-          <GoogleLogin />
-        </div>
-
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            setLoading(true);
-            const res = await authClient.emailOtp.sendVerificationOtp({
-              email,
-              type: "sign-in",
-            });
-            setLoading(false);
-
-            if (!res.data?.success) {
-              toast.error(res.error?.message || tCommon("genericError"));
-              return;
-            }
-
-            setOtp("");
-            toast.success(t("otpSentToEmail"));
-          }}
-          className="grid gap-4"
-        >
-          <div className="grid gap-2">
-            <Label htmlFor="email">{tCommon("emailLabel")}</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder={t("emailPlaceholder")}
-              required
-              disabled={loading}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              value={email}
-            />
-          </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              t("continueWithEmail")
-            )}
-          </Button>
-        </form>
-      </div>
-      <Dialog open={otp !== null}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t("verifyEmailTitle")}</DialogTitle>
-            <DialogDescription>{t("verifyEmailDescription")}</DialogDescription>
-          </DialogHeader>
-
-          <form
-            onSubmit={async (e) => {
-              if (!otp) return;
-              e.preventDefault();
-
-              setLoading(true);
-              const res = await authClient.signIn.emailOtp({
-                email,
-                otp,
-              });
-
-              if (res.error) {
-                setLoading(false);
-                toast.error(res.error?.message || tCommon("genericError"));
-                setOtp("");
-                return;
-              }
-
-              if (res.data?.user) {
-                window.location.href = callbackURL || "/dashboard";
-              }
-            }}
-            className="grid gap-4"
-          >
-            <div className="grid gap-2">
-              <Label htmlFor="otp">{t("verifyEmailLabel")}</Label>
-              <InputOTP
-                maxLength={6}
-                onChange={(e) => {
-                  setOtp(e);
-                }}
-                value={otp || ""}
-              >
-                <InputOTPGroup>
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
-                </InputOTPGroup>
-              </InputOTP>
+          <div className="max-w-sm w-full">
+            <div className="flex flex-wrap items-center gap-2 w-full">
+              <GoogleLogin />
             </div>
-            <Button type="submit" className="w-full mt-4" disabled={loading}>
-              {loading ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                t("loginButton")
-              )}
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              {t("didNotReceiveOTP")}{" "}
-              <button
-                type="button"
-                className="text-sm w-max cursor-pointer text-blue-500"
-                onClick={() => setOtp(null)}
+
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setLoading(true);
+                const res = await authClient.emailOtp.sendVerificationOtp({
+                  email,
+                  type: "sign-in",
+                });
+                setLoading(false);
+
+                if (!res.data?.success) {
+                  toast.error(res.error?.message || tCommon("genericError"));
+                  return;
+                }
+
+                setOtp("");
+                toast.success(t("otpSentToEmail"));
+              }}
+              className="gap-4 hidden"
+            >
+              <div className="grid gap-2">
+                <Label htmlFor="email">{tCommon("emailLabel")}</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder={t("emailPlaceholder")}
+                  className="h-9 px-4 text-base"
+                  required
+                  disabled={loading}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                  }}
+                  value={email}
+                />
+              </div>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={loading}
+                size={"lg"}
               >
-                {t("resendOTPButton")}
-              </button>
-            </span>
-          </form>
-        </DialogContent>
-      </Dialog>
-      <span className="container text-xs text-muted-foreground mt-4 max-w-md text-center fixed bottom-4">
-        {t("termsOfUseDescription")}{" "}
-        <Link href={"/terms-of-use"} className="underline">
-          {t("termsOfUse")}
-        </Link>{" "}
-        {t("and")}{" "}
-        <Link className="underline" href={"/privacy-policy"}>
-          {t("privacyPolicy")}
-        </Link>
-      </span>
-    </>
+                {loading ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  t("continueWithEmail")
+                )}
+              </Button>
+            </form>
+          </div>
+          <Dialog open={otp !== null}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{t("verifyEmailTitle")}</DialogTitle>
+                <DialogDescription>
+                  {t("verifyEmailDescription")}
+                </DialogDescription>
+              </DialogHeader>
+
+              <form
+                onSubmit={async (e) => {
+                  if (!otp) return;
+                  e.preventDefault();
+
+                  setLoading(true);
+                  const res = await authClient.signIn.emailOtp({
+                    email,
+                    otp,
+                  });
+
+                  if (res.error) {
+                    setLoading(false);
+                    toast.error(res.error?.message || tCommon("genericError"));
+                    setOtp("");
+                    return;
+                  }
+
+                  if (res.data?.user) {
+                    window.location.href = callbackURL || "/dashboard";
+                  }
+                }}
+                className="grid gap-4"
+              >
+                <div className="grid gap-2">
+                  <Label htmlFor="otp">{t("verifyEmailLabel")}</Label>
+                  <InputOTP
+                    maxLength={6}
+                    onChange={(e) => {
+                      setOtp(e);
+                    }}
+                    value={otp || ""}
+                  >
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                      <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full mt-4"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    t("loginButton")
+                  )}
+                </Button>
+                <span className="text-sm text-muted-foreground">
+                  {t("didNotReceiveOTP")}{" "}
+                  <button
+                    type="button"
+                    className="text-sm w-max cursor-pointer text-blue-500"
+                    onClick={() => setOtp(null)}
+                  >
+                    {t("resendOTPButton")}
+                  </button>
+                </span>
+              </form>
+            </DialogContent>
+          </Dialog>
+          <span className="text-xs text-muted-foreground mt-4 max-w-md  fixed bottom-4">
+            {t("termsOfUseDescription")}{" "}
+            <Link href={"/terms-of-use"} className="underline">
+              {t("termsOfUse")}
+            </Link>{" "}
+            {t("and")}{" "}
+            <Link className="underline" href={"/privacy-policy"}>
+              {t("privacyPolicy")}
+            </Link>
+          </span>
+        </div>
+      </div>
+      <div className="flex-1 h-screen hidden lg:block">
+        <Image
+          className="flex-1 w-full h-full object-cover"
+          src={"/images/login-bg.png"}
+          alt="Login Image"
+          width={2000}
+          height={2000}
+          quality={100}
+        />
+      </div>
+    </div>
   );
 };
 export default LogIn;
@@ -230,7 +259,8 @@ const GoogleLogin = () => {
     <Button
       variant="outline"
       type="button"
-      className="gap-2 flex-1 w-full py-4"
+      size="lg"
+      className="gap-2 flex-1 w-full font-medium border-foreground/20"
       onClick={handleSignIn}
       disabled={isLoading}
     >

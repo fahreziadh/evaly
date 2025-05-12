@@ -224,8 +224,7 @@ const Setting = () => {
         </SettingSection>
       </div>
 
-      <div className="fixed w-full bottom-0 left-0 flex flex-row items-center justify-end gap-4 px-4 sm:px-8 py-4 border-t bg-background z-50">
-        <div className="container">
+      <div className="fixed w-full bottom-0 left-0 flex flex-row items-center justify-end gap-4 px-4 sm:px-8 py-3 border-t bg-background z-50">
           <Button
             disabled={!isDirty}
             type="submit"
@@ -234,7 +233,6 @@ const Setting = () => {
             {tCommon("saveChanges")}
           </Button>
         </div>
-      </div>
     </form>
   );
 };

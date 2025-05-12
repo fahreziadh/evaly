@@ -70,7 +70,7 @@ export async function uploadFileToR2(file: File, key: string) {
     }
   }
 
-  const finalUrl = `${env.CLOUDFLARE_CDN_URL}/${key}`;
+  const finalUrl = `${env.NEXT_PUBLIC_CLOUDFLARE_CDN_URL}/${key}`;
   
   // Return the final URL (assuming successful upload)
   return finalUrl;

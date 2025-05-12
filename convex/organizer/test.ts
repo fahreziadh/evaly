@@ -80,7 +80,10 @@ export const deleteTest = mutation({
     testId: v.id("test"),
   },
   handler: async (ctx, args) => {
-    await checkAccess(ctx, args.testId);
+    const { isOwner } = await checkTestOwnership(ctx, args.testId);
+    if (!isOwner) {
+      throw new Error("You are not allowed to delete this test");
+    }
 
     await ctx.db.patch(args.testId, {
       deletedAt: Date.now(),
@@ -116,7 +119,10 @@ export const updateTest = mutation({
     }),
   },
   handler: async (ctx, args) => {
-    await checkAccess(ctx, args.testId);
+    const { isOwner } = await checkTestOwnership(ctx, args.testId);
+    if (!isOwner) {
+      throw new Error("You are not allowed to update this test");
+    }
 
     await ctx.db.patch(args.testId, {
       title: args.data.title,
@@ -129,32 +135,50 @@ export const updateTest = mutation({
   },
 });
 
-async function checkAccess(ctx: QueryCtx, testId: Id<"test">) {
+export async function checkTestOwnership(ctx: QueryCtx, testId: Id<"test">) {
   const userId = await getAuthUserId(ctx);
   if (!userId) {
-    throw new Error("User not found");
+    return {
+      isOwner: false,
+      test: null,
+    }
   }
 
   const user = await ctx.db.get(userId);
   if (!user) {
-    throw new Error("User not found");
+    return {
+      isOwner: false,
+      test: null,
+    }
   }
 
   // check if the test is available
   const test = await ctx.db.get(testId);
   if (!test) {
-    throw new Error("Test not found");
+    return {
+      isOwner: false,
+      test: null,
+    }
   }
 
   const organizationId = user.selectedOrganizationId;
   if (!organizationId) {
-    throw new Error("Organization not found");
+    return {
+      isOwner: false,
+      test: null,
+    }
   }
 
   // check if the user is the owner of the test
   if (test.organizationId !== organizationId) {
-    throw new Error("You are not allowed to access this test");
+    return {
+      isOwner: false,
+      test: null,
+    }
   }
 
-  return true;
+  return {
+    isOwner: true,
+    test,
+  }
 }

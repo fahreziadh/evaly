@@ -7,7 +7,7 @@ export async function deleteFileFromR2(key: string, isWithCdnUrl = true) {
   let objectKey = key;
   if (isWithCdnUrl) {
     // Remove the CDN URL prefix if present
-    const cdnPrefix = `${env.CLOUDFLARE_CDN_URL}/`;
+    const cdnPrefix = `${env.NEXT_PUBLIC_CLOUDFLARE_CDN_URL}/`;
     if (key.startsWith(cdnPrefix)) {
       objectKey = key.substring(cdnPrefix.length);
     } else {

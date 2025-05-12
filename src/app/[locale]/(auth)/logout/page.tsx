@@ -1,19 +1,9 @@
-"use client";
-import { authClient } from "@/lib/auth.client";
-import { useEffect } from "react";
-import LoadingScreen from "@/components/shared/loading/loading-screen";
+import PageClient from "./page.client";
+
+export const dynamic = "force-static";
 
 const Page = () => {
-
-  useEffect(() => {
-    authClient.signOut().then(() => {
-      window.location.href = "/";
-    }).catch((error) => {
-      console.error(error);
-    })
-  }, []);
-
-    return <LoadingScreen />;
+  return <PageClient />;
 };
 
 export default Page;

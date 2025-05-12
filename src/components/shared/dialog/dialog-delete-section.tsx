@@ -1,3 +1,4 @@
+import { useSelectedSection } from "@/app/[locale]/(organizer)/dashboard/tests/_hooks/use-selected-section";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,20 +22,39 @@ const DialogDeleteSection = ({
   className,
   sectionId,
   isLastSection = false,
+  testId,
 }: {
   className?: string;
   sectionId: string;
   isLastSection?: boolean;
+  testId: Id<"test">;
 }) => {
   const t = useTranslations("TestDetail");
   const tCommon = useTranslations("Common");
+  const [, setSelectedSection] = useSelectedSection();
 
   const [open, setOpen] = useState(false);
-  const deleteSection = useMutation(api.organizer.testSection.remove)
-  
-    const onHandleDelete = () => {
-      deleteSection({ sectionId: sectionId as Id<"testSection"> })
-    }
+  const deleteSection = useMutation(
+    api.organizer.testSection.remove
+  ).withOptimisticUpdate((localStore, args) => {
+    const section = localStore.getQuery(api.organizer.testSection.getByTestId, {
+      testId,
+    });
+    if (!section) return;
+    localStore.setQuery(
+      api.organizer.testSection.getByTestId,
+      {
+        testId,
+      },
+      section.filter((q) => q._id !== args.sectionId)
+    );
+  });
+
+  const onHandleDelete = async () => {
+    await deleteSection({ sectionId: sectionId as Id<"testSection"> });
+    setSelectedSection(null);
+    setOpen(false);
+  };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>

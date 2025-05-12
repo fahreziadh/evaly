@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Save, Info, PencilLine } from "lucide-react";
+import { Save, Info, PencilLine, Loader2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -20,14 +20,15 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { toast } from "sonner";
-import { OrganizerUserUpdate } from "@/types/user";
 import { Image } from "@/components/ui/image";
-import { trpc } from "@/trpc/trpc.client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
+import { DataModel } from "convex/_generated/dataModel";
+import { useUploadFile } from "@convex-dev/r2/react";
+import { env } from "@/lib/env.client";
 
 export const dynamic = "force-static";
-
 
 const Settings = () => {
   return (
@@ -94,7 +95,11 @@ const Settings = () => {
 // };
 
 const Profile = () => {
-  const { data, refetch, isPending } = trpc.organization.profile.useQuery();
+  const user = useQuery(api.organizer.profile.getProfile);
+  const uploadFile = useUploadFile(api.common.storage);
+  const updateProfile = useMutation(api.organizer.profile.updateProfile);
+
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // Define form for profile
   const {
@@ -103,48 +108,47 @@ const Profile = () => {
     formState: { isDirty },
     handleSubmit,
     setValue,
-    watch
-  } = useForm<OrganizerUserUpdate & { imageFile?: File }>({
+    watch,
+  } = useForm<DataModel["users"]["document"] & { imageFile?: File }>({
     defaultValues: {
       name: "",
-      email: "",
     },
   });
 
   const [previewURL, setPreviewURL] = useState<string | null>(null);
 
   useEffect(() => {
-    reset({
-      name: data?.user?.name,
-      email: data?.user?.email,
-      image: data?.user?.image,
-    });
-  }, [data, reset]);
+    if (user) {
+      reset(user);
+    }
+  }, [user, reset]);
 
   const onImagePreviewChange = (e: File) => {
     const objectUrl = URL.createObjectURL(e);
     setPreviewURL(objectUrl);
   };
 
-  const { mutate: mutateUpdateProfile, isPending: isPendingUpdateProfile } =
-    trpc.organization.updateProfile.useMutation({
-      onSuccess(data) {
-        if (data) {
-          toast.success("Profile updated successfully");
-          reset({
-            ...data,
-            createdAt: new Date(data.createdAt),
-            updatedAt: new Date(data.updatedAt),
-          });
-          refetch();
-        }
-      },
-    });
+  const onUpdateProfile = async (
+    data: DataModel["users"]["document"] & { imageFile?: File }
+  ) => {
+    setIsUpdating(true);
+    let imageUrl = data.image;
 
-  if (isPending || !watch("email")) {
-    return (
-      <Skeleton className="w-full h-80" />
-    );
+    if (data.imageFile) {
+      try {
+        const key = await uploadFile(data.imageFile);
+        imageUrl = `${env.NEXT_PUBLIC_CLOUDFLARE_CDN_URL}/evaly/${key}`;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    updateProfile({ name: data.name || "", image: imageUrl });
+    setIsUpdating(false);
+  };
+
+  if (user === undefined || !watch("email")) {
+    return <Skeleton className="w-full h-80" />;
   }
 
   return (
@@ -156,15 +160,7 @@ const Profile = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-6">
-        <form
-          className="space-y-6"
-          onSubmit={handleSubmit((data) => {
-            const formData = new FormData();
-            formData.append("fullName", data.name ?? "");
-            formData.append("imageFile", data.imageFile ?? new File([], ""));
-            mutateUpdateProfile(formData);
-          })}
-        >
+        <form className="space-y-6" onSubmit={handleSubmit(onUpdateProfile)}>
           <div className="flex flex-col md:flex-row gap-6">
             <Controller
               control={control}
@@ -177,7 +173,14 @@ const Profile = () => {
                         src={previewURL}
                         alt="Profile"
                         className="object-cover"
-                      />
+                      >
+                        <Image
+                          src={previewURL}
+                          alt="Profile"
+                          width={256}
+                          height={256}
+                        />
+                      </AvatarImage>
                     ) : field.value ? (
                       <AvatarImage
                         src={field.value}
@@ -194,7 +197,7 @@ const Profile = () => {
                       </AvatarImage>
                     ) : (
                       <AvatarFallback className="text-4xl">
-                        {data?.user?.email?.charAt(0).toUpperCase() || "U"}
+                        {user?.email?.charAt(0).toUpperCase() || "U"}
                       </AvatarFallback>
                     )}
                   </Avatar>
@@ -213,7 +216,7 @@ const Profile = () => {
                     <Input
                       id="profile-image"
                       type="file"
-                      accept="image/*"
+                      accept="image/png, image/jpeg, image/jpg, image/webp"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
@@ -284,13 +287,10 @@ const Profile = () => {
                     Cancel
                   </Button>
                 ) : null}
-                <Button
-                  type="submit"
-                  disabled={isPendingUpdateProfile || !isDirty}
-                >
-                  {isPendingUpdateProfile ? (
+                <Button type="submit" disabled={!isDirty || isUpdating}>
+                  {isUpdating ? (
                     <>
-                      <Loader2 className="h-4 w-4 animate-spin" /> Saving...
+                      <Loader2 className="animate-spin" /> Saving...
                     </>
                   ) : (
                     <>
@@ -308,7 +308,8 @@ const Profile = () => {
 };
 
 const Organization = () => {
-  const { data: organizationData } = trpc.organization.profile.useQuery();
+  const user = useQuery(api.organizer.profile.getProfile);
+  const organization = user?.organization;
 
   return (
     <Card>
@@ -319,7 +320,7 @@ const Organization = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-6">
-        {organizationData?.organizer?.organization ? (
+        {organization ? (
           <div className="text-muted-foreground">
             Organization settings coming soon...
           </div>

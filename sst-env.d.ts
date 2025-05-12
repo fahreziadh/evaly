@@ -25,7 +25,7 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "CLOUDFLARE_CDN_URL": {
+    "NEXT_PUBLIC_CLOUDFLARE_CDN_URL": {
       "type": "sst.sst.Secret"
       "value": string
     }

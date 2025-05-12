@@ -9,11 +9,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { trpc } from "@/trpc/trpc.client";
+import { useMutation } from "convex/react";
+import { api } from "convex/_generated/api";
 import { Trash2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Id } from "convex/_generated/dataModel";
 
 const DialogDeleteQuestion = ({
   className,
@@ -29,18 +31,18 @@ const DialogDeleteQuestion = ({
   const t = useTranslations("Questions");
   const tCommon = useTranslations("Common");
   const [open, setOpen] = useState(false);
+  const deleteQuestion = useMutation(api.organizer.question.deleteById);
 
-  const { mutate: deleteQuestion, isPending } =
-    trpc.organization.question.delete.useMutation({
-      mutationKey: ["delete-question"],
-      onSuccess: () => {
-        onSuccess();
-        setOpen(false);
-      },
-      onError: (error) => {
-        toast.error(error.message);
-      },
+
+  const onDeleteQuestion = async () => {
+    toast.promise(deleteQuestion({ id: questionId as Id<"question"> }), {
+      loading: "Deleting question...",
+      success: "Question deleted successfully",
+      error: "Failed to delete question",
     });
+    onSuccess();
+    setOpen(false);
+  };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -82,13 +84,12 @@ const DialogDeleteQuestion = ({
           </Button>
           <Button
             variant={"destructive"}
-            disabled={isPending}
             onClick={(e) => {
               e.stopPropagation();
-              deleteQuestion({ id: questionId });
+              onDeleteQuestion();
             }}
           >
-            {isPending ? tCommon("deletingStatus") : tCommon("deleteButton")}
+            {tCommon("deleteButton")}
           </Button>
         </DialogFooter>
       </DialogContent>

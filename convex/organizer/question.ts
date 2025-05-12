@@ -1,7 +1,8 @@
 import { v } from "convex/values";
-import { mutation, query } from "../_generated/server";
+import { mutation, query, QueryCtx } from "../_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { nanoid } from "nanoid";
+import { Id } from "../_generated/dataModel";
 
 export const createInitialQuestions = mutation({
   args: {
@@ -98,7 +99,6 @@ export const createInitialQuestions = mutation({
       }
     }
 
-
     return questionId;
   },
 });
@@ -113,8 +113,10 @@ export const getAllByReferenceId = query({
       .withIndex("by_reference_id", (q) =>
         q.eq("referenceId", args.referenceId)
       )
+      .filter((q) => q.lte(q.field("deletedAt"), 0))
       .collect();
-    return questions.sort((a, b) => a.order - b.order);
+    return questions
+      .sort((a, b) => a.order - b.order)
   },
 });
 
@@ -128,6 +130,14 @@ export const changeOrder = mutation({
     ),
   },
   handler: async (ctx, args) => {
+    const {isOwner} = await checkQuestionOwnership(
+      ctx,
+      args.questionIds[0].questionId
+    );
+    if (!isOwner) {
+      throw new Error("Unauthorized");
+    }
+
     for (const q of args.questionIds) {
       await ctx.db.patch(q.questionId, {
         order: q.order,
@@ -153,6 +163,10 @@ export const update = mutation({
     }),
   },
   handler: async (ctx, args) => {
+    const isOwner = await checkQuestionOwnership(ctx, args.id);
+    if (!isOwner) {
+      throw new Error("Unauthorized");
+    }
     await ctx.db.patch(args.id, args.data);
   },
 });
@@ -162,6 +176,79 @@ export const getById = query({
     id: v.id("question"),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.id);
+    const {isOwner} = await checkQuestionOwnership(ctx, args.id);
+    if (!isOwner) {
+      return undefined;
+    }
+    const question = await ctx.db.get(args.id);
+    if (!question || question.deletedAt) {
+      return undefined;
+    }
+    return question;
   },
 });
+
+export const deleteById = mutation({
+  args: {
+    id: v.id("question"),
+  },
+  handler: async (ctx, args) => {
+    const {isOwner, question} = await checkQuestionOwnership(ctx, args.id);
+    if (!isOwner) {
+      throw new Error("Unauthorized");
+    }
+
+
+    await ctx.db.patch(args.id, {
+      deletedAt: Date.now(),
+      order: 0,
+    });
+    
+    const deletedQuestionOrder = question?.order;
+    const referenceId = question?.referenceId;
+  
+    if (!deletedQuestionOrder || !referenceId) {
+      return;
+    }
+
+    // sort other questions
+    const questions = await ctx.db
+      .query("question")
+      .withIndex("by_reference_id", (q) =>
+        q.eq("referenceId", question?.referenceId)
+      )
+      .filter((q) => q.lte(q.field("deletedAt"), 0))
+      .collect();
+
+    const orderedQuestions = questions
+      .sort((a, b) => a.order - b.order)
+    
+    // update order of other questions
+    for (const question of orderedQuestions) {
+      if (question.order >= deletedQuestionOrder && question._id !== args.id) {
+        await ctx.db.patch(question._id, {
+          order: question.order - 1,
+        });
+      }
+    }
+  },
+});
+
+async function checkQuestionOwnership(
+  ctx: QueryCtx,
+  questionId: Id<"question">
+) {
+  const userId = await getAuthUserId(ctx);
+  if (!userId) {
+    return { isOwner: false, question: undefined };
+  }
+
+  const user = await ctx.db.get(userId);
+  if (!user) {
+    return { isOwner: false, question: undefined };
+  }
+
+  const question = await ctx.db.get(questionId);
+  const isOwner = question?.organizationId === user.selectedOrganizationId;
+  return { isOwner, question };
+}

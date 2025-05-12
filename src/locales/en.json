@@ -183,7 +183,7 @@
     "signInWithGoogle": "Sign in with Google",
     "verifyEmailDescription": "Please enter the one-time password sent to your email.",
     "termsOfUse": "Terms of Use",
-    "termsOfUseDescription": "By clicking 'Sign in with Google' or 'Continue with email' you agree to our",
+    "termsOfUseDescription": "By clicking 'Sign in with Google' you agree to our",
     "and": "and",
     "privacyPolicy": "Privacy policy",
     "didNotReceiveOTP": "Didn't receive the OTP?",

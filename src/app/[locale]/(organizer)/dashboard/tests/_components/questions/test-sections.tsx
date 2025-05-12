@@ -6,7 +6,6 @@ import {
   ChevronDownIcon,
   Loader2,
   PlusIcon,
-  PointerIcon,
 } from "lucide-react";
 import { useSelectedSection } from "../../_hooks/use-selected-section";
 import { useSearchParams } from "next/navigation";
@@ -15,20 +14,7 @@ import { useEffect, useMemo, useState } from "react";
 import CardSection from "@/components/shared/card/card-section";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Reorder } from "motion/react";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { QuestionTemplateSection } from "./question-template-section";
-import { toast } from "sonner";
 import { trpc } from "@/trpc/trpc.client";
-import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import {
   Popover,
@@ -37,9 +23,10 @@ import {
 } from "@/components/ui/popover";
 import { TooltipMessage } from "@/components/ui/tooltip";
 import DialogDeleteSection from "@/components/shared/dialog/dialog-delete-section";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
+import DialogEditSection from "@/components/shared/dialog/dialog-edit-section";
 
 const TestSections = ({ className }: { className?: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -64,24 +51,19 @@ const TestSections = ({ className }: { className?: string }) => {
   }
 
   if (data?.length === 1) {
-    return (
-      <div className="flex flex-row gap-2 items-center">
-        <AddSession>
-          <Button variant={"outline"}>
-            <PlusIcon /> New section
-          </Button>
-        </AddSession>
-      </div>
-    );
+    return <AddSession />;
   }
 
   return (
     <div className="flex flex-row-reverse md:flex-row gap-2 items-center">
       <DialogDeleteSection
+        testId={testId as Id<"test">}
         isLastSection={data?.length === 1}
         sectionId={selectedSection as string}
       />
-      {/* <DialogEditSection sectionId={selectedSection as string} /> */}
+      {selectedSectionData && (
+        <DialogEditSection testSection={selectedSectionData} />
+      )}
       <AddSession />
 
       <div className={cn("flex flex-row", className)}>
@@ -111,10 +93,14 @@ const TestSections = ({ className }: { className?: string }) => {
                   variant={"outline"}
                   className="rounded-r-none rounded-l-none group"
                 >
-                  <span>
-                    {selectedSectionData?.order || 1}.{" "}
-                    {selectedSectionData?.title || "Untitled"}
-                  </span>
+                  {selectedSectionData?.title ? (
+                    <>
+                      {selectedSectionData.order}. {selectedSectionData.title}
+                    </>
+                  ) : (
+                    `Section ${selectedSectionData?.order}`
+                  )}
+
                   {selectedSectionData?.duration &&
                   selectedSectionData?.duration > 0 ? (
                     <Badge variant={"secondary"}>
@@ -231,143 +217,48 @@ const ListSession = () => {
   );
 };
 
-const AddSession = ({ children }: { children?: React.ReactNode }) => {
+const AddSession = () => {
   const testId = useSearchParams().get("testId") as Id<"test">;
+  const testSections = useQuery(api.organizer.testSection.getByTestId, {
+    testId: testId as Id<"test">,
+  });
+
   const [, setSelectedSection] = useSelectedSection();
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState("");
-  const tCommon = useTranslations("Common");
+  const [isPending, setIsPending] = useState(false);
 
-  const { mutateAsync, isPending: isPendingCreateSection } =
-    trpc.organization.testSection.create.useMutation();
+  const createTestSection = useMutation(api.organizer.testSection.create);
 
-  const { mutateAsync: tranferQuestion, isPending: isPendingTransferQuestion } =
-    trpc.organization.question.transferBetweenReference.useMutation({
-      onError(error) {
-        toast.error(error.message || tCommon("genericUpdateError"));
-      },
-    });
-
-  async function onUseTemplate() {
-    if (!selectedId) return;
-    const createdSection = await mutateAsync({ testId: testId as string });
-    if (!createdSection?.sections?.length) {
-      toast.error("Something went wrong!");
-      return;
-    }
-    const order = 1;
-    const toReferenceId = createdSection?.sections[0]?.id;
-    const fromReferenceId = selectedId;
-
-    const transferredQuestion = await tranferQuestion({
-      order: Number(order),
-      toReferenceId: toReferenceId as string,
-      fromReferenceId,
-    });
-
-    if (transferredQuestion && transferredQuestion.length > 0) {
-      const sectionId = createdSection?.sections[0]?.id;
-      setIsOpen(false);
-      if (sectionId) {
-        setSelectedSection(sectionId);
-      }
-    }
-  }
+  const handleCreateSection = async () => {
+    setIsPending(true);
+    const section = await createTestSection({ testId });
+    setSelectedSection(section);
+    setIsPending(false);
+  };
 
   return (
-    <div className="flex flex-col items-end">
-      <Dialog
-        open={isOpen}
-        onOpenChange={(e) => {
-          if (!e) setSelectedId("");
-          setIsOpen(e);
-        }}
+    <TooltipMessage message="Add another section">
+      <Button
+        variant={
+          testSections?.length && testSections.length > 1 ? "ghost" : "outline"
+        }
+        size={
+          testSections?.length && testSections.length > 1 ? "icon" : "default"
+        }
+        disabled={isPending}
+        onClick={handleCreateSection}
       >
-        <DialogTrigger asChild>
-          <div>
-            <TooltipMessage message="Add new section">
-              {children || (
-                <Button
-                  variant={"ghost"}
-                  size={"icon"}
-                  disabled={
-                    isPendingCreateSection
-                  }
-                >
-                  {isPendingCreateSection ? (
-                    <Loader2 className="animate-spin" />
-                  ) : (
-                    <PlusIcon className="size-4" />
-                  )}
-                </Button>
-              )}
-            </TooltipMessage>
-          </div>
-        </DialogTrigger>
-        <DialogContent className="md:max-w-4xl lg:max-w-5xl xl:max-w-6xl">
-          <DialogHeader>
-            <DialogTitle>Add new section</DialogTitle>
-            <DialogDescription className="flex flex-wrap">
-              Add an empty section or use a question template. Click to
-              selecting the template <PointerIcon className="size-4 ml-2" />
-            </DialogDescription>
-          </DialogHeader>
-          <ScrollArea className="h-[40vh]">
-            <QuestionTemplateSection
-              onSelectedIdChange={setSelectedId}
-              selectedId={selectedId}
-            />
-          </ScrollArea>
-          <DialogFooter>
-            <div className="flex flex-row justify-between w-full">
-              <DialogClose asChild>
-                <Button variant={"secondary"}>Back</Button>
-              </DialogClose>
-
-              <div className="flex gap-2">
-                <Button
-                  variant={"outline"}
-                  className="w-max"
-                  disabled={isPendingCreateSection}
-                  onClick={async () => {
-                    const data = await mutateAsync({ testId: testId as string });
-                    const sectionId = data?.sections[0]?.id;
-                    setIsOpen(false);
-                    if (sectionId) {
-                      setSelectedSection(sectionId);
-                    }
-                  }}
-                >
-                  {isPendingCreateSection ? (
-                    <Loader2 className="animate-spin" />
-                  ) : (
-                    <PlusIcon />
-                  )}
-                  Create Empty Section
-                </Button>
-                <Button
-                  onClick={onUseTemplate}
-                  variant={"default"}
-                  disabled={
-                    !selectedId ||
-                    isPendingTransferQuestion ||
-                    isPendingCreateSection
-                  }
-                >
-                  {selectedId ? (
-                    <>
-                      Use template <ArrowRight />
-                    </>
-                  ) : (
-                    "Choose template"
-                  )}
-                </Button>
-              </div>
-            </div>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+        {isPending ? (
+          <Loader2 className="animate-spin" />
+        ) : (
+          <>
+            <PlusIcon className="size-4"/>
+            {testSections?.length && testSections.length > 1
+              ? null
+              : "Multi-section"}
+          </>
+        )}
+      </Button>
+    </TooltipMessage>
   );
 };
 

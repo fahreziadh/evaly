@@ -16,11 +16,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { trpc } from "@/trpc/trpc.client";
 import Image from "next/image";
 import { useProgressRouter } from "../progress-bar";
 import { Button } from "@/components/ui/button";
 import { LogoType } from "../logo";
+import { useQuery } from "convex/react";
+import { api } from "convex/_generated/api";
 
 export function NavUser() {
   return (
@@ -35,7 +36,7 @@ export function NavUser() {
 
 export const NavUserAccount = () => {
   const { isMobile } = useSidebar();
-  const { data } = trpc.organization.profile.useQuery();
+  const user = useQuery(api.organizer.profile.getProfile)
   const router = useProgressRouter();
 
   return (
@@ -43,10 +44,10 @@ export const NavUserAccount = () => {
       <DropdownMenuTrigger asChild>
         <Button size={"icon"} variant={"ghost"} className="rounded-full">
           <Avatar className="size-5 rounded-full">
-            {data?.user?.image ? (
-              <AvatarImage src={data?.user?.image} alt="User" asChild>
+            {user?.image ? (
+              <AvatarImage src={user?.image} alt="User" asChild>
                 <Image
-                  src={data?.user?.image}
+                  src={user?.image}
                   alt="User"
                   width={60}
                   height={60}
@@ -55,7 +56,7 @@ export const NavUserAccount = () => {
               </AvatarImage>
             ) : (
               <AvatarFallback>
-                {data?.user?.email?.charAt(0).toUpperCase()}
+                {user?.email?.charAt(0).toUpperCase()}
               </AvatarFallback>
             )}
           </Avatar>
@@ -70,10 +71,10 @@ export const NavUserAccount = () => {
       >
         <DropdownMenuLabel className="flex flex-row gap-3">
           <Avatar className="size-8 rounded-full">
-            {data?.user?.image ? (
-              <AvatarImage src={data?.user?.image} alt="User" asChild>
+            {user?.image ? (
+              <AvatarImage src={user?.image} alt="User" asChild>
                 <Image
-                  src={data?.user?.image}
+                  src={user?.image}
                   alt="User"
                   width={32}
                   height={32}
@@ -82,16 +83,16 @@ export const NavUserAccount = () => {
               </AvatarImage>
             ) : (
               <AvatarFallback>
-                {data?.user?.email?.charAt(0).toUpperCase()}
+                {user?.email?.charAt(0).toUpperCase()}
               </AvatarFallback>
             )}
           </Avatar>
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-semibold">
-              {data?.user?.name || "N/A"}
+              {user?.name || "N/A"}
             </span>
             <span className="truncate text-xs">
-              {data?.user?.email || "N/A"}
+              {user?.email || "N/A"}
             </span>
           </div>
         </DropdownMenuLabel>

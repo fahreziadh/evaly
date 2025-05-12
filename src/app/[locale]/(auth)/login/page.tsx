@@ -3,7 +3,7 @@ import { Suspense } from "react";
 
 const LoginPage = () => {
   return (
-    <div className="flex flex-col justify-center items-center h-screen container">
+    <div className="min-h-screen">
       <Suspense>
         <LogIn />
       </Suspense>

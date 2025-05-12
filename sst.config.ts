@@ -35,7 +35,7 @@ export default $config({
         CLOUDFLARE_SECRET_ACCESS_KEY: new sst.Secret(
           "CLOUDFLARE_SECRET_ACCESS_KEY"
         ).value,
-        CLOUDFLARE_CDN_URL: new sst.Secret("CLOUDFLARE_CDN_URL").value,
+        NEXT_PUBLIC_CLOUDFLARE_CDN_URL: new sst.Secret("NEXT_PUBLIC_CLOUDFLARE_CDN_URL").value,
         CLOUDFLARE_BUCKET_NAME: new sst.Secret("CLOUDFLARE_BUCKET_NAME").value,
         EVALY_AWS_ACCESS_KEY_ID: new sst.Secret("EVALY_AWS_ACCESS_KEY_ID")
           .value,

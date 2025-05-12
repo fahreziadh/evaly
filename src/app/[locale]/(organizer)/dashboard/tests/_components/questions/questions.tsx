@@ -59,7 +59,7 @@ const Questions = ({ selectedSection }: { selectedSection: string }) => {
   };
 
   const goToDetailQuestion = (questionId: Id<"question">) => {
-    router.push(`/dashboard/question/detail?questionId=${questionId}`);
+    router.push(`/dashboard/question/detail?questionId=${questionId}&testId=${testId}`);
   };
 
   if (dataQuestions === undefined) {
@@ -84,7 +84,7 @@ const Questions = ({ selectedSection }: { selectedSection: string }) => {
                 data-index={index}
                 dragListener={false}
               >
-                <Link href={`/dashboard/question/detail?questionId=${data._id}`}>
+                <Link href={`/dashboard/question/detail?questionId=${data._id}&testId=${testId}`}>
                   <CardQuestion
                     data={data}
                     className={cn(index === 0 ? "mt-0" : "")}

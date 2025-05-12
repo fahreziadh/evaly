@@ -225,7 +225,7 @@ const AddSession = () => {
             <PlusIcon className="size-4" />
             {testSections?.length && testSections.length > 1
               ? null
-              : "Multi-section"}
+              : "Add Multi-section"}
           </>
         )}
       </Button>

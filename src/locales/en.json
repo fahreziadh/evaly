@@ -388,6 +388,7 @@
     "saveButton": "Save",
     "questionsAddedSuccessfully": "Questions added successfully",
     "publishButton": "Publish",
+    "stopTestButton": "Stop Test",
     "testPublishedSuccessfully": "Test published successfully",
     "publishTestTitle": "Publish Test",
     "saveAndCloseButton": "Save & Close",

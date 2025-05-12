@@ -28,7 +28,6 @@ import {
 import { useEffect, useMemo } from "react";
 import { trpc } from "@/trpc/trpc.client";
 import { useTranslations } from "next-intl";
-import DialogPublishTest from "@/components/shared/dialog/dialog-publish-test";
 import { useTabsState } from "../_hooks/use-tabs-state";
 import { cn } from "@/lib/utils";
 import TestSections from "./questions/test-sections";
@@ -49,6 +48,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { DataModel, Id } from "convex/_generated/dataModel";
 import { useForm } from "react-hook-form";
+import DialogPublishTest from "@/components/shared/dialog/dialog-publish-test";
 const Header = ({ className }: { className?: string }) => {
   const [tabs, setTabs] = useTabsState("questions");
   const testId = useSearchParams().get("testId") as Id<"test">;
@@ -89,67 +89,59 @@ const Header = ({ className }: { className?: string }) => {
         </div>
 
         {/* Right side: Status and actions */}
-        <div className="flex flex-row justify-end w-full gap-2 items-center">
-          <Badge
-            variant={"secondary"}
-            className={testTypeColor(dataTest?.type)}
-            size={"lg"}
-          >
-            {testTypeFormatter(dataTest?.type, t)}
-          </Badge>
-          <div>
-            {status === "published" ? (
-              <Badge variant={"ghost"} size={"lg"}>
-                <CircleIcon className="fill-success-foreground stroke-success-foreground size-3" />
-                {t("activeStatus")}
-              </Badge>
-            ) : null}
+        {!dataTest ? (
+          <Skeleton className="w-24 h-9 rounded-md" />
+        ) : (
+          <div className="flex flex-row justify-end w-full gap-2 items-center">
+            <Badge
+              variant={"secondary"}
+              className={testTypeColor(dataTest?.type)}
+              size={"lg"}
+            >
+              {testTypeFormatter(dataTest?.type, t)}
+            </Badge>
+            <div>
+              {status === "published" ? (
+                <Badge variant={"ghost"} size={"lg"}>
+                  <CircleIcon className="fill-success-foreground stroke-success-foreground size-3" />
+                  {t("activeStatus")}
+                </Badge>
+              ) : null}
 
-            {status === "draft" ? (
-              <Badge variant={"secondary"} size={"lg"}>
-                {t("draftStatus")}
-              </Badge>
-            ) : null}
+              {status === "draft" ? (
+                <Badge variant={"secondary"} size={"lg"}>
+                  {t("draftStatus")}
+                </Badge>
+              ) : null}
 
-            {status === "finished" ? (
-              <Badge variant={"success"} size={"lg"}>
-                <CheckIcon />
-                {t("finishedStatus")}
-              </Badge>
-            ) : null}
-          </div>
-          {/* Loading state */}
-          {dataTest === undefined ? (
-            <Button variant={"default"} disabled>
-              <Loader2 className="animate-spin" />
-              Loading...
-            </Button>
-          ) : // Published state
-          status === "published" ? (
-            <div className="flex flex-row items-center gap-2">
-              <Button variant={"ghost"} size={"icon"} onClick={copyLinkToShare}>
-                <LinkIcon />
-              </Button>
-              {/* <EndTestButton
-                id={id?.toString() || ""}
-              /> */}
+              {status === "finished" ? (
+                <Badge variant={"success"} size={"lg"}>
+                  <CheckIcon />
+                  {t("finishedStatus")}
+                </Badge>
+              ) : null}
             </div>
-          ) : // Finished state
-          status === "finished" ? (
-            dataTest !== null ? (
-              <DialogReopenTest dataTest={dataTest} onReopened={reopenTest} />
-            ) : null
-          ) : // Draft state
-          status === "draft" ? (
+
+            {/* Reopen test if finished */}
+            {status === "finished" ? (
+              dataTest !== null ? (
+                <DialogReopenTest dataTest={dataTest} onReopened={reopenTest} />
+              ) : null
+            ) : null}
+
+            <Button variant={"ghost"} size={"icon"} onClick={copyLinkToShare}>
+              <LinkIcon />
+            </Button>
             <DialogPublishTest
               testId={testId?.toString() || ""}
+              test={dataTest}
               onPublished={() => {
                 // reset(newTest);
                 setTabs("results");
               }}
             />
-          ) : null}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Tabs and Test Sections */}
@@ -305,7 +297,8 @@ const DialogEditTest = ({
   dataTest?: DataModel["test"]["document"] | null;
 }) => {
   const tCommon = useTranslations("Common");
-  const { register, reset, getValues } = useForm<DataModel["test"]["document"]>();
+  const { register, reset, getValues } =
+    useForm<DataModel["test"]["document"]>();
   const updateTest = useMutation(
     api.organizer.test.updateTest
   ).withOptimisticUpdate((localStore, args) => {

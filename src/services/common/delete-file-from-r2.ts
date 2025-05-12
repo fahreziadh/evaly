@@ -1,4 +1,5 @@
 import { env } from "@/lib/env";
+import { env as envClient } from "@/lib/env.client";
 import { client, R2_URL } from "@/lib/r2";
 
 const BUCKET_NAME = env.CLOUDFLARE_BUCKET_NAME;
@@ -7,7 +8,7 @@ export async function deleteFileFromR2(key: string, isWithCdnUrl = true) {
   let objectKey = key;
   if (isWithCdnUrl) {
     // Remove the CDN URL prefix if present
-    const cdnPrefix = `${env.NEXT_PUBLIC_CLOUDFLARE_CDN_URL}/`;
+    const cdnPrefix = `${envClient.NEXT_PUBLIC_CLOUDFLARE_CDN_URL}/`;
     if (key.startsWith(cdnPrefix)) {
       objectKey = key.substring(cdnPrefix.length);
     } else {

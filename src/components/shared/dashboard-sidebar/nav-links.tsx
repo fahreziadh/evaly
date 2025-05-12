@@ -1,16 +1,14 @@
 "use client";
 
 import {
-    SidebarGroup,
-    SidebarGroupContent,
-    SidebarGroupLabel,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { BookOpen, Cog } from "lucide-react";
-import { Home } from "lucide-react";
-import { UserCircle } from "lucide-react";
+import { BookOpen, Cog, Home, UserCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "../progress-bar";

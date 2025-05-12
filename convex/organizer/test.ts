@@ -115,7 +115,7 @@ export const updateTest = mutation({
       showResultImmediately: v.boolean(),
       isPublished: v.boolean(),
       type: v.union(v.literal("live"), v.literal("self-paced")),
-      description: v.string(),
+      description: v.optional(v.string()),
     }),
   },
   handler: async (ctx, args) => {

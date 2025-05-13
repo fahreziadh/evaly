@@ -6,7 +6,7 @@ import { organizer } from "./schemas/organizer";
 import { test } from "./schemas/test";
 import { question } from "./schemas/question";
 import { testSection } from "./schemas/test.section";
-
+import { whistlist } from "./schemas/whistlist";
 export default defineSchema({
   ...authTables,
   users,
@@ -15,4 +15,5 @@ export default defineSchema({
   test,
   testSection,
   question,
+  whistlist,
 });

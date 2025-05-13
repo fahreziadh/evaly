@@ -16,12 +16,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import Image from "next/image";
-import { useProgressRouter } from "../progress-bar";
 import { Button } from "@/components/ui/button";
-import { LogoType } from "../logo";
 import { useQuery } from "convex/react";
-import { api } from "convex/_generated/api";
+import { api } from "@convex/_generated/api";
+import { useNavigate } from "@tanstack/react-router";
+import { LogoType } from "../logo";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 export function NavUser() {
   return (
@@ -36,8 +36,9 @@ export function NavUser() {
 
 export const NavUserAccount = () => {
   const { isMobile } = useSidebar();
-  const user = useQuery(api.organizer.profile.getProfile)
-  const router = useProgressRouter();
+  const user = useQuery(api.organizer.profile.getProfile);
+  const { signOut } = useAuthActions();
+  const navigate = useNavigate();
 
   return (
     <DropdownMenu>
@@ -46,7 +47,7 @@ export const NavUserAccount = () => {
           <Avatar className="size-5 rounded-full">
             {user?.image ? (
               <AvatarImage src={user?.image} alt="User" asChild>
-                <Image
+                <img
                   src={user?.image}
                   alt="User"
                   width={60}
@@ -73,7 +74,7 @@ export const NavUserAccount = () => {
           <Avatar className="size-8 rounded-full">
             {user?.image ? (
               <AvatarImage src={user?.image} alt="User" asChild>
-                <Image
+                <img
                   src={user?.image}
                   alt="User"
                   width={32}
@@ -91,38 +92,30 @@ export const NavUserAccount = () => {
             <span className="truncate font-semibold">
               {user?.name || "N/A"}
             </span>
-            <span className="truncate text-xs">
-              {user?.email || "N/A"}
-            </span>
+            <span className="truncate text-xs">{user?.email || "N/A"}</span>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => router.push("/dashboard/settings?tab=profile")}
-        >
+        <DropdownMenuItem onClick={() => navigate({ to: "/" })}>
           <User className="size-3.5 mr-1" />
           Profile
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => router.push("/dashboard/settings?tab=organization")}
-        >
+        <DropdownMenuItem onClick={() => navigate({ to: "/" })}>
           <Building2 className="size-3.5 mr-1" />
           Organization
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => router.push("/dashboard/settings?tab=general")}
-        >
+        <DropdownMenuItem onClick={() => navigate({ to: "/" })}>
           <Settings className="size-3.5 mr-1" />
           Settings
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push("/")}>
+        <DropdownMenuItem onClick={() => navigate({ to: "/" })}>
           <Home className="size-3.5 mr-1" />
           Home
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
-            router.push("/logout");
+            signOut();
           }}
         >
           <LogOut className="size-3.5 mr-1" />

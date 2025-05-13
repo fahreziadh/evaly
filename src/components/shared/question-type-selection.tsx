@@ -1,10 +1,8 @@
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Label } from "../ui/label";
-import { questionTypes } from "@/constants/question-type";
-import { QuestionType } from "@/types/question";
 import { cn } from "@/lib/utils";
-import { useTranslations } from "next-intl";
+import { questionTypes, type QuestionType } from "@/lib/question-type";
 
 const QuestionTypeSelection = ({
   value,
@@ -19,8 +17,6 @@ const QuestionTypeSelection = ({
   className?: string;
   readonly?: boolean;
 }) => {
-  const tTestDetail = useTranslations("TestDetail");
-  const t = useTranslations("Questions")
 
   // Get the current selected question type or default to "multiple-choice"
   const selectedType = value && questionTypes[value] ? questionTypes[value] : questionTypes["multiple-choice"];
@@ -33,11 +29,11 @@ const QuestionTypeSelection = ({
       <PopoverTrigger asChild>
         <Button disabled={readonly} variant={variant} className={cn("cursor-default disabled:opacity-100", className)}>
           {SelectedIcon && <SelectedIcon size={16} className="mr-1" />}
-          {tTestDetail(selectedType?.value) || tTestDetail("multiple-choice")} 
+          {selectedType?.label} 
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-[240px] p-2">
-        <Label className="px-2 mb-2 block">{t("questionType")}</Label>
+        <Label className="px-2 mb-2 block">Question Type</Label>
           <div className="flex flex-col gap-1">
             {Object.values(questionTypes).map((type) => {
               // Ensure each type has an icon or use a fallback
@@ -56,7 +52,7 @@ const QuestionTypeSelection = ({
                   variant={value === type.value ? "default" : "ghost"}
                 >
                   {TypeIcon && <TypeIcon size={16} />}
-                  {tTestDetail(type.value)}
+                  {type.label}
                 </Button>
               );
             })}

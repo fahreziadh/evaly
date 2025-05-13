@@ -1,7 +1,7 @@
 import { v } from "convex/values";
-import { mutation, query, QueryCtx } from "../_generated/server";
+import { mutation, query, type QueryCtx } from "../_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { Id } from "../_generated/dataModel";
+import { type Id } from "../_generated/dataModel";
 
 export const createTest = mutation({
   args: {
@@ -67,7 +67,7 @@ export const getTests = query({
       .withIndex("by_organization_id", (q) =>
         q.eq("organizationId", organizationId)
       )
-      .filter((q) => q.eq(q.field("deletedAt"), undefined))
+      .filter((q) => q.lte(q.field("deletedAt"), 0))
       .order("desc")
       .collect();
 
@@ -116,6 +116,7 @@ export const updateTest = mutation({
       isPublished: v.boolean(),
       type: v.union(v.literal("live"), v.literal("self-paced")),
       description: v.optional(v.string()),
+      finishedAt: v.optional(v.number()),
     }),
   },
   handler: async (ctx, args) => {
@@ -131,7 +132,78 @@ export const updateTest = mutation({
       isPublished: args.data.isPublished,
       type: args.data.type,
       description: args.data.description,
+      finishedAt: args.data.finishedAt,
     });
+  },
+});
+
+export const duplicateTest = mutation({
+  args: {
+    testId: v.id("test"),
+  },
+  handler: async (ctx, args) => {
+    const { isOwner } = await checkTestOwnership(ctx, args.testId);
+    if (!isOwner) {
+      throw new Error("You are not allowed to duplicate this test");
+    }
+
+    // Duplicate the test
+    const test = await ctx.db.get(args.testId);
+    if (!test) {
+      throw new Error("Test not found");
+    }
+
+    const newTestId = await ctx.db.insert("test", {
+      title: `${test.title} (Copy)`,
+      access: test.access,
+      createdByOrganizerId: test.createdByOrganizerId,
+      organizationId: test.organizationId,
+      isPublished: false,
+      showResultImmediately: test.showResultImmediately,
+      type: test.type,
+      description: test.description,
+    });
+
+    // Duplicate the all test sections
+    const testSections = await ctx.db
+      .query("testSection")
+      .withIndex("by_test_id", (q) => q.eq("testId", args.testId))
+      .filter((q) => q.lte(q.field("deletedAt"), 0))
+      .collect();
+
+    for (const testSection of testSections) {
+      const newTestSectionId = await ctx.db.insert("testSection", {
+        testId: newTestId,
+        order: testSection.order,
+        title: testSection.title,
+        description: testSection.description,
+        duration: testSection.duration,
+      });
+
+      // Duplicate the all test questions
+      const testQuestions = await ctx.db
+        .query("question")
+        .withIndex("by_reference_id", (q) =>
+          q.eq("referenceId", testSection._id)
+        )
+        .filter((q) => q.lte(q.field("deletedAt"), 0))
+        .collect();
+
+      for (const question of testQuestions) {
+        await ctx.db.insert("question", {
+          referenceId: newTestSectionId,
+          allowMultipleAnswers: question.allowMultipleAnswers,
+          order: question.order,
+          organizationId: question.organizationId,
+          pointValue: question.pointValue,
+          question: question.question,
+          type: question.type,
+          options: question.options,
+        });
+      }
+    }
+
+    return newTestId;
   },
 });
 
@@ -141,7 +213,7 @@ export async function checkTestOwnership(ctx: QueryCtx, testId: Id<"test">) {
     return {
       isOwner: false,
       test: null,
-    }
+    };
   }
 
   const user = await ctx.db.get(userId);
@@ -149,7 +221,7 @@ export async function checkTestOwnership(ctx: QueryCtx, testId: Id<"test">) {
     return {
       isOwner: false,
       test: null,
-    }
+    };
   }
 
   // check if the test is available
@@ -158,7 +230,7 @@ export async function checkTestOwnership(ctx: QueryCtx, testId: Id<"test">) {
     return {
       isOwner: false,
       test: null,
-    }
+    };
   }
 
   const organizationId = user.selectedOrganizationId;
@@ -166,7 +238,7 @@ export async function checkTestOwnership(ctx: QueryCtx, testId: Id<"test">) {
     return {
       isOwner: false,
       test: null,
-    }
+    };
   }
 
   // check if the user is the owner of the test
@@ -174,11 +246,11 @@ export async function checkTestOwnership(ctx: QueryCtx, testId: Id<"test">) {
     return {
       isOwner: false,
       test: null,
-    }
+    };
   }
 
   return {
     isOwner: true,
     test,
-  }
+  };
 }

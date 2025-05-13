@@ -1,8 +1,8 @@
 "use client";
 
 import { EqualApproximatelyIcon } from "lucide-react";
-import { Link } from "./progress-bar";
 import { cn } from "@/lib/utils";
+import { Link } from "@tanstack/react-router";
 
 interface Props {
   className?: string;
@@ -11,7 +11,7 @@ interface Props {
 
 export const LogoType = ({ className, href = "/" }: Props) => {
   return (
-    <Link href={href} className={cn("flex items-center gap-2", className)}>
+    <Link to={href} className={cn("flex items-center gap-2", className)}>
       <Logo />
       <span className="font-extrabold font-mono">Evaly</span>
     </Link>

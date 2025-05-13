@@ -1,19 +1,5 @@
-import { TestType } from "@/types/test";
-
 // For backwards compatibility, provide the original non-translated version
-export const testTypeFormatter = (type?: TestType, t?: (key: string) => string) => {
-  if (t) {
-    switch (type) {
-      case "live":
-        return t("liveTestType");
-      case "self-paced":
-        return t("selfPacedTestType");
-      default:
-        return t("unknownTestType");
-    }
-  }
-  
-  // Fallback for when translation function is not provided
+export const testTypeFormatter = (type?: string) => {
   switch (type) {
     case "live":
       return "Live test";
@@ -24,7 +10,7 @@ export const testTypeFormatter = (type?: TestType, t?: (key: string) => string) 
   }
 };
 
-export const testTypeColor = (type?: TestType) => {
+export const testTypeColor = (type?: string) => {
   switch (type) {
     case "live":
       return "bg-emerald-600/10 text-emerald-600 border border-emerald-600/10";

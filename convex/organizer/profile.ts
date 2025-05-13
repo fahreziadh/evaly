@@ -1,6 +1,6 @@
 import { getAuthSessionId, getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "../_generated/server";
-import { Id } from "../_generated/dataModel";
+import { type Id } from "../_generated/dataModel";
 import { v } from "convex/values";
 
 export const isAuthenticated = query({
@@ -71,8 +71,12 @@ export const updateProfile = mutation({
 });
 
 export const createInitialOrganization = mutation({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    fullName: v.string(),
+    organizationName: v.string(),
+    organizationType: v.string(),
+  },
+  handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
       return undefined;
@@ -80,8 +84,8 @@ export const createInitialOrganization = mutation({
 
     // Create organization
     const organization = await ctx.db.insert("organization", {
-      name: "My Organization",
-      type: "other",
+      name: args.organizationName,
+      type: args.organizationType,
     });
 
     // Create organizer
@@ -94,6 +98,7 @@ export const createInitialOrganization = mutation({
 
     // Update user
     await ctx.db.patch(userId, {
+      name: args.fullName,
       selectedOrganizationId: organization,
       selectedOrganizerId: organizer,
     });

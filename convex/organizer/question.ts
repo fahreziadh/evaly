@@ -1,8 +1,8 @@
 import { v } from "convex/values";
-import { mutation, query, QueryCtx } from "../_generated/server";
+import { mutation, query, type QueryCtx } from "../_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { nanoid } from "nanoid";
-import { Id } from "../_generated/dataModel";
+import { type Id } from "../_generated/dataModel";
 
 export const createInitialQuestions = mutation({
   args: {

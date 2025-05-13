@@ -9,7 +9,6 @@ import {
 } from "./editor.image-upload";
 import { EditorToolbar } from "./toolbar";
 import { handleCommandNavigation } from "./extensions/command-navigation";
-import { ImageResizer } from "./extensions/image-resizer";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -41,7 +40,7 @@ export const Editor = ({
     editorProps: {
       attributes: {
         class: cn(
-          "custom-prose focus:outline-none outline-none rounded-b-md border p-4 md:p-6  relative w-full min-h-[140px]  border-t-0 min-w-full",
+          "custom-prose focus:outline-none outline-none rounded-b-md border p-4 md:p-6  relative w-full min-h-[140px]  border-t-0 min-w-full bg-card",
           editorClassName,
           disabled && "animate-pulse opacity-50"
         ),
@@ -53,7 +52,7 @@ export const Editor = ({
       transformPastedHTML: (html) => {
         return removeColorStyleHtml(html);
       },
-      handleKeyDown: (view, event) => handleCommandNavigation(event),
+      handleKeyDown: (_, event) => handleCommandNavigation(event),
       handlePaste: (view, event) => handleImagePaste(view, event, uploadFn),
       handleDrop: (view, event, _slice, moved) =>
         handleImageDrop(view, event, moved, uploadFn),
@@ -83,7 +82,7 @@ export const Editor = ({
         {editor && (
           <EditorToolbar
             editor={editor}
-            className={cn("rounded-t-md", toolbarClassName)}
+            className={cn("rounded-t-md bg-card", toolbarClassName)}
           />
         )}
         <EditorContent
@@ -91,7 +90,7 @@ export const Editor = ({
           className={cn("h-full", editorClassName)}
           placeholder={placeholder}
         />
-        <ImageResizer />
+        {/* <ImageResizer /> */}
       </EditorContext.Provider>
     </div>
   );

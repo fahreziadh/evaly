@@ -11,6 +11,6 @@ export const test = defineTable({
   description: v.optional(v.string()),
   createdByOrganizerId: v.id("organizer"),
   heldAt: v.optional(v.string()),
-  finishedAt: v.optional(v.string()),
+  finishedAt: v.optional(v.number()),
   deletedAt: v.optional(v.number()),
 }).index("by_organization_id", ["organizationId"]);

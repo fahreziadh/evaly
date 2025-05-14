@@ -48,11 +48,11 @@ function RouteComponent() {
       {/* Loading */}
       {data === undefined ? (
         <div className="flex flex-col mt-10 min-h-dvh gap-4">
-          <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full" />
+          <Skeleton className="h-20 w-full bg-card border" />
+          <Skeleton className="h-20 w-full bg-card border" />
+          <Skeleton className="h-20 w-full bg-card border" />
+          <Skeleton className="h-20 w-full bg-card border" />
+          <Skeleton className="h-20 w-full bg-card border" />
         </div>
       ) : null}
     </div>

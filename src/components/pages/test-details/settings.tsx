@@ -44,7 +44,7 @@ const SettingSection = ({
 );
 
 const Setting = () => {
-  const { testId } = useSearch({from: "/app/tests/details"});
+  const { testId } = useSearch({ from: "/app/tests/details" });
   const dataTest = useQuery(api.organizer.test.getTestById, {
     testId: testId as Id<"test">,
   });
@@ -100,14 +100,27 @@ const Setting = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col divide-y divide-dashed mb-10">
-        <SettingSection title={"Type"} description={"Select the type of test you want to create"}>
+      <div className="flex flex-col divide-y divide-dashed mb-10 border p-6 rounded-md">
+        <div className="flex flex-row items-center justify-end gap-4 pb-4">
+          <Button
+            disabled={!isDirty}
+            type="submit"
+            variant={isDirty ? "default" : "outline"}
+          >
+            Save Changes
+          </Button>
+        </div>
+        <SettingSection
+          title={"Type"}
+          description={"Select the type of test you want to create"}
+        >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Card className="w-full p-3 border-foreground cursor-pointer relative">
               <CheckCircle2 size={18} className="absolute top-2 right-2" />
               <h3 className="font-medium mb-2">Self-Paced Test</h3>
               <Label className="font-normal">
-                Self-paced tests allow candidates to take the test at their own pace, without any time constraints.
+                Self-paced tests allow candidates to take the test at their own
+                pace, without any time constraints.
               </Label>
             </Card>
 
@@ -118,7 +131,8 @@ const Setting = () => {
               />
               <h3 className="font-medium mb-2">Live Test</h3>
               <Label className="font-normal">
-                Live tests are timed and candidates must complete the test within a specific time limit.
+                Live tests are timed and candidates must complete the test
+                within a specific time limit.
               </Label>
             </Card>
           </div>
@@ -167,7 +181,9 @@ const Setting = () => {
 
         <SettingSection
           title={"Show Result Immediately"}
-          description={"Select whether the test results should be shown immediately after the test is completed."}
+          description={
+            "Select whether the test results should be shown immediately after the test is completed."
+          }
         >
           <Controller
             name="showResultImmediately"
@@ -223,16 +239,6 @@ const Setting = () => {
           />
         </SettingSection>
       </div>
-
-      <div className="fixed w-full bottom-0 left-0 flex flex-row items-center justify-end gap-4 px-4 sm:px-8 py-3 border-t bg-background z-50">
-          <Button
-            disabled={!isDirty}
-            type="submit"
-            variant={isDirty ? "default" : "outline"}
-          >
-            Save Changes
-          </Button>
-        </div>
     </form>
   );
 };

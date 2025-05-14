@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { Link } from "@tanstack/react-router";
 
-const LoginPage = () => {
+const LoginOrganizerPage = () => {
   return (
     <div className="flex flex-row">
       <div className="flex-1 min-h-screen flex flex-col items-center justify-center container">
@@ -26,8 +26,8 @@ const LoginPage = () => {
             By continuing, you agree to our
             <Link to={"/"} className="underline">
               Terms of Use
-            </Link>
-            and
+            </Link>{" "}
+            and{" "}
             <Link to={"/"} className="underline">
               Privacy Policy
             </Link>
@@ -47,7 +47,7 @@ const LoginPage = () => {
     </div>
   );
 };
-export default LoginPage;
+export default LoginOrganizerPage;
 
 const GoogleIcon = () => {
   return (

@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as AppRouteImport } from './routes/app/route'
+import { Route as participantRouteImport } from './routes/(participant)/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as AppIndexImport } from './routes/app/index'
 import { Route as AppSettingsImport } from './routes/app/settings'
@@ -20,13 +21,19 @@ import { Route as AppTestsIndexImport } from './routes/app/tests/index'
 import { Route as AppQuestionsIndexImport } from './routes/app/questions/index'
 import { Route as AppTestsDetailsImport } from './routes/app/tests/details'
 import { Route as AppQuestionsDetailsImport } from './routes/app/questions/details'
-import { Route as participantSTestIdImport } from './routes/(participant)/s.$testId'
+import { Route as participantSTestIdIndexImport } from './routes/(participant)/s.$testId.index'
+import { Route as participantSTestIdAttemptIdImport } from './routes/(participant)/s.$testId.$attemptId'
 
 // Create/Update Routes
 
 const AppRouteRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const participantRouteRoute = participantRouteImport.update({
+  id: '/(participant)',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -78,11 +85,18 @@ const AppQuestionsDetailsRoute = AppQuestionsDetailsImport.update({
   getParentRoute: () => AppRouteRoute,
 } as any)
 
-const participantSTestIdRoute = participantSTestIdImport.update({
-  id: '/(participant)/s/$testId',
-  path: '/s/$testId',
-  getParentRoute: () => rootRoute,
+const participantSTestIdIndexRoute = participantSTestIdIndexImport.update({
+  id: '/s/$testId/',
+  path: '/s/$testId/',
+  getParentRoute: () => participantRouteRoute,
 } as any)
+
+const participantSTestIdAttemptIdRoute =
+  participantSTestIdAttemptIdImport.update({
+    id: '/s/$testId/$attemptId',
+    path: '/s/$testId/$attemptId',
+    getParentRoute: () => participantRouteRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -93,6 +107,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/(participant)': {
+      id: '/(participant)'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof participantRouteImport
       parentRoute: typeof rootRoute
     }
     '/app': {
@@ -123,13 +144,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexImport
       parentRoute: typeof AppRouteImport
     }
-    '/(participant)/s/$testId': {
-      id: '/(participant)/s/$testId'
-      path: '/s/$testId'
-      fullPath: '/s/$testId'
-      preLoaderRoute: typeof participantSTestIdImport
-      parentRoute: typeof rootRoute
-    }
     '/app/questions/details': {
       id: '/app/questions/details'
       path: '/questions/details'
@@ -158,10 +172,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTestsIndexImport
       parentRoute: typeof AppRouteImport
     }
+    '/(participant)/s/$testId/$attemptId': {
+      id: '/(participant)/s/$testId/$attemptId'
+      path: '/s/$testId/$attemptId'
+      fullPath: '/s/$testId/$attemptId'
+      preLoaderRoute: typeof participantSTestIdAttemptIdImport
+      parentRoute: typeof participantRouteImport
+    }
+    '/(participant)/s/$testId/': {
+      id: '/(participant)/s/$testId/'
+      path: '/s/$testId'
+      fullPath: '/s/$testId'
+      preLoaderRoute: typeof participantSTestIdIndexImport
+      parentRoute: typeof participantRouteImport
+    }
   }
 }
 
 // Create and export the route tree
+
+interface participantRouteRouteChildren {
+  participantSTestIdAttemptIdRoute: typeof participantSTestIdAttemptIdRoute
+  participantSTestIdIndexRoute: typeof participantSTestIdIndexRoute
+}
+
+const participantRouteRouteChildren: participantRouteRouteChildren = {
+  participantSTestIdAttemptIdRoute: participantSTestIdAttemptIdRoute,
+  participantSTestIdIndexRoute: participantSTestIdIndexRoute,
+}
+
+const participantRouteRouteWithChildren =
+  participantRouteRoute._addFileChildren(participantRouteRouteChildren)
 
 interface AppRouteRouteChildren {
   AppParticipantsRoute: typeof AppParticipantsRoute
@@ -188,42 +229,46 @@ const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
 )
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof participantRouteRouteWithChildren
   '/app': typeof AppRouteRouteWithChildren
   '/app/participants': typeof AppParticipantsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/': typeof AppIndexRoute
-  '/s/$testId': typeof participantSTestIdRoute
   '/app/questions/details': typeof AppQuestionsDetailsRoute
   '/app/tests/details': typeof AppTestsDetailsRoute
   '/app/questions': typeof AppQuestionsIndexRoute
   '/app/tests': typeof AppTestsIndexRoute
+  '/s/$testId/$attemptId': typeof participantSTestIdAttemptIdRoute
+  '/s/$testId': typeof participantSTestIdIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof participantRouteRouteWithChildren
   '/app/participants': typeof AppParticipantsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app': typeof AppIndexRoute
-  '/s/$testId': typeof participantSTestIdRoute
   '/app/questions/details': typeof AppQuestionsDetailsRoute
   '/app/tests/details': typeof AppTestsDetailsRoute
   '/app/questions': typeof AppQuestionsIndexRoute
   '/app/tests': typeof AppTestsIndexRoute
+  '/s/$testId/$attemptId': typeof participantSTestIdAttemptIdRoute
+  '/s/$testId': typeof participantSTestIdIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/(participant)': typeof participantRouteRouteWithChildren
   '/app': typeof AppRouteRouteWithChildren
   '/app/participants': typeof AppParticipantsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/': typeof AppIndexRoute
-  '/(participant)/s/$testId': typeof participantSTestIdRoute
   '/app/questions/details': typeof AppQuestionsDetailsRoute
   '/app/tests/details': typeof AppTestsDetailsRoute
   '/app/questions/': typeof AppQuestionsIndexRoute
   '/app/tests/': typeof AppTestsIndexRoute
+  '/(participant)/s/$testId/$attemptId': typeof participantSTestIdAttemptIdRoute
+  '/(participant)/s/$testId/': typeof participantSTestIdIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -234,47 +279,51 @@ export interface FileRouteTypes {
     | '/app/participants'
     | '/app/settings'
     | '/app/'
-    | '/s/$testId'
     | '/app/questions/details'
     | '/app/tests/details'
     | '/app/questions'
     | '/app/tests'
+    | '/s/$testId/$attemptId'
+    | '/s/$testId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/app/participants'
     | '/app/settings'
     | '/app'
-    | '/s/$testId'
     | '/app/questions/details'
     | '/app/tests/details'
     | '/app/questions'
     | '/app/tests'
+    | '/s/$testId/$attemptId'
+    | '/s/$testId'
   id:
     | '__root__'
     | '/'
+    | '/(participant)'
     | '/app'
     | '/app/participants'
     | '/app/settings'
     | '/app/'
-    | '/(participant)/s/$testId'
     | '/app/questions/details'
     | '/app/tests/details'
     | '/app/questions/'
     | '/app/tests/'
+    | '/(participant)/s/$testId/$attemptId'
+    | '/(participant)/s/$testId/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  participantRouteRoute: typeof participantRouteRouteWithChildren
   AppRouteRoute: typeof AppRouteRouteWithChildren
-  participantSTestIdRoute: typeof participantSTestIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  participantRouteRoute: participantRouteRouteWithChildren,
   AppRouteRoute: AppRouteRouteWithChildren,
-  participantSTestIdRoute: participantSTestIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -288,12 +337,19 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/app",
-        "/(participant)/s/$testId"
+        "/(participant)",
+        "/app"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/(participant)": {
+      "filePath": "(participant)/route.tsx",
+      "children": [
+        "/(participant)/s/$testId/$attemptId",
+        "/(participant)/s/$testId/"
+      ]
     },
     "/app": {
       "filePath": "app/route.tsx",
@@ -319,9 +375,6 @@ export const routeTree = rootRoute
       "filePath": "app/index.tsx",
       "parent": "/app"
     },
-    "/(participant)/s/$testId": {
-      "filePath": "(participant)/s.$testId.tsx"
-    },
     "/app/questions/details": {
       "filePath": "app/questions/details.tsx",
       "parent": "/app"
@@ -337,6 +390,14 @@ export const routeTree = rootRoute
     "/app/tests/": {
       "filePath": "app/tests/index.tsx",
       "parent": "/app"
+    },
+    "/(participant)/s/$testId/$attemptId": {
+      "filePath": "(participant)/s.$testId.$attemptId.tsx",
+      "parent": "/(participant)"
+    },
+    "/(participant)/s/$testId/": {
+      "filePath": "(participant)/s.$testId.index.tsx",
+      "parent": "/(participant)"
     }
   }
 }

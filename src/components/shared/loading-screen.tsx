@@ -1,8 +1,11 @@
+import { TextShimmer } from "../ui/text-shimmer";
 
 const LoadingScreen = () => {
   return (
     <div className="flex justify-center items-center h-screen bg-background">
-      <h1 className="text-2xl font-medium animate-pulse">Loading...</h1>
+      <TextShimmer className="text-2xl font-medium">
+        Loading...
+      </TextShimmer>
     </div>
   );
 };

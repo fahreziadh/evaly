@@ -1,4 +1,4 @@
-import LoginPage from "@/components/pages/login";
+import LoginOrganizerPage from "@/components/pages/login-organizer";
 import OrganizerOnboarding from "@/components/pages/organizer-onboarding";
 import DashboardSidebar from "@/components/shared/dashboard-sidebar";
 import DashboardMobileNavbar from "@/components/shared/dashboard-sidebar/dashboard-mobile-navbar";
@@ -36,7 +36,7 @@ function App() {
         <LoadingScreen />
       </AuthLoading>
       <Unauthenticated>
-        <LoginPage />
+        <LoginOrganizerPage />
       </Unauthenticated>
       <Authenticated>
         {user && !user?.selectedOrganizationId ? (

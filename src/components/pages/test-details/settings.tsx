@@ -8,12 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle2, LockIcon } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Textarea } from "@/components/ui/textarea";
 import { TooltipInfo } from "@/components/ui/tooltip";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import type { DataModel, Id } from "@convex/_generated/dataModel";
 import { useSearch } from "@tanstack/react-router";
+import { Editor } from "@/components/shared/editor/editor";
 
 type SettingSectionProps = {
   title: string;
@@ -101,7 +101,8 @@ const Setting = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col divide-y divide-dashed mb-10 border p-6 rounded-md">
-        <div className="flex flex-row items-center justify-end gap-4 pb-4">
+        <div className="flex flex-row items-center justify-between gap-4 pb-4">
+          <h1 className="font-medium">Test Settings</h1>
           <Button
             disabled={!isDirty}
             type="submit"
@@ -229,10 +230,9 @@ const Setting = () => {
             name="description"
             control={control}
             render={({ field }) => (
-              <Textarea
+              <Editor
                 placeholder={"Enter a description for the test"}
                 value={field.value || ""}
-                className="resize-none min-h-[140px] text-base p-4 w-full"
                 onChange={field.onChange}
               />
             )}

@@ -5,6 +5,7 @@ export const getProfile = query({
     args: {},
     handler: async (ctx) => {
       const userId = await getAuthUserId(ctx);
+
       if (!userId) {
         return undefined;
       }

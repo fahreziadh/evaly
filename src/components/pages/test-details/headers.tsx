@@ -21,6 +21,9 @@ import TestSections from "./headers.test-sections";
 import { DialogReopenTest } from "@/components/shared/dialog-reopen-test";
 import { testTypeFormatter } from "@/lib/test-type-formatter";
 import DialogDeleteTest from "@/components/shared/dialog-delete-test";
+import usePresence from "@/hooks/presence/use-presence";
+import NumberFlow from "@number-flow/react";
+import { cn } from "@/lib/utils";
 
 const Headers = () => {
   return (
@@ -33,7 +36,7 @@ const Headers = () => {
 
 const FirstSection = () => {
   const navigate = useNavigate();
-  const { testId } = useSearch({from: "/app/tests/details"});
+  const { testId } = useSearch({ from: "/app/tests/details" });
   const dataTest = useQuery(api.organizer.test.getTestById, {
     testId: testId as Id<"test">,
   });
@@ -150,10 +153,11 @@ const FirstSection = () => {
 };
 
 const SecondSection = () => {
-  const { testId, tabs } = useSearch({from: "/app/tests/details"});
+  const { testId, tabs } = useSearch({ from: "/app/tests/details" });
   const dataTest = useQuery(api.organizer.test.getTestById, {
     testId: testId as Id<"test">,
   });
+  const [data, presence] = usePresence(testId as Id<"test">, "organizer", {});
 
   const status = useMemo(() => {
     if (dataTest?.isPublished && dataTest?.finishedAt) return "finished";
@@ -166,22 +170,36 @@ const SecondSection = () => {
 
   return (
     <div className="flex flex-row gap-2 items-center justify-between">
-      <TabsList>
-        <TabsTrigger
-          value="results"
-          className={status === "draft" ? "hidden" : ""}
-        >
-          Results
-        </TabsTrigger>
-        <TabsTrigger value="questions">Questions</TabsTrigger>
-        <TabsTrigger
-          value="share"
-          className={status === "draft" ? "hidden" : ""}
-        >
-          Share
-        </TabsTrigger>
-        <TabsTrigger value="settings">Settings</TabsTrigger>
-      </TabsList>
+      <div className="flex flex-row gap-4 items-center">
+        <TabsList>
+          <TabsTrigger
+            value="results"
+            className={status === "draft" ? "hidden" : ""}
+          >
+            Results
+          </TabsTrigger>
+          <TabsTrigger value="questions">Questions</TabsTrigger>
+          <TabsTrigger
+            value="share"
+            className={status === "draft" ? "hidden" : ""}
+          >
+            Share
+          </TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
+        </TabsList>
+
+        {status === "active" ? (
+          <Badge variant={"outline"} size={"lg"} className="border-dashed">
+            <div
+              className={cn(
+                "size-2 bg-emerald-500 rounded-full transition-all mr-1.5",
+                presence?.length === 0 ? "bg-foreground/15" : ""
+              )}
+            />
+            <NumberFlow value={presence?.length || 0} suffix=" Online" />
+          </Badge>
+        ) : null}
+      </div>
 
       {tabs === "questions" ? <TestSections /> : null}
     </div>
@@ -190,7 +208,7 @@ const SecondSection = () => {
 
 const DialogEditTest = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { testId } = useSearch({from: "/app/tests/details"});
+  const { testId } = useSearch({ from: "/app/tests/details" });
   const dataTest = useQuery(api.organizer.test.getTestById, {
     testId: testId as Id<"test">,
   });

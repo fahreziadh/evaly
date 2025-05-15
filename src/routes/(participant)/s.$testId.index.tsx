@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import NavbarLobby from "./-components/navbar.lobby";
 import { api } from "@convex/_generated/api";
 import type { DataModel, Id } from "@convex/_generated/dataModel";
@@ -6,21 +6,39 @@ import { convexQuery } from "@convex-dev/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { NotFound } from "@/components/pages/not-found";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircleIcon, CheckIcon, FileText, Inbox } from "lucide-react";
+import {
+  CheckCircleIcon,
+  CheckIcon,
+  FileText,
+  Inbox,
+  LockIcon,
+} from "lucide-react";
 import { testTypeFormatter } from "@/lib/test-type-formatter";
-import { useQuery } from "convex/react";
 import LoadingScreen from "@/components/shared/loading-screen";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useMutation, useQuery } from "convex/react";
+import { useState } from "react";
+import { ConvexError } from "convex/values";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/(participant)/s/$testId/")({
   component: RouteComponent,
   async loader(ctx) {
-    return await ctx.context.queryClient.ensureQueryData(
-      convexQuery(api.participant.test.getById, {
-        id: ctx.params.testId as Id<"test">,
-      })
-    );
+    const [, test] = await Promise.all([
+      ctx.context.queryClient.ensureQueryData(
+        convexQuery(api.participant.testSection.getByTestId, {
+          testId: ctx.params.testId as Id<"test">,
+        })
+      ),
+      ctx.context.queryClient.ensureQueryData(
+        convexQuery(api.participant.test.getById, {
+          id: ctx.params.testId as Id<"test">,
+        })
+      ),
+    ]);
+
+    return test;
   },
   head(ctx) {
     return {
@@ -58,20 +76,26 @@ function RouteComponent() {
 
         <QuickInfo test={test} />
         <TestSections test={test} />
-        <h1 className="mt-8 font-semibold">Description</h1>
-        <div
-          className="whitespace-pre-line mt-2"
-          dangerouslySetInnerHTML={{ __html: test.description || "" }}
-        />
+        {test.description?.replace("<p></p>", "").length ? (
+          <>
+            <h1 className="mt-8 font-semibold">Description</h1>
+            <div
+              className="mt-2 custom-prose"
+              dangerouslySetInnerHTML={{ __html: test.description || "" }}
+            />
+          </>
+        ) : null}
       </div>
     </>
   );
 }
 
 const QuickInfo = ({ test }: { test: DataModel["test"]["document"] }) => {
-  const testSections = useQuery(api.participant.testSection.getByTestId, {
-    testId: test._id,
-  });
+  const { data: testSections } = useSuspenseQuery(
+    convexQuery(api.participant.testSection.getByTestId, {
+      testId: test._id,
+    })
+  );
 
   return (
     <div className="flex flex-row flex-wrap">
@@ -102,12 +126,40 @@ const QuickInfo = ({ test }: { test: DataModel["test"]["document"] }) => {
 };
 
 const TestSections = ({ test }: { test: DataModel["test"]["document"] }) => {
-  const testSections = useQuery(api.participant.testSection.getByTestId, {
-    testId: test._id,
-  });
+  const navigate = useNavigate();
+  const [startTestSectionId, setStartTestSectionId] =
+    useState<Id<"testSection">>();
+  const { data: testSections } = useSuspenseQuery(
+    convexQuery(api.participant.testSection.getByTestId, {
+      testId: test._id,
+    })
+  );
 
-  const attempt = {
-    completedAt: undefined,
+  const testAttempts = useQuery(
+    api.participant.testAttempt.getByTestIdAndParticipantId,
+    {
+      testId: test._id,
+    }
+  );
+
+  const startTestAttempt = useMutation(api.participant.testAttempt.start);
+
+  const handleStartTestAttempt = async (testSectionId: Id<"testSection">) => {
+    setStartTestSectionId(testSectionId);
+    try {
+      const testAttempt = await startTestAttempt({ testSectionId });
+      navigate({
+        to: "/s/$testId/$attemptId",
+        params: {
+          testId: test._id,
+          attemptId: testAttempt._id,
+        },
+      });
+    } catch (error) {
+      toast.error(error instanceof ConvexError ? error.data : "Unknown error");
+    } finally {
+      setStartTestSectionId(undefined);
+    }
   };
 
   if (testSections?.length === 0) {
@@ -122,9 +174,35 @@ const TestSections = ({ test }: { test: DataModel["test"]["document"] }) => {
   }
 
   if (testSections?.length === 1) {
+    const isFinished =
+      testAttempts === undefined ||
+      testAttempts?.find(
+        (attempt) => attempt.testSectionId === testSections[0]._id
+      )?.finishedAt !== undefined;
+
     return (
-      <Button variant={"default"} className="w-max mt-4 px-4" rounded>
-        Start Test
+      <Button
+        disabled={
+          testAttempts === undefined || !!startTestSectionId || isFinished
+        }
+        variant={"default"}
+        className="w-max mt-4 px-4 select-none"
+        onClick={() => handleStartTestAttempt(testSections[0]._id)}
+      >
+        {startTestSectionId ? "Starting..." : null}
+        {testAttempts === undefined ? "Loading..." : null}
+        {testAttempts && isFinished ? (
+          <>
+            <CheckIcon />
+            Finished
+          </>
+        ) : null}
+        {!isFinished && !startTestSectionId && !testAttempts
+          ? "Start Test"
+          : null}
+        {testAttempts && !isFinished && !startTestSectionId
+          ? "Continue Test"
+          : null}
       </Button>
     );
   }
@@ -134,14 +212,17 @@ const TestSections = ({ test }: { test: DataModel["test"]["document"] }) => {
       <h1 className="mt-8 font-semibold">Sections</h1>
       <Card className="mt-3 divide-y">
         {testSections?.map((section) => {
-          // const attempt = getAttemptBySectionId(section.id);
+          const attempt = testAttempts?.find(
+            (attempt) => attempt.testSectionId === section._id
+          );
+          const attemptFinished = attempt?.finishedAt !== undefined;
           return (
             <div
               key={section._id}
               className="px-6 py-3 hover:border-solid flex flex-row items-center hover:bg-secondary transition"
             >
               <div className="flex flex-row items-center gap-2 flex-1">
-                <h1 className="font-medium">
+                <h1 className="font-medium text-sm">
                   {section.order}. {section.title || `Section ${section.order}`}
                 </h1>
                 <Badge variant={"outline"}>
@@ -150,26 +231,30 @@ const TestSections = ({ test }: { test: DataModel["test"]["document"] }) => {
                 </Badge>
               </div>
               <div>
-                {attempt?.completedAt ? (
+                {attemptFinished ? (
                   <Badge variant="success">
-                    <CheckIcon /> Completed
+                    <CheckIcon /> Finished
                   </Badge>
                 ) : test.finishedAt ? (
                   <Badge variant="outline">Test Ended</Badge>
                 ) : (
                   <Button
-                    onClick={() => {
-                      // mutateStartTest({
-                      //   testId: testId as string,
-                      //   testSectionId: section.id,
-                      // });
-                    }}
-                    disabled={!!test.finishedAt}
+                    disabled={
+                      testAttempts === undefined ||
+                      !!test.finishedAt ||
+                      startTestSectionId === section._id
+                    }
                     variant={"outline"}
                     size={"sm"}
-                    className="px-3"
+                    className="px-3 select-none"
+                    onClick={() => handleStartTestAttempt(section._id)}
                   >
-                    Start
+                    {test.finishedAt ? <LockIcon /> : null}
+                    {startTestSectionId === section._id
+                      ? "Starting..."
+                      : attempt
+                        ? "Continue"
+                        : "Start"}
                   </Button>
                 )}
               </div>

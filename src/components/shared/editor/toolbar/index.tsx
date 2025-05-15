@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Editor as TiptapEditor } from "@tiptap/react";
-import { List, ListOrdered, Quote, Code } from "lucide-react";
+import { List, ListOrdered, Quote, Code, BoldIcon, Italic, Underline, Strikethrough } from "lucide-react";
 import InsertLink from "./insert-link";
 import EditorMenuTextStyle from "../editor-menu.text-style";
 
@@ -24,6 +24,7 @@ export const EditorToolbar = ({
       <div className="border-l border-foreground/50 border-dashed h-4 mx-2"></div>
 
       <Button
+        type="button"
         onClick={() => editor.chain().focus().toggleBold().run()}
         size={"icon-sm"}
         disabled={!editor.can().chain().focus().toggleBold().run()}
@@ -31,9 +32,10 @@ export const EditorToolbar = ({
         className="text-base"
         
       >
-        B
+        <BoldIcon />
       </Button>
       <Button
+        type="button"
         onClick={() => editor.chain().focus().toggleItalic().run()}
         size={"icon-sm"}
         disabled={!editor.can().chain().focus().toggleItalic().run()}
@@ -41,10 +43,11 @@ export const EditorToolbar = ({
         
         className="italic font-mono text-base"
       >
-        I
+        <Italic />
       </Button>
 
       <Button
+        type="button"
         onClick={() => editor.chain().focus().toggleUnderline().run()}
         size={"icon-sm"}
         disabled={!editor.can().chain().focus().toggleUnderline().run()}
@@ -52,10 +55,11 @@ export const EditorToolbar = ({
         
         className="font-mono  underline text-base"
       >
-        U
+        <Underline />
       </Button>
 
       <Button
+        type="button"
         onClick={() => editor.chain().focus().toggleStrike().run()}
         size={"icon-sm"}
         disabled={!editor.can().chain().focus().toggleStrike().run()}
@@ -63,10 +67,11 @@ export const EditorToolbar = ({
         
         className="font-mono  line-through text-base"
       >
-        S
+        <Strikethrough />
       </Button>
 
       <Button
+        type="button"
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
         size={"icon-sm"}
         disabled={!editor.can().chain().focus().toggleBlockquote().run()}
@@ -79,6 +84,7 @@ export const EditorToolbar = ({
       <div className="border-l border-foreground/50 border-dashed h-4 mx-2"></div>
 
       <Button
+        type="button"
         size={"icon-sm"}
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         variant={editor.isActive("bulletList") ? "default" : "ghost"}
@@ -87,6 +93,7 @@ export const EditorToolbar = ({
         <List size={16} />
       </Button>
       <Button
+        type="button"
         size={"icon-sm"}
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         variant={editor.isActive("orderedList") ? "default" : "ghost"}
@@ -96,12 +103,13 @@ export const EditorToolbar = ({
       </Button>
 
       <div className="border-l border-foreground/50 border-dashed h-4 mx-2"></div>
-      
+
       <Button
+        type="button"
         size={"icon-sm"}
         onClick={() => editor.chain().focus().toggleCodeBlock().run()}
         variant={editor.isActive("codeBlock") ? "default" : "ghost"}
-        
+
       >
         <Code size={16} />
       </Button>

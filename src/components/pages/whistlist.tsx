@@ -6,6 +6,7 @@ import { useState } from "react";
 import { api } from "@convex/_generated/api";
 import { toast } from "sonner";
 import { GridPattern } from "../magicui/grid-pattern";
+import { GithubIcon } from "lucide-react";
 const Whistlist = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -27,10 +28,16 @@ const Whistlist = () => {
   return (
     <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden px-2">
       <GridPattern strokeDasharray={"4 2"} />
-      <Card className="p-4 z-10 container gap-6 max-w-5xl flex md:flex-row flex-col shadow-2xl shadow-orange-600/15 rounded-xl border-foreground/20">
-        <div className="flex-1 p-6 flex flex-col items-start justify-center">
+      <Card className="p-2 z-10 container gap-6 max-w-5xl flex md:flex-row flex-col rounded-xl border-foreground/25">
+        <div className="flex-1 p-3 md:p-6 flex flex-col items-start justify-center">
+          <a href="https://github.com/fahreziadh/evaly">
+            <Button variant={"outline-solid"} size={"xs"} className="w-max mb-4 px-2" rounded>
+              <GithubIcon /> Star on Github
+            </Button>
+          </a>
           <h1 className="text-3xl text-pretty font-bold">
-            A modern <span className="bg-foreground/10">open-source</span> platform for assessments and quizzes
+            A modern <span className="bg-foreground/10">open-source</span>{" "}
+            platform for assessments and quizzes
           </h1>
           <p className="mt-4">
             Online examination platform that makes creating, distributing, and

@@ -16,11 +16,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { trpc } from "@/trpc/trpc.client";
-import Image from "next/image";
-import { useProgressRouter } from "../progress-bar";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "convex/react";
+import { api } from "@convex/_generated/api";
+import { useNavigate } from "@tanstack/react-router";
 import { LogoType } from "../logo";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 export function NavUser() {
   return (
@@ -35,18 +36,19 @@ export function NavUser() {
 
 export const NavUserAccount = () => {
   const { isMobile } = useSidebar();
-  const { data } = trpc.organization.profile.useQuery();
-  const router = useProgressRouter();
+  const user = useQuery(api.organizer.profile.getProfile);
+  const { signOut } = useAuthActions();
+  const navigate = useNavigate();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button size={"icon"} variant={"ghost"} className="rounded-full">
-          <Avatar className="size-6 rounded-full">
-            {data?.user?.image ? (
-              <AvatarImage src={data?.user?.image} alt="User" asChild>
-                <Image
-                  src={data?.user?.image}
+          <Avatar className="size-5 rounded-full">
+            {user?.image ? (
+              <AvatarImage src={user?.image} alt="User" asChild>
+                <img
+                  src={user?.image}
                   alt="User"
                   width={60}
                   height={60}
@@ -55,7 +57,7 @@ export const NavUserAccount = () => {
               </AvatarImage>
             ) : (
               <AvatarFallback>
-                {data?.user?.email?.charAt(0).toUpperCase()}
+                {user?.email?.charAt(0).toUpperCase()}
               </AvatarFallback>
             )}
           </Avatar>
@@ -70,10 +72,10 @@ export const NavUserAccount = () => {
       >
         <DropdownMenuLabel className="flex flex-row gap-3">
           <Avatar className="size-8 rounded-full">
-            {data?.user?.image ? (
-              <AvatarImage src={data?.user?.image} alt="User" asChild>
-                <Image
-                  src={data?.user?.image}
+            {user?.image ? (
+              <AvatarImage src={user?.image} alt="User" asChild>
+                <img
+                  src={user?.image}
                   alt="User"
                   width={32}
                   height={32}
@@ -82,46 +84,38 @@ export const NavUserAccount = () => {
               </AvatarImage>
             ) : (
               <AvatarFallback>
-                {data?.user?.email?.charAt(0).toUpperCase()}
+                {user?.email?.charAt(0).toUpperCase()}
               </AvatarFallback>
             )}
           </Avatar>
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-semibold">
-              {data?.user?.name || "N/A"}
+              {user?.name || "N/A"}
             </span>
-            <span className="truncate text-xs">
-              {data?.user?.email || "N/A"}
-            </span>
+            <span className="truncate text-xs">{user?.email || "N/A"}</span>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => router.push("/dashboard/settings?tab=profile")}
-        >
+        <DropdownMenuItem onClick={() => navigate({ to: "/" })}>
           <User className="size-3.5 mr-1" />
           Profile
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => router.push("/dashboard/settings?tab=organization")}
-        >
+        <DropdownMenuItem onClick={() => navigate({ to: "/" })}>
           <Building2 className="size-3.5 mr-1" />
           Organization
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => router.push("/dashboard/settings?tab=general")}
-        >
+        <DropdownMenuItem onClick={() => navigate({ to: "/" })}>
           <Settings className="size-3.5 mr-1" />
           Settings
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push("/")}>
+        <DropdownMenuItem onClick={() => navigate({ to: "/" })}>
           <Home className="size-3.5 mr-1" />
           Home
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
-            router.push("/logout");
+            signOut();
           }}
         >
           <LogOut className="size-3.5 mr-1" />

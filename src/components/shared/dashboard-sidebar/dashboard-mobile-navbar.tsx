@@ -4,18 +4,13 @@ import { Button } from "@/components/ui/button";
 import { LogoType } from "../logo";
 import { Menu, XIcon } from "lucide-react";
 import { NavUserAccount } from "./nav-user";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import NavLinks from "./nav-links";
-import { useProgressBar } from "../progress-bar";
+
 const DashboardMobileNavbar = () => {
   const [open, setOpen] = useState(false);
-  const status = useProgressBar();
-  useEffect(() => {
-    if (status.state === "in-progress") {
-      setOpen(false);
-    }
-  }, [status.state]);
+
   return (
     <div className="relative">
       <div className="h-14 bg-background border-b px-4 md:hidden flex flex-row items-center justify-between sticky top-0 z-50">

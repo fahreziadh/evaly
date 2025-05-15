@@ -1,2 +1,0 @@
-CREATE INDEX "test_section_test_id_idx" ON "test_section" USING btree ("test_id");--> statement-breakpoint
-CREATE INDEX "test_attempt_test_section_id_index" ON "test_attempt" USING btree ("test_section_id");

@@ -27,7 +27,7 @@ import { useSearch } from "@tanstack/react-router";
 
 const TestSections = ({ className }: { className?: string }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { selectedSection, tabs, testId } = useSearch({from: "/app/tests/details"});
+  const { selectedSection, tabs, testId } = useSearch({from: "/(organizer)/app/tests/details"});
   const navigate = useNavigate({from: "/app/tests/details"});
 
   const data = useQuery(api.organizer.testSection.getByTestId, {
@@ -162,7 +162,7 @@ const TestSections = ({ className }: { className?: string }) => {
 };
 
 const ListSession = ({ testId }: { testId: Id<"test"> }) => {
-  const { selectedSection, tabs } = useSearch({from: "/app/tests/details"});
+  const { selectedSection, tabs } = useSearch({from: "/(organizer)/app/tests/details"});
   const navigate = useNavigate({from: "/app/tests/details"});
 
   const data = useQuery(api.organizer.testSection.getByTestId, {
@@ -216,7 +216,7 @@ const ListSession = ({ testId }: { testId: Id<"test"> }) => {
 };
 
 const AddSession = ({ testId }: { testId: Id<"test"> }) => {
-  const { tabs } = useSearch({from: "/app/tests/details"});
+  const { tabs } = useSearch({from: "/(organizer)/app/tests/details"});
   const navigate = useNavigate({from: "/app/tests/details"});
   const testSections = useQuery(api.organizer.testSection.getByTestId, {
     testId: testId as Id<"test">,

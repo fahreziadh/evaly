@@ -13,7 +13,7 @@ export type PresenceData<D> = {
   present: boolean;
 };
 
-const HEARTBEAT_PERIOD = 2_000;
+const HEARTBEAT_PERIOD = 4_000;
 
 /**
  * usePresence is a React hook for reading & writing presence data.
@@ -86,7 +86,7 @@ export const usePresence = <T extends { [key: string]: Value }>(
     [testId, participantId, updatePresence]
   );
 
-  return [data, presence, updateData] as const;
+  return {data, presence, updateData} as const;
 };
 
 export default usePresence;

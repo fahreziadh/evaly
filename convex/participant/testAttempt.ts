@@ -73,3 +73,69 @@ export const getByTestIdAndParticipantId = query({
     return testAttempt;
   },
 });
+
+export const getById = query({
+  args: {
+    id: v.id("testAttempt"),
+  },
+  handler: async (ctx, args) => {
+    const testAttempt = await ctx.db.get(args.id);
+    if (!testAttempt) {
+      return null;
+    }
+
+    const questions = await ctx.db
+      .query("question")
+      .withIndex("by_reference_id", (q) =>
+        q.eq("referenceId", testAttempt.testSectionId)
+      )
+      .filter((q) => q.lte(q.field("deletedAt"), 0))
+      .collect();
+
+    // Order questions by order and remove the answer from the question options
+    const orderedQuestions = questions
+      .sort((a, b) => a.order - b.order)
+      .map((question) => {
+        const options = question.options?.map((option) => {
+          return {
+            ...option,
+            isCorrect: false,
+          };
+        });
+        return {
+          ...question,
+          options,
+        };
+      });
+
+    return {
+      ...testAttempt,
+      questions: orderedQuestions,
+    };
+  },
+});
+
+export const finish = mutation({
+  args: {
+    id: v.id("testAttempt"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new ConvexError("Unauthorized");
+    }
+
+    const testAttempt = await ctx.db.get(args.id);
+    if (!testAttempt) {
+      throw new ConvexError("Test attempt not found");
+    }
+
+    if (testAttempt.participantId !== userId) {
+      throw new ConvexError("Unauthorized");
+    }
+
+    return await ctx.db.patch(args.id, {
+      finishedAt: Date.now(),
+    });
+  },
+});

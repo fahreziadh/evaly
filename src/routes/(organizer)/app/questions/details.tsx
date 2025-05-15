@@ -8,7 +8,7 @@ const searchSchema = z.object({
   questionId: z.string().catch(""),
 });
 
-export const Route = createFileRoute("/app/questions/details")({
+export const Route = createFileRoute("/(organizer)/app/questions/details")({
   component: lazyRouteComponent(
     () => import("@/components/pages/question-details")
   ),

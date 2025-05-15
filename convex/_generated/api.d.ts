@@ -18,6 +18,7 @@ import type * as organizer_testSection from "../organizer/testSection.js";
 import type * as participant_profile from "../participant/profile.js";
 import type * as participant_test from "../participant/test.js";
 import type * as participant_testAttempt from "../participant/testAttempt.js";
+import type * as participant_testAttemptAnswer from "../participant/testAttemptAnswer.js";
 import type * as participant_testPresence from "../participant/testPresence.js";
 import type * as participant_testSection from "../participant/testSection.js";
 import type * as schemas_organization from "../schemas/organization.js";
@@ -55,6 +56,7 @@ declare const fullApi: ApiFromModules<{
   "participant/profile": typeof participant_profile;
   "participant/test": typeof participant_test;
   "participant/testAttempt": typeof participant_testAttempt;
+  "participant/testAttemptAnswer": typeof participant_testAttemptAnswer;
   "participant/testPresence": typeof participant_testPresence;
   "participant/testSection": typeof participant_testSection;
   "schemas/organization": typeof schemas_organization;

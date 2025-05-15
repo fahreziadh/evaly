@@ -36,7 +36,7 @@ const Headers = () => {
 
 const FirstSection = () => {
   const navigate = useNavigate();
-  const { testId } = useSearch({ from: "/app/tests/details" });
+  const { testId } = useSearch({ from: "/(organizer)/app/tests/details" });
   const dataTest = useQuery(api.organizer.test.getTestById, {
     testId: testId as Id<"test">,
   });
@@ -153,11 +153,11 @@ const FirstSection = () => {
 };
 
 const SecondSection = () => {
-  const { testId, tabs } = useSearch({ from: "/app/tests/details" });
+  const { testId, tabs } = useSearch({ from: "/(organizer)/app/tests/details" });
   const dataTest = useQuery(api.organizer.test.getTestById, {
     testId: testId as Id<"test">,
   });
-  const [data, presence] = usePresence(testId as Id<"test">, "organizer", {});
+  const {presence} = usePresence(testId as Id<"test">, "organizer", {});
 
   const status = useMemo(() => {
     if (dataTest?.isPublished && dataTest?.finishedAt) return "finished";
@@ -208,7 +208,7 @@ const SecondSection = () => {
 
 const DialogEditTest = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { testId } = useSearch({ from: "/app/tests/details" });
+  const { testId } = useSearch({ from: "/(organizer)/app/tests/details" });
   const dataTest = useQuery(api.organizer.test.getTestById, {
     testId: testId as Id<"test">,
   });

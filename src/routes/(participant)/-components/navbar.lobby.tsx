@@ -8,25 +8,45 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { api } from "@convex/_generated/api";
-import { useQuery } from "convex/react";
+import { useEffect, useState } from "react";
+import UpdateProfile from "./update-profile";
+import type { DataModel, Id } from "@convex/_generated/dataModel";
+import { useParams } from "@tanstack/react-router";
+import usePresence from "@/hooks/presence/use-presence";
 
-const NavbarLobby = () => {
+const NavbarLobby = ({ user }: { user: DataModel["users"]["document"] }) => {
+  const { testId } = useParams({
+    from: "/(participant)/s/$testId/",
+  });
+  const { updateData } = usePresence(testId as Id<"test">, user._id, {});
+
+  useEffect(() => {
+    updateData({
+      data: {
+        testId: testId as Id<"test">,
+        testSectionId: undefined,
+      },
+    });
+  }, [testId]);
+
   return (
     <div className="flex flex-row justify-between h-14 px-4 fixed top-0 w-full">
       <div className="flex flex-row items-center gap-2">
         <LogoType href="/" />
       </div>
       <div className="flex flex-row items-center gap-2">
-        <AccountDropdown />
+        <AccountDropdown user={user} />
       </div>
     </div>
   );
 };
 
-const AccountDropdown = () => {
-  const user = useQuery(api.participant.profile.getProfile);
-
+export const AccountDropdown = ({
+  user,
+}: {
+  user: DataModel["users"]["document"];
+}) => {
+  const [openProfileDialog, setOpenProfileDialog] = useState(false);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="cursor-pointer hover:opacity-75 transition">
@@ -38,9 +58,15 @@ const AccountDropdown = () => {
       <DropdownMenuContent side="bottom" align="end" className="w-56">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Update Profile</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setOpenProfileDialog(true)}>
+          Update Profile
+        </DropdownMenuItem>
         <DropdownMenuItem>Logout</DropdownMenuItem>
       </DropdownMenuContent>
+      <UpdateProfile
+        open={openProfileDialog}
+        onClose={() => setOpenProfileDialog(false)}
+      />
     </DropdownMenu>
   );
 };

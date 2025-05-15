@@ -48,7 +48,7 @@ const MIN_QUESTION_LENGTH = 10;
 const EditQuestion = () => {
   const navigate = useNavigate();
   const { questionId, selectedSectionId, testId } = useSearch({
-    from: "/app/questions/details",
+    from: "/(organizer)/app/questions/details",
   });
   const [questionTextLength, setQuestionTextLength] = useState(0);
   const updateQuestion = useMutation(
@@ -715,7 +715,7 @@ export default EditQuestion;
 
 const Pagination = ({ referenceId }: { referenceId: string }) => {
   const { questionId, selectedSectionId, testId } = useSearch({
-    from: "/app/questions/details",
+    from: "/(organizer)/app/questions/details",
   });
   const navigate = useNavigate();
 

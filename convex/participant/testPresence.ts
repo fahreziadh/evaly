@@ -12,7 +12,7 @@ import { internalMutation, mutation, query } from "../_generated/server";
 import { internal } from "../_generated/api";
 
 const LIST_LIMIT = 200;
-const MARK_AS_GONE_MS = 3_000;
+const MARK_AS_GONE_MS = 6_000;
 
 /**
  * Overwrites the presence data for a given user in a test.
@@ -65,6 +65,12 @@ export const heartbeat = mutation({
         q.eq("participantId", participantId).eq("testId", testId)
       )
       .unique();
+    const existingPresence = await ctx.db
+      .query("testPresence")
+      .withIndex("by_test_id_present_particiapnt", (q) =>
+        q.eq("testId", testId).eq("participantId", participantId)
+      )
+      .unique();
 
     const markAsGone = await ctx.scheduler.runAfter(
       MARK_AS_GONE_MS,
@@ -77,10 +83,14 @@ export const heartbeat = mutation({
       if (watchdog && watchdog.state.kind === "pending") {
         await ctx.scheduler.cancel(watchdog._id);
       }
-
       await ctx.db.patch(existing._id, {
         markAsGone,
       });
+      if (existingPresence?.present === false) {
+        await ctx.db.patch(existingPresence._id, {
+          present: true,
+        });
+      }
     } else {
       await ctx.db.insert("testPresenceHeartbeats", {
         participantId,

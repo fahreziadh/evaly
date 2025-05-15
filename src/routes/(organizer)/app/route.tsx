@@ -13,7 +13,7 @@ import {
   useQuery,
 } from "convex/react";
 
-export const Route = createFileRoute("/app")({
+export const Route = createFileRoute("/(organizer)/app")({
   component: App,
   head: () => ({
     meta: [

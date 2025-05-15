@@ -10,7 +10,7 @@ const searchSchema = z.object({
   selectedSection: z.string().optional(),
 });
 
-export const Route = createFileRoute("/app/tests/details")({
+export const Route = createFileRoute("/(organizer)/app/tests/details")({
   component: TestsDetails,
   validateSearch: (search) => searchSchema.parse(search),
 });

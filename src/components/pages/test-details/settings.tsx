@@ -44,7 +44,7 @@ const SettingSection = ({
 );
 
 const Setting = () => {
-  const { testId } = useSearch({ from: "/app/tests/details" });
+  const { testId } = useSearch({ from: "/(organizer)/app/tests/details" });
   const dataTest = useQuery(api.organizer.test.getTestById, {
     testId: testId as Id<"test">,
   });

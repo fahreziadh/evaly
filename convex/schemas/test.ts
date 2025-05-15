@@ -18,8 +18,6 @@ export const test = defineTable({
 export const testPresence = defineTable({
   testId: v.id("test"),
   participantId: v.string(),
-  currentSectionId: v.optional(v.id("testSection")),
-  currentQuestionId: v.optional(v.id("question")),
   latestJoinedAt: v.number(),
   present: v.boolean(),
   deletedAt: v.optional(v.number()),

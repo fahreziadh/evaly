@@ -6,7 +6,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
 import { FileSpreadsheet } from "lucide-react";
 
-export const Route = createFileRoute("/app/")({
+export const Route = createFileRoute("/(organizer)/app/")({
   component: RouteComponent,
 });
 

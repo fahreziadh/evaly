@@ -9,10 +9,13 @@ import { TextShimmer } from "@/components/ui/text-shimmer";
 import Settings from "./settings";
 import Share from "./share";
 import { useNavigate, useSearch } from "@tanstack/react-router";
+import Results from "./results";
 
 export default function TestsDetails() {
-  const { tabs, testId, selectedSection } = useSearch({from: "/app/tests/details"});
-  const navigate = useNavigate({from: "/app/tests/details"});
+  const { tabs, testId, selectedSection } = useSearch({
+    from: "/(organizer)/app/tests/details",
+  });
+  const navigate = useNavigate({ from: "/app/tests/details" });
   const testSections = useQuery(api.organizer.testSection.getByTestId, {
     testId: testId as Id<"test">,
   });
@@ -57,7 +60,9 @@ export default function TestsDetails() {
           </TextShimmer>
         )}
       </TabsContent>
-      <TabsContent value="results"></TabsContent>
+      <TabsContent value="results">
+        <Results />
+      </TabsContent>
       <TabsContent value="settings">
         <Settings />
       </TabsContent>

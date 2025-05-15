@@ -1,0 +1,27 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Development Workflow
+
+## Running Locally
+
+- `bun dev` or `npm run dev` - Start the development server using Vinxi
+- `bun sst:dev` or `npm run sst:dev` - Start the SST development environment
+
+## Deployment
+
+- `bun sst:staging` or `npm run sst:staging` - Deploy to staging environment
+- `bun sst:main` or `npm run sst:main` - Deploy to production environment
+
+## File Structure Conventions
+
+- New page components should be added to [src/components/pages/](mdc:src/components/pages)
+- Reusable UI components should be added to [src/components/ui/](mdc:src/components/ui)
+- Shared components used across pages should be added to [src/components/shared/](mdc:src/components/shared)
+- Backend logic should be organized in the [convex/](mdc:convex) directory based on user type
+
+## Testing
+
+- `bun test` or `npm run test` - Run tests using Vitest

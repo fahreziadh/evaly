@@ -11,26 +11,20 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as AppRouteImport } from './routes/app/route'
 import { Route as participantRouteImport } from './routes/(participant)/route'
 import { Route as IndexImport } from './routes/index'
-import { Route as AppIndexImport } from './routes/app/index'
-import { Route as AppSettingsImport } from './routes/app/settings'
-import { Route as AppParticipantsImport } from './routes/app/participants'
-import { Route as AppTestsIndexImport } from './routes/app/tests/index'
-import { Route as AppQuestionsIndexImport } from './routes/app/questions/index'
-import { Route as AppTestsDetailsImport } from './routes/app/tests/details'
-import { Route as AppQuestionsDetailsImport } from './routes/app/questions/details'
+import { Route as organizerAppRouteImport } from './routes/(organizer)/app/route'
+import { Route as organizerAppIndexImport } from './routes/(organizer)/app/index'
+import { Route as organizerAppSettingsImport } from './routes/(organizer)/app/settings'
+import { Route as organizerAppParticipantsImport } from './routes/(organizer)/app/participants'
 import { Route as participantSTestIdIndexImport } from './routes/(participant)/s.$testId.index'
+import { Route as organizerAppTestsIndexImport } from './routes/(organizer)/app/tests/index'
+import { Route as organizerAppQuestionsIndexImport } from './routes/(organizer)/app/questions/index'
 import { Route as participantSTestIdAttemptIdImport } from './routes/(participant)/s.$testId.$attemptId'
+import { Route as organizerAppTestsDetailsImport } from './routes/(organizer)/app/tests/details'
+import { Route as organizerAppQuestionsDetailsImport } from './routes/(organizer)/app/questions/details'
 
 // Create/Update Routes
-
-const AppRouteRoute = AppRouteImport.update({
-  id: '/app',
-  path: '/app',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const participantRouteRoute = participantRouteImport.update({
   id: '/(participant)',
@@ -43,46 +37,28 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AppIndexRoute = AppIndexImport.update({
+const organizerAppRouteRoute = organizerAppRouteImport.update({
+  id: '/(organizer)/app',
+  path: '/app',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const organizerAppIndexRoute = organizerAppIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AppRouteRoute,
+  getParentRoute: () => organizerAppRouteRoute,
 } as any)
 
-const AppSettingsRoute = AppSettingsImport.update({
+const organizerAppSettingsRoute = organizerAppSettingsImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => AppRouteRoute,
+  getParentRoute: () => organizerAppRouteRoute,
 } as any)
 
-const AppParticipantsRoute = AppParticipantsImport.update({
+const organizerAppParticipantsRoute = organizerAppParticipantsImport.update({
   id: '/participants',
   path: '/participants',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-
-const AppTestsIndexRoute = AppTestsIndexImport.update({
-  id: '/tests/',
-  path: '/tests/',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-
-const AppQuestionsIndexRoute = AppQuestionsIndexImport.update({
-  id: '/questions/',
-  path: '/questions/',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-
-const AppTestsDetailsRoute = AppTestsDetailsImport.update({
-  id: '/tests/details',
-  path: '/tests/details',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-
-const AppQuestionsDetailsRoute = AppQuestionsDetailsImport.update({
-  id: '/questions/details',
-  path: '/questions/details',
-  getParentRoute: () => AppRouteRoute,
+  getParentRoute: () => organizerAppRouteRoute,
 } as any)
 
 const participantSTestIdIndexRoute = participantSTestIdIndexImport.update({
@@ -91,11 +67,38 @@ const participantSTestIdIndexRoute = participantSTestIdIndexImport.update({
   getParentRoute: () => participantRouteRoute,
 } as any)
 
+const organizerAppTestsIndexRoute = organizerAppTestsIndexImport.update({
+  id: '/tests/',
+  path: '/tests/',
+  getParentRoute: () => organizerAppRouteRoute,
+} as any)
+
+const organizerAppQuestionsIndexRoute = organizerAppQuestionsIndexImport.update(
+  {
+    id: '/questions/',
+    path: '/questions/',
+    getParentRoute: () => organizerAppRouteRoute,
+  } as any,
+)
+
 const participantSTestIdAttemptIdRoute =
   participantSTestIdAttemptIdImport.update({
     id: '/s/$testId/$attemptId',
     path: '/s/$testId/$attemptId',
     getParentRoute: () => participantRouteRoute,
+  } as any)
+
+const organizerAppTestsDetailsRoute = organizerAppTestsDetailsImport.update({
+  id: '/tests/details',
+  path: '/tests/details',
+  getParentRoute: () => organizerAppRouteRoute,
+} as any)
+
+const organizerAppQuestionsDetailsRoute =
+  organizerAppQuestionsDetailsImport.update({
+    id: '/questions/details',
+    path: '/questions/details',
+    getParentRoute: () => organizerAppRouteRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -116,61 +119,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof participantRouteImport
       parentRoute: typeof rootRoute
     }
-    '/app': {
-      id: '/app'
+    '/(organizer)/app': {
+      id: '/(organizer)/app'
       path: '/app'
       fullPath: '/app'
-      preLoaderRoute: typeof AppRouteImport
+      preLoaderRoute: typeof organizerAppRouteImport
       parentRoute: typeof rootRoute
     }
-    '/app/participants': {
-      id: '/app/participants'
+    '/(organizer)/app/participants': {
+      id: '/(organizer)/app/participants'
       path: '/participants'
       fullPath: '/app/participants'
-      preLoaderRoute: typeof AppParticipantsImport
-      parentRoute: typeof AppRouteImport
+      preLoaderRoute: typeof organizerAppParticipantsImport
+      parentRoute: typeof organizerAppRouteImport
     }
-    '/app/settings': {
-      id: '/app/settings'
+    '/(organizer)/app/settings': {
+      id: '/(organizer)/app/settings'
       path: '/settings'
       fullPath: '/app/settings'
-      preLoaderRoute: typeof AppSettingsImport
-      parentRoute: typeof AppRouteImport
+      preLoaderRoute: typeof organizerAppSettingsImport
+      parentRoute: typeof organizerAppRouteImport
     }
-    '/app/': {
-      id: '/app/'
+    '/(organizer)/app/': {
+      id: '/(organizer)/app/'
       path: '/'
       fullPath: '/app/'
-      preLoaderRoute: typeof AppIndexImport
-      parentRoute: typeof AppRouteImport
+      preLoaderRoute: typeof organizerAppIndexImport
+      parentRoute: typeof organizerAppRouteImport
     }
-    '/app/questions/details': {
-      id: '/app/questions/details'
+    '/(organizer)/app/questions/details': {
+      id: '/(organizer)/app/questions/details'
       path: '/questions/details'
       fullPath: '/app/questions/details'
-      preLoaderRoute: typeof AppQuestionsDetailsImport
-      parentRoute: typeof AppRouteImport
+      preLoaderRoute: typeof organizerAppQuestionsDetailsImport
+      parentRoute: typeof organizerAppRouteImport
     }
-    '/app/tests/details': {
-      id: '/app/tests/details'
+    '/(organizer)/app/tests/details': {
+      id: '/(organizer)/app/tests/details'
       path: '/tests/details'
       fullPath: '/app/tests/details'
-      preLoaderRoute: typeof AppTestsDetailsImport
-      parentRoute: typeof AppRouteImport
-    }
-    '/app/questions/': {
-      id: '/app/questions/'
-      path: '/questions'
-      fullPath: '/app/questions'
-      preLoaderRoute: typeof AppQuestionsIndexImport
-      parentRoute: typeof AppRouteImport
-    }
-    '/app/tests/': {
-      id: '/app/tests/'
-      path: '/tests'
-      fullPath: '/app/tests'
-      preLoaderRoute: typeof AppTestsIndexImport
-      parentRoute: typeof AppRouteImport
+      preLoaderRoute: typeof organizerAppTestsDetailsImport
+      parentRoute: typeof organizerAppRouteImport
     }
     '/(participant)/s/$testId/$attemptId': {
       id: '/(participant)/s/$testId/$attemptId'
@@ -178,6 +167,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/s/$testId/$attemptId'
       preLoaderRoute: typeof participantSTestIdAttemptIdImport
       parentRoute: typeof participantRouteImport
+    }
+    '/(organizer)/app/questions/': {
+      id: '/(organizer)/app/questions/'
+      path: '/questions'
+      fullPath: '/app/questions'
+      preLoaderRoute: typeof organizerAppQuestionsIndexImport
+      parentRoute: typeof organizerAppRouteImport
+    }
+    '/(organizer)/app/tests/': {
+      id: '/(organizer)/app/tests/'
+      path: '/tests'
+      fullPath: '/app/tests'
+      preLoaderRoute: typeof organizerAppTestsIndexImport
+      parentRoute: typeof organizerAppRouteImport
     }
     '/(participant)/s/$testId/': {
       id: '/(participant)/s/$testId/'
@@ -204,54 +207,53 @@ const participantRouteRouteChildren: participantRouteRouteChildren = {
 const participantRouteRouteWithChildren =
   participantRouteRoute._addFileChildren(participantRouteRouteChildren)
 
-interface AppRouteRouteChildren {
-  AppParticipantsRoute: typeof AppParticipantsRoute
-  AppSettingsRoute: typeof AppSettingsRoute
-  AppIndexRoute: typeof AppIndexRoute
-  AppQuestionsDetailsRoute: typeof AppQuestionsDetailsRoute
-  AppTestsDetailsRoute: typeof AppTestsDetailsRoute
-  AppQuestionsIndexRoute: typeof AppQuestionsIndexRoute
-  AppTestsIndexRoute: typeof AppTestsIndexRoute
+interface organizerAppRouteRouteChildren {
+  organizerAppParticipantsRoute: typeof organizerAppParticipantsRoute
+  organizerAppSettingsRoute: typeof organizerAppSettingsRoute
+  organizerAppIndexRoute: typeof organizerAppIndexRoute
+  organizerAppQuestionsDetailsRoute: typeof organizerAppQuestionsDetailsRoute
+  organizerAppTestsDetailsRoute: typeof organizerAppTestsDetailsRoute
+  organizerAppQuestionsIndexRoute: typeof organizerAppQuestionsIndexRoute
+  organizerAppTestsIndexRoute: typeof organizerAppTestsIndexRoute
 }
 
-const AppRouteRouteChildren: AppRouteRouteChildren = {
-  AppParticipantsRoute: AppParticipantsRoute,
-  AppSettingsRoute: AppSettingsRoute,
-  AppIndexRoute: AppIndexRoute,
-  AppQuestionsDetailsRoute: AppQuestionsDetailsRoute,
-  AppTestsDetailsRoute: AppTestsDetailsRoute,
-  AppQuestionsIndexRoute: AppQuestionsIndexRoute,
-  AppTestsIndexRoute: AppTestsIndexRoute,
+const organizerAppRouteRouteChildren: organizerAppRouteRouteChildren = {
+  organizerAppParticipantsRoute: organizerAppParticipantsRoute,
+  organizerAppSettingsRoute: organizerAppSettingsRoute,
+  organizerAppIndexRoute: organizerAppIndexRoute,
+  organizerAppQuestionsDetailsRoute: organizerAppQuestionsDetailsRoute,
+  organizerAppTestsDetailsRoute: organizerAppTestsDetailsRoute,
+  organizerAppQuestionsIndexRoute: organizerAppQuestionsIndexRoute,
+  organizerAppTestsIndexRoute: organizerAppTestsIndexRoute,
 }
 
-const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
-  AppRouteRouteChildren,
-)
+const organizerAppRouteRouteWithChildren =
+  organizerAppRouteRoute._addFileChildren(organizerAppRouteRouteChildren)
 
 export interface FileRoutesByFullPath {
   '/': typeof participantRouteRouteWithChildren
-  '/app': typeof AppRouteRouteWithChildren
-  '/app/participants': typeof AppParticipantsRoute
-  '/app/settings': typeof AppSettingsRoute
-  '/app/': typeof AppIndexRoute
-  '/app/questions/details': typeof AppQuestionsDetailsRoute
-  '/app/tests/details': typeof AppTestsDetailsRoute
-  '/app/questions': typeof AppQuestionsIndexRoute
-  '/app/tests': typeof AppTestsIndexRoute
+  '/app': typeof organizerAppRouteRouteWithChildren
+  '/app/participants': typeof organizerAppParticipantsRoute
+  '/app/settings': typeof organizerAppSettingsRoute
+  '/app/': typeof organizerAppIndexRoute
+  '/app/questions/details': typeof organizerAppQuestionsDetailsRoute
+  '/app/tests/details': typeof organizerAppTestsDetailsRoute
   '/s/$testId/$attemptId': typeof participantSTestIdAttemptIdRoute
+  '/app/questions': typeof organizerAppQuestionsIndexRoute
+  '/app/tests': typeof organizerAppTestsIndexRoute
   '/s/$testId': typeof participantSTestIdIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof participantRouteRouteWithChildren
-  '/app/participants': typeof AppParticipantsRoute
-  '/app/settings': typeof AppSettingsRoute
-  '/app': typeof AppIndexRoute
-  '/app/questions/details': typeof AppQuestionsDetailsRoute
-  '/app/tests/details': typeof AppTestsDetailsRoute
-  '/app/questions': typeof AppQuestionsIndexRoute
-  '/app/tests': typeof AppTestsIndexRoute
+  '/app/participants': typeof organizerAppParticipantsRoute
+  '/app/settings': typeof organizerAppSettingsRoute
+  '/app': typeof organizerAppIndexRoute
+  '/app/questions/details': typeof organizerAppQuestionsDetailsRoute
+  '/app/tests/details': typeof organizerAppTestsDetailsRoute
   '/s/$testId/$attemptId': typeof participantSTestIdAttemptIdRoute
+  '/app/questions': typeof organizerAppQuestionsIndexRoute
+  '/app/tests': typeof organizerAppTestsIndexRoute
   '/s/$testId': typeof participantSTestIdIndexRoute
 }
 
@@ -259,15 +261,15 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/(participant)': typeof participantRouteRouteWithChildren
-  '/app': typeof AppRouteRouteWithChildren
-  '/app/participants': typeof AppParticipantsRoute
-  '/app/settings': typeof AppSettingsRoute
-  '/app/': typeof AppIndexRoute
-  '/app/questions/details': typeof AppQuestionsDetailsRoute
-  '/app/tests/details': typeof AppTestsDetailsRoute
-  '/app/questions/': typeof AppQuestionsIndexRoute
-  '/app/tests/': typeof AppTestsIndexRoute
+  '/(organizer)/app': typeof organizerAppRouteRouteWithChildren
+  '/(organizer)/app/participants': typeof organizerAppParticipantsRoute
+  '/(organizer)/app/settings': typeof organizerAppSettingsRoute
+  '/(organizer)/app/': typeof organizerAppIndexRoute
+  '/(organizer)/app/questions/details': typeof organizerAppQuestionsDetailsRoute
+  '/(organizer)/app/tests/details': typeof organizerAppTestsDetailsRoute
   '/(participant)/s/$testId/$attemptId': typeof participantSTestIdAttemptIdRoute
+  '/(organizer)/app/questions/': typeof organizerAppQuestionsIndexRoute
+  '/(organizer)/app/tests/': typeof organizerAppTestsIndexRoute
   '/(participant)/s/$testId/': typeof participantSTestIdIndexRoute
 }
 
@@ -281,9 +283,9 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/questions/details'
     | '/app/tests/details'
+    | '/s/$testId/$attemptId'
     | '/app/questions'
     | '/app/tests'
-    | '/s/$testId/$attemptId'
     | '/s/$testId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -293,23 +295,23 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/questions/details'
     | '/app/tests/details'
+    | '/s/$testId/$attemptId'
     | '/app/questions'
     | '/app/tests'
-    | '/s/$testId/$attemptId'
     | '/s/$testId'
   id:
     | '__root__'
     | '/'
     | '/(participant)'
-    | '/app'
-    | '/app/participants'
-    | '/app/settings'
-    | '/app/'
-    | '/app/questions/details'
-    | '/app/tests/details'
-    | '/app/questions/'
-    | '/app/tests/'
+    | '/(organizer)/app'
+    | '/(organizer)/app/participants'
+    | '/(organizer)/app/settings'
+    | '/(organizer)/app/'
+    | '/(organizer)/app/questions/details'
+    | '/(organizer)/app/tests/details'
     | '/(participant)/s/$testId/$attemptId'
+    | '/(organizer)/app/questions/'
+    | '/(organizer)/app/tests/'
     | '/(participant)/s/$testId/'
   fileRoutesById: FileRoutesById
 }
@@ -317,13 +319,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   participantRouteRoute: typeof participantRouteRouteWithChildren
-  AppRouteRoute: typeof AppRouteRouteWithChildren
+  organizerAppRouteRoute: typeof organizerAppRouteRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   participantRouteRoute: participantRouteRouteWithChildren,
-  AppRouteRoute: AppRouteRouteWithChildren,
+  organizerAppRouteRoute: organizerAppRouteRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -338,7 +340,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/(participant)",
-        "/app"
+        "/(organizer)/app"
       ]
     },
     "/": {
@@ -351,49 +353,49 @@ export const routeTree = rootRoute
         "/(participant)/s/$testId/"
       ]
     },
-    "/app": {
-      "filePath": "app/route.tsx",
+    "/(organizer)/app": {
+      "filePath": "(organizer)/app/route.tsx",
       "children": [
-        "/app/participants",
-        "/app/settings",
-        "/app/",
-        "/app/questions/details",
-        "/app/tests/details",
-        "/app/questions/",
-        "/app/tests/"
+        "/(organizer)/app/participants",
+        "/(organizer)/app/settings",
+        "/(organizer)/app/",
+        "/(organizer)/app/questions/details",
+        "/(organizer)/app/tests/details",
+        "/(organizer)/app/questions/",
+        "/(organizer)/app/tests/"
       ]
     },
-    "/app/participants": {
-      "filePath": "app/participants.tsx",
-      "parent": "/app"
+    "/(organizer)/app/participants": {
+      "filePath": "(organizer)/app/participants.tsx",
+      "parent": "/(organizer)/app"
     },
-    "/app/settings": {
-      "filePath": "app/settings.tsx",
-      "parent": "/app"
+    "/(organizer)/app/settings": {
+      "filePath": "(organizer)/app/settings.tsx",
+      "parent": "/(organizer)/app"
     },
-    "/app/": {
-      "filePath": "app/index.tsx",
-      "parent": "/app"
+    "/(organizer)/app/": {
+      "filePath": "(organizer)/app/index.tsx",
+      "parent": "/(organizer)/app"
     },
-    "/app/questions/details": {
-      "filePath": "app/questions/details.tsx",
-      "parent": "/app"
+    "/(organizer)/app/questions/details": {
+      "filePath": "(organizer)/app/questions/details.tsx",
+      "parent": "/(organizer)/app"
     },
-    "/app/tests/details": {
-      "filePath": "app/tests/details.tsx",
-      "parent": "/app"
-    },
-    "/app/questions/": {
-      "filePath": "app/questions/index.tsx",
-      "parent": "/app"
-    },
-    "/app/tests/": {
-      "filePath": "app/tests/index.tsx",
-      "parent": "/app"
+    "/(organizer)/app/tests/details": {
+      "filePath": "(organizer)/app/tests/details.tsx",
+      "parent": "/(organizer)/app"
     },
     "/(participant)/s/$testId/$attemptId": {
       "filePath": "(participant)/s.$testId.$attemptId.tsx",
       "parent": "/(participant)"
+    },
+    "/(organizer)/app/questions/": {
+      "filePath": "(organizer)/app/questions/index.tsx",
+      "parent": "/(organizer)/app"
+    },
+    "/(organizer)/app/tests/": {
+      "filePath": "(organizer)/app/tests/index.tsx",
+      "parent": "/(organizer)/app"
     },
     "/(participant)/s/$testId/": {
       "filePath": "(participant)/s.$testId.index.tsx",

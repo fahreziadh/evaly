@@ -9,9 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import {
   CheckCircleIcon,
   CheckIcon,
-  FileText,
-  Inbox,
-  LockIcon,
+  FileSearch,
+  FileText, LockIcon
 } from "lucide-react";
 import { testTypeFormatter } from "@/lib/test-type-formatter";
 import LoadingScreen from "@/components/shared/loading-screen";
@@ -44,7 +43,7 @@ export const Route = createFileRoute("/(participant)/s/$testId/")({
     return {
       meta: [
         {
-          title: ctx.loaderData?.title + " - Evaly",
+          title: ctx.loaderData?.title || "Untitled Test" + " - Evaly",
           description: ctx.loaderData?.description,
         },
       ],
@@ -53,6 +52,7 @@ export const Route = createFileRoute("/(participant)/s/$testId/")({
 });
 
 function RouteComponent() {
+  const user = useQuery(api.participant.profile.getProfile)
   const { testId } = Route.useParams();
   const { data: test } = useSuspenseQuery(
     convexQuery(api.participant.test.getById, {
@@ -60,19 +60,19 @@ function RouteComponent() {
     })
   );
 
-  if (test === undefined) {
+  if (test === undefined || user === undefined) {
     return <LoadingScreen />;
   }
 
-  if (test === null) {
+  if (test === null || user === null) {
     return <NotFound />;
   }
 
   return (
     <>
-      <NavbarLobby />
+      <NavbarLobby user={user} />
       <div className="pb-20 mt-[5vh] md:mt-[10vh] container max-w-2xl">
-        <h1 className="text-xl font-semibold mb-4">{test.title}</h1>
+        <h1 className="text-xl font-semibold mb-4">{test.title || "Untitled Test"}</h1>
 
         <QuickInfo test={test} />
         <TestSections test={test} />
@@ -107,9 +107,9 @@ const QuickInfo = ({ test }: { test: DataModel["test"]["document"] }) => {
           </Badge>
         ) : null}
         <Badge variant={"secondary"}>{testTypeFormatter(test.type)}</Badge>
-        {testSections && testSections?.length === 1 ? (
+        {testSections && testSections?.length > 1 ? (
           <Badge variant={"secondary"}>
-            <Inbox className="h-4 w-4 text-muted-foreground" />
+            <FileSearch className="h-4 w-4 text-muted-foreground" />
             <span>{testSections.length} Sections</span>
           </Badge>
         ) : null}

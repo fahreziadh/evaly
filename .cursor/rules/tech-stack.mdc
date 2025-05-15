@@ -1,0 +1,17 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Tech Stack
+
+Evaly is built with the following technologies:
+
+- **Frontend Framework**: React 19 with TypeScript
+- **Routing**: TanStack Router ([@tanstack/react-router](mdc:package.json))
+- **UI Components**: Mix of custom components and Radix UI primitives
+- **Styling**: Tailwind CSS
+- **State Management**: TanStack Query (React Query)
+- **Backend**: Convex for backend logic and data storage
+- **Authentication**: Convex Auth
+- **Deployment**: SST (Serverless Stack) for AWS infrastructure

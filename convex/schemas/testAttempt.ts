@@ -26,5 +26,5 @@ export const testAttemptAnswer = defineTable({
   isCorrect: v.optional(v.boolean()),
   deletedAt: v.optional(v.number()),
 })
-  .index("by_test_attempt_id", ["testAttemptId"])
-  .index("by_question_id", ["questionId"]);
+  .index("by_attempt_and_question", ["testAttemptId", "questionId"])
+  .index("by_attempt", ["testAttemptId"]);

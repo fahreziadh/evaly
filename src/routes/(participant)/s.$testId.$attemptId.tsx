@@ -36,11 +36,11 @@ function RouteComponent() {
   }
 
   return (
-    <>
+    <div className="pb-10">
       <NavbarAttempt user={user} />
       <ListQuestions />
       <FinishTestButton />
-    </>
+    </div>
   );
 }
 

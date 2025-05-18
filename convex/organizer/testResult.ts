@@ -19,6 +19,12 @@ export const getProgress = query({
       return null;
     }
 
+    const testSections = await ctx.db
+      .query("testSection")
+      .withIndex("by_test_id", (q) => q.eq("testId", args.testId))
+      .filter((q) => q.lte(q.field("deletedAt"), 0))
+      .collect();
+
     // Show the the list of participants
     // Each participants generate the answers it should be as Map<questionId, testAttemptAnswer>
     const testAttempt = await ctx.db
@@ -50,18 +56,25 @@ export const getProgress = query({
 
     const participantsWithAttemptsAndAnswer = await Promise.all(
       sortedParticipants.map(async (e) => {
-        const attempts: {
+        const results: {
           [testSectionId: Id<"testSection">]: {
             [
               questionId: Id<"question">
             ]: DataModel["testAttemptAnswer"]["document"];
           };
         } = {};
+        let completedAttempt = 0;
+        let totalFinishedInSecond = 0;
 
         await Promise.all(
           testAttempt
             .filter(({ participantId }) => participantId === e._id)
             .map(async (e) => {
+              if (e.finishedAt) {
+                completedAttempt++;
+                totalFinishedInSecond += (e.finishedAt - e.startedAt) / 1000;
+              }
+
               const answers: {
                 [
                   questionId: Id<"question">
@@ -79,13 +92,15 @@ export const getProgress = query({
                   }
                 });
 
-              attempts[e.testSectionId] = answers;
+              results[e.testSectionId] = answers;
             })
         );
 
         return {
           participant: e,
-          attempts: attempts,
+          results,
+          isFinished: completedAttempt === testSections.length,
+          totalFinishedInSecond
         };
       })
     );

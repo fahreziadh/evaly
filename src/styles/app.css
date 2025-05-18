@@ -163,7 +163,7 @@ code {
 
 @utility container {
   @apply mx-auto px-4;
-  @apply 2xl:max-w-[1200px] max-w-[1000px];
+  @apply 2xl:max-w-[1200px] max-w-[1100px];
 }
 
 a {

@@ -6,21 +6,21 @@ import type { Id } from "@convex/_generated/dataModel";
 import { useSearch } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
 import {
-    CircleUserRoundIcon,
-    ClockIcon,
-    FileInput,
-    FolderCheckIcon,
-    Loader2,
-    SearchIcon,
-    Square,
+  CircleUserRoundIcon,
+  ClockIcon,
+  FileInput,
+  FolderCheckIcon,
+  Loader2,
+  SearchIcon,
+  Square,
 } from "lucide-react";
-import React, { useRef } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import NumberFlow from "@number-flow/react";
+import NumberFlow, { NumberFlowGroup } from "@number-flow/react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useDebounce } from "@uidotdev/usehooks";
 
 const Results = () => {
   return (
@@ -28,19 +28,6 @@ const Results = () => {
       <SectionStats className="col-span-6" />
       <SectionProgress className="col-span-4" />
       <SectionLeaderBoards className="col-span-2" />
-      <Tabs className="mt-4">
-        <TabsList>
-          <TabsTrigger value="submissions">Submissions</TabsTrigger>
-          <TabsTrigger value="report">Report</TabsTrigger>
-          <TabsTrigger value="Analysis">Analysis</TabsTrigger>
-        </TabsList>
-        <TabsContent value="submissions">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur quis
-          accusamus eius nisi fugiat sapiente vero ipsam, officiis labore omnis
-          consequatur, odit dignissimos a harum exercitationem velit at iusto
-          quaerat?
-        </TabsContent>
-      </Tabs>
     </div>
   );
 };
@@ -54,9 +41,39 @@ const SectionStats = ({ className }: { className?: string }) => {
     testId: testId as Id<"test">,
   });
 
-  const testSections = useQuery(api.organizer.testSection.getByTestId, {
+  const progress = useQuery(api.organizer.testResult.getProgress, {
     testId: testId as Id<"test">,
   });
+
+  const { totalSubmissions, averageFinished, completitionRate } = useMemo(() => {
+    if (!progress)
+      return {
+        totalSubmissions: 0,
+        averageFinished: { h: 0, m: 0, s: 0 },
+        completitionRate: 0,
+      };
+    //Total Submissions
+    const totalSubmissions = progress.filter(
+      (e) => e.isFinished === true
+    ).length;
+
+    // AverageTime
+    const totalTime = progress.reduce(
+      (acc, curr) => acc + curr.totalFinishedInSecond,
+      0
+    );
+    const averageTotalTime = totalTime / progress.length;
+
+    const h = Math.floor(averageTotalTime / 3600) || 0
+    const m = Math.floor((averageTotalTime % 3600) / 60) || 0
+    const s = Math.floor(averageTotalTime % 60) || 0 
+    const averageFinished = {h,m,s}
+
+    // Completition Rate
+    const completitionRate =  Math.floor((totalSubmissions / progress.length) * 100) || 0
+
+    return { totalSubmissions, averageFinished ,completitionRate };
+  }, [progress]);
 
   return (
     <div className={cn("grid grid-cols-4 gap-3", className)}>
@@ -73,14 +90,47 @@ const SectionStats = ({ className }: { className?: string }) => {
       <Card className="p-4 flex flex-row justify-between">
         <div>
           <h1 className="font-medium text-sm">Submission</h1>
-          <NumberFlow value={0} className="text-3xl font-bold" />
+          <NumberFlow value={totalSubmissions} className="text-3xl font-bold" />
         </div>
         <FileInput className="size-5 stroke-blue-500" />
       </Card>
       <Card className="p-4 flex flex-row justify-between">
         <div>
           <h1 className="font-medium text-sm">Average Time</h1>
-          <NumberFlow value={0} className="text-3xl font-bold " />
+          <NumberFlowGroup>
+            <div
+              style={{
+                fontVariantNumeric: "tabular-nums",
+              }}
+              className="text-3xl font-bold flex item-baseline gap-2"
+            >
+              {averageFinished.h > 0 ? (
+                <NumberFlow
+                  trend={-1}
+                  value={averageFinished.h}
+                  format={{ minimumIntegerDigits: 2 }}
+                  suffix="h"
+                />
+              ) : null}
+
+              <NumberFlow
+                trend={-1}
+                value={averageFinished.m}
+                digits={{ 1: { max: 5 } }}
+                suffix="m"
+                format={{ minimumIntegerDigits: 2 }}
+              />
+              {averageFinished.m === 0 ? (
+                <NumberFlow
+                  trend={-1}
+                  value={averageFinished.s}
+                  digits={{ 1: { max: 5 } }}
+                  suffix="s"
+                  format={{ minimumIntegerDigits: 2 }}
+                />
+              ) : null}
+            </div>
+          </NumberFlowGroup>
         </div>
         <ClockIcon className="size-5 stroke-emerald-500" />
       </Card>
@@ -88,8 +138,8 @@ const SectionStats = ({ className }: { className?: string }) => {
         <div className="flex-1">
           <h1 className="font-medium text-sm">Completetion Rate</h1>
           <div className="flex flex-row items-center gap-4">
-            <NumberFlow value={100} className="text-3xl font-bold" suffix="%" />
-            <Progress value={100} className="mt-2 flex-1" />
+            <NumberFlow value={completitionRate} className="text-3xl font-bold" suffix="%" />
+            <Progress value={completitionRate} className="mt-2 flex-1" />
           </div>
         </div>
         <FolderCheckIcon className="size-5 stroke-indigo-500" />
@@ -99,6 +149,9 @@ const SectionStats = ({ className }: { className?: string }) => {
 };
 
 const SectionProgress = ({ className }: { className?: string }) => {
+  const [searchInput, setSearchInput] = useState("");
+  const searchInputDebounce = useDebounce(searchInput, 300);
+
   const { testId } = useSearch({
     from: "/(organizer)/app/tests/details",
   });
@@ -113,9 +166,23 @@ const SectionProgress = ({ className }: { className?: string }) => {
 
   const parentRef = useRef(null);
 
+  const progressFiltered = useMemo(() => {
+    const filtered =
+      progress && Array.isArray(progress)
+        ? progress.filter((item) => {
+            if (!searchInputDebounce) return true;
+            const name = item.participant?.name || "";
+            return name
+              .toLowerCase()
+              .includes(searchInputDebounce.toLowerCase());
+          })
+        : [];
+    return filtered;
+  }, [progress, searchInputDebounce]);
+
   // The virtualizer
   const rowVirtualizer = useVirtualizer({
-    count: progress?.length ?? 0,
+    count: progressFiltered.length ?? 0,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 28,
     overscan: 20,
@@ -143,7 +210,12 @@ const SectionProgress = ({ className }: { className?: string }) => {
         </div>
         <div className="w-[200px] relative flex flex-row items-center">
           <SearchIcon className="absolute left-2 size-3.5 text-muted-foreground" />
-          <Input placeholder="Find someone" className="pl-7" />
+          <Input
+            placeholder="Find someone"
+            className="pl-7 w-md"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
         </div>
       </CardHeader>
       {progress === undefined || testSections === undefined ? (
@@ -177,7 +249,7 @@ const SectionProgress = ({ className }: { className?: string }) => {
                 </thead>
                 <tbody>
                   {rowVirtualizer.getVirtualItems().map((virtualItem, i) => {
-                    const item = progress[virtualItem.index];
+                    const item = progressFiltered[virtualItem.index];
                     const participant = item.participant;
                     return (
                       <tr
@@ -192,12 +264,13 @@ const SectionProgress = ({ className }: { className?: string }) => {
                           {participant?.name}
                         </td>
                         {testSections.map((testSection) => {
-                          const attempt = item.attempts[testSection._id];
+                          const attempt = item.results[testSection._id];
                           return (
                             <React.Fragment key={"th-" + testSection._id}>
                               <th className="text-sm truncate px-2 font-medium text-transparent group-hover:text-muted-foreground "></th>
                               {testSection.questions.map((question) => {
-                                const participantAnswer = attempt[question._id];
+                                const participantAnswer =
+                                  attempt?.[question._id];
 
                                 const haveOptions =
                                   question.options?.length || 0;
@@ -217,16 +290,26 @@ const SectionProgress = ({ className }: { className?: string }) => {
                                         ? "correct"
                                         : "incorrect";
                                 } else {
-                                    const correctOptions = question.options?.filter((e) => e.isCorrect).map((e) => e.id) ?? [];
-                                    const participantOptionsAnswers = participantAnswer.answerOptions ?? [];
+                                  const correctOptions =
+                                    question.options
+                                      ?.filter((e) => e.isCorrect)
+                                      .map((e) => e.id) ?? [];
+                                  const participantOptionsAnswers =
+                                    participantAnswer?.answerOptions ?? [];
 
-                                    // Compare arrays: both must have the same length and same elements (order doesn't matter)
-                                    const isCorrect =
-                                      correctOptions.length === participantOptionsAnswers.length &&
-                                      correctOptions.every((opt) => participantOptionsAnswers.includes(opt)) &&
-                                      participantOptionsAnswers.every((opt) => correctOptions.includes(opt));
+                                  // Compare arrays: both must have the same length and same elements (order doesn't matter)
+                                  const isCorrect =
+                                    correctOptions.length ===
+                                      participantOptionsAnswers.length &&
+                                    correctOptions.every((opt) =>
+                                      participantOptionsAnswers.includes(opt)
+                                    ) &&
+                                    participantOptionsAnswers.every((opt) =>
+                                      correctOptions.includes(opt)
+                                    );
 
-                                    status = participantOptionsAnswers.length === 0
+                                  status =
+                                    participantOptionsAnswers.length === 0
                                       ? "skipped"
                                       : isCorrect
                                         ? "correct"
@@ -252,7 +335,7 @@ const SectionProgress = ({ className }: { className?: string }) => {
                                           : ""
                                       )}
                                     >
-                                      {i + 1}
+                                      {question.order}
                                     </div>
                                   </td>
                                 );

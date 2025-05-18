@@ -49,7 +49,7 @@ export const AccountDropdown = ({
   const [openProfileDialog, setOpenProfileDialog] = useState(false);
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="cursor-pointer hover:opacity-75 transition">
+      <DropdownMenuTrigger className=" hover:opacity-75 transition">
         <Avatar>
           <AvatarImage src={user?.image} />
           <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>

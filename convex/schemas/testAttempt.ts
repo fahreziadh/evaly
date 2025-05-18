@@ -8,10 +8,14 @@ export const testAttempt = defineTable({
   startedAt: v.number(),
   finishedAt: v.optional(v.number()),
   deletedAt: v.optional(v.number()),
-}).index("by_participant_test_section", ["participantId", "testSectionId"]).index("by_participant_test", ["participantId", "testId"]);
+})
+  .index("by_participant_test_section", ["participantId", "testSectionId"])
+  .index("by_participant_test", ["participantId", "testId"])
+  .index("by_test", ["testId"]);
 
 export const testAttemptAnswer = defineTable({
   testAttemptId: v.id("testAttempt"),
+  testId: v.id("test"),
   questionId: v.id("question"),
   answerText: v.optional(v.string()),
   answerOptions: v.optional(v.array(v.string())),
@@ -27,4 +31,5 @@ export const testAttemptAnswer = defineTable({
   deletedAt: v.optional(v.number()),
 })
   .index("by_attempt_and_question", ["testAttemptId", "questionId"])
-  .index("by_attempt", ["testAttemptId"]);
+  .index("by_attempt", ["testAttemptId"])
+  .index("by_test", ["testId"]);

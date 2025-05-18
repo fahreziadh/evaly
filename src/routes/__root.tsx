@@ -10,8 +10,6 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Toaster } from "../components/ui/sonner.tsx";
 import appCss from "../styles/app.css?url";
 import { NotFound } from "@/components/pages/not-found.tsx";
-import { Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils.ts";
 import { QueryClient } from "@tanstack/react-query";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
@@ -43,29 +41,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 );
 
 function RootComponent() {
-  const status = useRouterState();
 
   return (
     <RootDocument>
-      <Loader2
-        className={cn(
-          "fixed top-2 right-2 animate-spin",
-          status.isLoading
-            ? "z-50 opacity-100 scale-100"
-            : "-z-10 opacity-0 scale-0"
-        )}
-      />
       <Outlet />
     </RootDocument>
   );
 }
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
+  const status = useRouterState();
+
   return (
     <html>
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className={status.isLoading ? "animate-pulse" : ""}>
         {children}
         <Toaster position="top-center" />
         <TanStackRouterDevtools />

@@ -55,6 +55,7 @@ const DialogDeleteTest = ({
           size={size}
           variant={variant}
           className={cn(className)}
+          rounded={false}
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();

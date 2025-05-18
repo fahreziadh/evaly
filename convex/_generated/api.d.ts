@@ -14,6 +14,7 @@ import type * as http from "../http.js";
 import type * as organizer_profile from "../organizer/profile.js";
 import type * as organizer_question from "../organizer/question.js";
 import type * as organizer_test from "../organizer/test.js";
+import type * as organizer_testResult from "../organizer/testResult.js";
 import type * as organizer_testSection from "../organizer/testSection.js";
 import type * as participant_profile from "../participant/profile.js";
 import type * as participant_test from "../participant/test.js";
@@ -52,6 +53,7 @@ declare const fullApi: ApiFromModules<{
   "organizer/profile": typeof organizer_profile;
   "organizer/question": typeof organizer_question;
   "organizer/test": typeof organizer_test;
+  "organizer/testResult": typeof organizer_testResult;
   "organizer/testSection": typeof organizer_testSection;
   "participant/profile": typeof participant_profile;
   "participant/test": typeof participant_test;

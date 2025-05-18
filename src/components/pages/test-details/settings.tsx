@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -100,8 +100,8 @@ const Setting = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col divide-y divide-dashed mb-10 border p-6 rounded-md">
-        <div className="flex flex-row items-center justify-between gap-4 pb-4">
+      <Card className="flex flex-col divide-y divide-dashed mb-10">
+        <CardHeader className="flex flex-row items-center justify-between gap-4">
           <h1 className="font-medium">Test Settings</h1>
           <Button
             disabled={!isDirty}
@@ -110,36 +110,38 @@ const Setting = () => {
           >
             Save Changes
           </Button>
-        </div>
-        <SettingSection
-          title={"Type"}
-          description={"Select the type of test you want to create"}
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Card className="w-full p-3 border-foreground cursor-pointer relative">
-              <CheckCircle2 size={18} className="absolute top-2 right-2" />
-              <h3 className="font-medium mb-2">Self-Paced Test</h3>
-              <Label className="font-normal">
-                Self-paced tests allow candidates to take the test at their own
-                pace, without any time constraints.
-              </Label>
-            </Card>
+        </CardHeader>
 
-            <Card className="w-full p-3 opacity-70 ring-offset-4 ring-foreground/50 transition-all relative">
-              <LockIcon
-                size={18}
-                className="absolute top-2 right-2 opacity-50"
-              />
-              <h3 className="font-medium mb-2">Live Test</h3>
-              <Label className="font-normal">
-                Live tests are timed and candidates must complete the test
-                within a specific time limit.
-              </Label>
-            </Card>
-          </div>
-        </SettingSection>
+        <CardContent>
+          <SettingSection
+            title={"Type"}
+            description={"Select the type of test you want to create"}
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Card className="w-full p-3 border-foreground  relative">
+                <CheckCircle2 size={18} className="absolute top-2 right-2" />
+                <h3 className="font-medium mb-2">Self-Paced Test</h3>
+                <Label className="font-normal">
+                  Self-paced tests allow candidates to take the test at their
+                  own pace, without any time constraints.
+                </Label>
+              </Card>
 
-        {/* <SettingSection
+              <Card className="w-full p-3 opacity-70 ring-offset-4 ring-foreground/50 transition-all relative">
+                <LockIcon
+                  size={18}
+                  className="absolute top-2 right-2 opacity-50"
+                />
+                <h3 className="font-medium mb-2">Live Test</h3>
+                <Label className="font-normal">
+                  Live tests are timed and candidates must complete the test
+                  within a specific time limit.
+                </Label>
+              </Card>
+            </div>
+          </SettingSection>
+
+          {/* <SettingSection
           title={"Access"}
           description={"Select the access type for the test"}
         >
@@ -180,65 +182,66 @@ const Setting = () => {
           />
         </SettingSection> */}
 
-        <SettingSection
-          title={"Show Result Immediately"}
-          description={
-            "Select whether the test results should be shown immediately after the test is completed."
-          }
-        >
-          <Controller
-            name="showResultImmediately"
-            control={control}
-            defaultValue={true}
-            render={({ field }) => (
-              <>
-                <Tabs
-                  className="w-full"
-                  defaultValue={field.value ? "true" : "false"}
-                  value={field.value ? "true" : "false"}
-                  onValueChange={(value) => {
-                    field.onChange(value === "true");
-                  }}
-                >
-                  <TabsList>
-                    <TabsTrigger value="true">Yes</TabsTrigger>
-                    <TabsTrigger value="false">No</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="true">
-                    <Label className="text-sm font-normal text-muted-foreground block">
-                      Results will be shown immediately after the test is
-                      completed.
-                    </Label>
-                  </TabsContent>
-                  <TabsContent value="false">
-                    <Label className="text-sm font-normal text-muted-foreground block">
-                      Results can only be viewed if organizer has published the
-                      results.
-                    </Label>
-                  </TabsContent>
-                </Tabs>
-              </>
-            )}
-          />
-        </SettingSection>
+          <SettingSection
+            title={"Show Result Immediately"}
+            description={
+              "Select whether the test results should be shown immediately after the test is completed."
+            }
+          >
+            <Controller
+              name="showResultImmediately"
+              control={control}
+              defaultValue={true}
+              render={({ field }) => (
+                <>
+                  <Tabs
+                    className="w-full"
+                    defaultValue={field.value ? "true" : "false"}
+                    value={field.value ? "true" : "false"}
+                    onValueChange={(value) => {
+                      field.onChange(value === "true");
+                    }}
+                  >
+                    <TabsList>
+                      <TabsTrigger value="true">Yes</TabsTrigger>
+                      <TabsTrigger value="false">No</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="true">
+                      <Label className="text-sm font-normal text-muted-foreground block">
+                        Results will be shown immediately after the test is
+                        completed.
+                      </Label>
+                    </TabsContent>
+                    <TabsContent value="false">
+                      <Label className="text-sm font-normal text-muted-foreground block">
+                        Results can only be viewed if organizer has published
+                        the results.
+                      </Label>
+                    </TabsContent>
+                  </Tabs>
+                </>
+              )}
+            />
+          </SettingSection>
 
-        <SettingSection
-          title={"Description"}
-          description={"Enter a description for the test"}
-        >
-          <Controller
-            name="description"
-            control={control}
-            render={({ field }) => (
-              <Editor
-                placeholder={"Enter a description for the test"}
-                value={field.value || ""}
-                onChange={field.onChange}
-              />
-            )}
-          />
-        </SettingSection>
-      </div>
+          <SettingSection
+            title={"Description"}
+            description={"Enter a description for the test"}
+          >
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <Editor
+                  placeholder={"Enter a description for the test"}
+                  value={field.value || ""}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          </SettingSection>
+        </CardContent>
+      </Card>
     </form>
   );
 };

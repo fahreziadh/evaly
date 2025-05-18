@@ -11,30 +11,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  SidebarMenu,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar";
+import { useSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import { useNavigate } from "@tanstack/react-router";
-import { LogoType } from "../logo";
 import { useAuthActions } from "@convex-dev/auth/react";
 
-export function NavUser() {
-  return (
-    <SidebarMenu className="flex flex-row items-center justify-between px-2">
-      <LogoType href="/dashboard" />
-      <SidebarMenuItem>
-        <NavUserAccount />
-      </SidebarMenuItem>
-    </SidebarMenu>
-  );
-}
-
-export const NavUserAccount = () => {
+export const NavUser = () => {
   const { isMobile } = useSidebar();
   const user = useQuery(api.organizer.profile.getProfile);
   const { signOut } = useAuthActions();
@@ -44,7 +28,7 @@ export const NavUserAccount = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button size={"icon"} variant={"ghost"} className="rounded-full">
-          <Avatar className="size-5 rounded-full">
+          <Avatar className="rounded-full">
             {user?.image ? (
               <AvatarImage src={user?.image} alt="User" asChild>
                 <img

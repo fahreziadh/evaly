@@ -21,15 +21,15 @@ code {
 
 :root {
   --background: hsl(0 0% 100%);
-  --foreground: hsl(0 0% 25%);
+  --foreground: hsl(0 0% 13%);
   --card: hsl(0 0% 100%);
-  --card-foreground: hsl(0 0% 25%);
+  --card-foreground: hsl(0 0% 13%);
   --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(0 0% 25%);
-  --primary: hsl(0, 0%, 25%);
+  --popover-foreground: hsl(0 0% 13%);
+  --primary: hsl(0 0% 13%);
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(0 0% 95%);
-  --secondary-foreground: hsl(0 0% 25.1%);
+  --secondary: hsl(0 0% 91%);
+  --secondary-foreground: hsl(0 0% 13%);
   --muted: hsl(0 0% 95%);
   --muted-foreground: hsl(0 0% 50%);
   --accent: hsl(349.7 89.2% 60.2%);
@@ -47,11 +47,11 @@ code {
   --radius: 0.6rem;
 
   --sidebar: hsl(0, 0%, 100%);
-  --sidebar-foreground: hsl(0, 0%, 25%);
-  --sidebar-primary: hsl(0, 0%, 25%);
+  --sidebar-foreground: hsl(0, 0%, 13%);
+  --sidebar-primary: hsl(0, 0%, 13%);
   --sidebar-primary-foreground: hsl(0 0% 98%);
   --sidebar-accent: hsl(0 0% 94%);
-  --sidebar-accent-foreground: hsl(0 0% 25%);
+  --sidebar-accent-foreground: hsl(0 0% 13%);
   --sidebar-border: hsl(0 0% 92%);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 
@@ -163,7 +163,11 @@ code {
 
 @utility container {
   @apply mx-auto px-4;
-  @apply 2xl:max-w-[1200px] max-w-[1100px];
+  @apply 2xl:max-w-[1200px] max-w-[1000px];
+}
+
+a {
+  @apply cursor-default;
 }
 
 @layer base {
@@ -207,7 +211,7 @@ code {
        prose-h2:text-lg prose-h2:mt-6 prose-h2:mb-3 
        prose-h3:text-base prose-h3:mt-5 prose-h3:mb-2
        prose-p:my-6 prose-p:leading-normal prose-p:text-foreground
-       prose-a:text-foreground prose-a:underline-offset-4 prose-a:decoration-1 prose-a:decoration-foreground/30 prose-a:cursor-pointer prose-a:font-medium
+       prose-a:text-foreground prose-a:underline-offset-4 prose-a:decoration-1 prose-a:decoration-foreground/30 prose-a:font-medium
        prose-img:my-2;
   }
 

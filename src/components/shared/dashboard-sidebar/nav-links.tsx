@@ -2,12 +2,11 @@
 
 import {
   SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
+  SidebarGroupContent, SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarMenuItem
 } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 import { Link, useLocation } from "@tanstack/react-router";
 import { BookOpen, Cog, Home, UserCircle } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -24,22 +23,22 @@ const NavLinks = () => {
     {
       name: "Dashboard",
       href: "/app",
-      icon: <Home className="size-4" />,
+      icon: Home,
     },
     {
       name: "Questions",
       href: "/app/questions",
-      icon: <BookOpen className="size-4" />,
+      icon: BookOpen,
     },
     {
       name: "Participants",
       href: "/app/participants",
-      icon: <UserCircle className="size-4" />,
+      icon: UserCircle,
     },
     {
       name: "Settings",
       href: "/app/settings",
-      icon: <Cog className="size-4" />,
+      icon: Cog,
     },
   ]
 
@@ -68,14 +67,13 @@ const NavLinks = () => {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.name}>
               <SidebarMenuButton asChild isActive={activeItem === item.href}>
                 <Link to={item.href}>
-                  {item.icon} {item.name}
+                  <item.icon className={cn("", activeItem === item.href && "")} /> {item.name}
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

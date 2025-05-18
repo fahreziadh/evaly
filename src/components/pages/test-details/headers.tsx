@@ -1,15 +1,15 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { CircleIcon, LinkIcon } from "lucide-react";
+import { ArrowLeftIcon, CircleIcon, LinkIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { PopoverAnchor, PopoverContent } from "@/components/ui/popover";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import { api } from "@convex/_generated/api";
 import type { DataModel, Id } from "@convex/_generated/dataModel";
-import { Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useMutation, useQuery } from "convex/react";
-import { ArrowLeftIcon, Loader2, PencilLine, Save } from "lucide-react";
+import { Loader2, PencilLine, Save } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Badge } from "@/components/ui/badge";
@@ -19,15 +19,13 @@ import DialogUnpublishTest from "@/components/shared/dialog-unpublish-test";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TestSections from "./headers.test-sections";
 import { DialogReopenTest } from "@/components/shared/dialog-reopen-test";
-import { testTypeFormatter } from "@/lib/test-type-formatter";
 import DialogDeleteTest from "@/components/shared/dialog-delete-test";
-import usePresence from "@/hooks/presence/use-presence";
-import NumberFlow from "@number-flow/react";
 import { cn } from "@/lib/utils";
+import { testTypeFormatter } from "@/lib/test-type-formatter";
 
 const Headers = () => {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col space-y-10">
       <FirstSection />
       <SecondSection />
     </div>
@@ -55,24 +53,31 @@ const FirstSection = () => {
   }, [dataTest]);
 
   return (
-    <div className="flex md:flex-row flex-col-reverse gap-2 justify-between items-start">
+    <div className="flex md:flex-row flex-col-reverse gap-2 justify-between items-center h-12 px-6 bg-card border-b border-dashed">
       {/* Left */}
-      <div className="flex flex-row gap-2 items-center">
-        <Link to="/app">
-          <Button size={"icon"} variant={"ghost"}>
-            <ArrowLeftIcon />
-          </Button>
-        </Link>
-
+      <div className="flex flex-row gap-3 items-center">
+        <Button
+          variant={"secondary"}
+          size={"icon-sm"}
+          onClick={() => {
+            navigate({
+              to: "/app",
+            });
+          }}
+          rounded={false}
+        >
+          <ArrowLeftIcon />
+        </Button>
         <DialogEditTest />
-        <Badge variant={"outline"}>{testTypeFormatter(dataTest?.type)}</Badge>
       </div>
-
       {/* Right */}
       {!dataTest ? (
         <Skeleton className="w-24 h-8" />
       ) : (
-        <div className="flex flex-row gap-2 items-center">
+        <div className="flex flex-row gap-3 items-center">
+          <Badge size="lg" variant={"outline"}>
+            {testTypeFormatter(dataTest?.type)}
+          </Badge>
           {/* Status */}
           <Badge
             size={"lg"}
@@ -153,11 +158,12 @@ const FirstSection = () => {
 };
 
 const SecondSection = () => {
-  const { testId, tabs } = useSearch({ from: "/(organizer)/app/tests/details" });
+  const { testId, tabs } = useSearch({
+    from: "/(organizer)/app/tests/details",
+  });
   const dataTest = useQuery(api.organizer.test.getTestById, {
     testId: testId as Id<"test">,
   });
-  const {presence} = usePresence(testId as Id<"test">, "organizer", {});
 
   const status = useMemo(() => {
     if (dataTest?.isPublished && dataTest?.finishedAt) return "finished";
@@ -169,37 +175,23 @@ const SecondSection = () => {
     return <Skeleton className="w-full max-w-sm h-9" />;
 
   return (
-    <div className="flex flex-row gap-2 items-center justify-between">
-      <div className="flex flex-row gap-4 items-center">
-        <TabsList>
-          <TabsTrigger
-            value="results"
-            className={status === "draft" ? "hidden" : ""}
-          >
-            Results
-          </TabsTrigger>
-          <TabsTrigger value="questions">Questions</TabsTrigger>
-          <TabsTrigger
-            value="share"
-            className={status === "draft" ? "hidden" : ""}
-          >
-            Share
-          </TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
-        </TabsList>
-
-        {status === "active" ? (
-          <Badge variant={"outline"} size={"lg"} className="border-dashed">
-            <div
-              className={cn(
-                "size-2 bg-emerald-500 rounded-full transition-all mr-1.5",
-                presence?.length === 0 ? "bg-foreground/15" : ""
-              )}
-            />
-            <NumberFlow value={presence?.length || 0} suffix=" Online" />
-          </Badge>
-        ) : null}
-      </div>
+    <div className="flex flex-row gap-2 items-center justify-between container">
+      <TabsList>
+        <TabsTrigger
+          value="results"
+          className={status === "draft" ? "hidden" : ""}
+        >
+          Results
+        </TabsTrigger>
+        <TabsTrigger value="questions">Questions</TabsTrigger>
+        <TabsTrigger
+          value="share"
+          className={status === "draft" ? "hidden" : ""}
+        >
+          Share
+        </TabsTrigger>
+        <TabsTrigger value="settings">Settings</TabsTrigger>
+      </TabsList>
 
       {tabs === "questions" ? <TestSections /> : null}
     </div>
@@ -253,17 +245,18 @@ const DialogEditTest = () => {
   }, [dataTest, reset]);
 
   if (dataTest === undefined)
-    return (
-      <TextShimmer className="animate-pulse  font-medium">
-        Loading...
-      </TextShimmer>
-    );
+    return <TextShimmer className="animate-pulse">Loading...</TextShimmer>;
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger className="flex flex-row items-center gap-2 cursor-pointer group">
-        <span className="font-medium text-start w-max max-w-xl truncate">
-          {dataTest?.title || "Untitled"}
+      <PopoverTrigger className="flex flex-row items-center gap-2  group hover:opacity-80">
+        <span
+          className={cn(
+            "w-max max-w-xl truncate",
+            !dataTest?.title ? "text-muted-foreground" : ""
+          )}
+        >
+          {dataTest?.title || "Name your test"}
         </span>
         {dataTest === undefined ? (
           <Loader2 className="animate-spin text-muted-foreground/50" />

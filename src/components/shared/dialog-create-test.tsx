@@ -3,8 +3,7 @@ import {
   ArrowRight,
   CheckCircle,
   Loader2,
-  LockIcon,
-  PlusIcon,
+  LockIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -58,7 +57,6 @@ const DialogCreateTest = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant={"default"}>
-          <PlusIcon />
           Create Test
         </Button>
       </DialogTrigger>
@@ -69,7 +67,7 @@ const DialogCreateTest = () => {
             Choose the type of test you want to create
           </DialogDescription>
         </DialogHeader>
-        <Card className="p-4 cursor-pointer ring-2 ring-offset-2">
+        <Card className="p-4  ring-2 ring-offset-2">
           <div className="flex flex-row items-start justify-between">
             <h1>Self-Paced Test</h1>
             <CheckCircle size={20} />

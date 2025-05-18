@@ -1,6 +1,7 @@
 import CardQuestion from "@/components/shared/card-question";
 import DialogAddQuestion from "@/components/shared/dialog-add-question";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { api } from "@convex/_generated/api";
@@ -84,7 +85,7 @@ const Questions = ({
 
   if (!dataQuestions.length) {
     return (
-      <div className="flex flex-col p-6 gap-4 bg-card rounded-md border border-dashed">
+      <Card className="flex flex-col p-6 gap-4">
         <h1>No question found</h1>
         <DialogAddQuestion
           testId={testId as string}
@@ -95,7 +96,7 @@ const Questions = ({
             goToDetailQuestion(questionId);
           }}
         />
-      </div>
+      </Card>
     );
   }
 

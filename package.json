@@ -43,6 +43,8 @@
     "@tanstack/react-router-devtools": "^1.114.3",
     "@tanstack/react-router-with-query": "^1.120.3",
     "@tanstack/react-start": "^1.120.3",
+    "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-virtual": "^3.13.8",
     "@tanstack/router-plugin": "^1.114.3",
     "@tiptap/extension-character-count": "2.12.0",
     "@tiptap/extension-code-block-lowlight": "2.12.0",

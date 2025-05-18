@@ -1,7 +1,6 @@
 import LoginOrganizerPage from "@/components/pages/login-organizer";
 import OrganizerOnboarding from "@/components/pages/organizer-onboarding";
 import DashboardSidebar from "@/components/shared/dashboard-sidebar";
-import DashboardMobileNavbar from "@/components/shared/dashboard-sidebar/dashboard-mobile-navbar";
 import LoadingScreen from "@/components/shared/loading-screen";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { api } from "@convex/_generated/api";
@@ -45,7 +44,6 @@ function App() {
           <SidebarProvider>
             <DashboardSidebar />
             <div className="flex-1">
-              <DashboardMobileNavbar />
               <Outlet />
             </div>
           </SidebarProvider>

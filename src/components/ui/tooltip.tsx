@@ -81,7 +81,7 @@ export function TooltipMessage({
   message,
 }: {
   children: React.ReactNode;
-  message: string;
+  message: string | React.ReactNode
 }) {
   return (
     <Tooltip>

@@ -191,8 +191,8 @@ const Share = ({ testId }: { testId: Id<"test"> }) => {
             Share your test with participants
           </CardDescription>
         </CardHeader>
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row items-start gap-6 bg-background">
+        <CardContent>
+          <div className="flex flex-col md:flex-row items-start gap-6">
             <div className="relative bg-background p-4 border" ref={qrCodeRef}>
               <QRCodeSVG
                 value={`${window.location.origin}/s/${testId}`}
@@ -271,7 +271,7 @@ const Share = ({ testId }: { testId: Id<"test"> }) => {
                 </Button>
               </div>
 
-              <div className="bg-muted/50 p-4 flex items-start gap-3 w-full">
+              <div className="p-4 flex items-start gap-3 w-full">
                 <Info className="h-5 w-5 text-blue-500 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium">

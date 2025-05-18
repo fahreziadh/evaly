@@ -1,10 +1,7 @@
 import LoadingScreen from "@/components/shared/loading-screen";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
-import {
-  createFileRoute, notFound,
-  useNavigate
-} from "@tanstack/react-router";
+import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery } from "convex/react";
 import NavbarAttempt from "./-components/navbar.attempt";
 import CardQuestion from "./-components/card.question";
@@ -48,7 +45,7 @@ function RouteComponent() {
 }
 
 const ListQuestions = () => {
-  const { attemptId } = Route.useParams();
+  const { attemptId, testId } = Route.useParams();
   const testAttempt = useQuery(api.participant.testAttempt.getById, {
     id: attemptId as Id<"testAttempt">,
   });
@@ -84,6 +81,7 @@ const ListQuestions = () => {
             answers={answers?.find(
               (answer) => answer.questionId === question._id
             )}
+            testId={testId as Id<"test">}
           />
         );
       })}

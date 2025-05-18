@@ -1,11 +1,9 @@
-import { TextShimmer } from "../ui/text-shimmer";
+import { Loader2Icon } from "lucide-react";
 
 const LoadingScreen = () => {
   return (
-    <div className="flex justify-center items-center h-screen bg-background">
-      <TextShimmer className="text-2xl font-medium">
-        Loading...
-      </TextShimmer>
+    <div className="flex flex-col justify-center items-center h-screen">
+      <Loader2Icon className="size-10 animate-spin" />
     </div>
   );
 };

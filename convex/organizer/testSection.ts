@@ -12,16 +12,21 @@ export const getByTestId = query({
       .withIndex("by_test_id", (q) => q.eq("testId", args.testId))
       .filter((q) => q.lte(q.field("deletedAt"), 0))
       .collect();
+
+    const sortedData = data.sort((a, b) => a.order - b.order);
     
-    const dataWithNumOfQuestions = await Promise.all(data.map(async (e) => {
+    const dataWithNumOfQuestions = await Promise.all(sortedData.map(async (e) => {
       const questions = await ctx.db
       .query("question")
       .withIndex("by_reference_id", (q) => q.eq("referenceId", e._id))
       .filter((q) => q.lte(q.field("deletedAt"), 0))
       .collect();
 
+      const sortedQuestions = questions.sort((a, b) => a.order - b.order);
+
       return {
         ...e,
+        questions: questions,
         numOfQuestions: questions.length,
       };
     }));

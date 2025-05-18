@@ -28,7 +28,7 @@ export const DialogReopenTest = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"outline"}>
+        <Button variant={"secondary"}>
           <Copy />
           Duplicate test
         </Button>

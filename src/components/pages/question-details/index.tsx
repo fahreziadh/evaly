@@ -8,10 +8,8 @@ import {
   ChevronRight,
   GripVertical,
   Loader2,
-  PlusIcon,
-  SaveIcon,
-  Trash2,
-  XIcon,
+  PlusIcon, Trash2,
+  XIcon
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -35,7 +33,6 @@ import { api } from "@convex/_generated/api";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import { Editor } from "@/components/shared/editor/editor";
 import { question } from "@convex/schemas/question";
-import { Badge } from "@/components/ui/badge";
 import QuestionTypeSelection from "@/components/shared/question-type-selection";
 import { getDefaultOptions } from "@/lib/get-default-options";
 import { useNavigate, useSearch } from "@tanstack/react-router";
@@ -216,15 +213,15 @@ const EditQuestion = () => {
   };
 
   return (
-    <div className="container dashboard-margin">
-      <div className="flex flex-row w-full justify-between items-start">
-        <div className="flex flex-row gap-2 items-center">
-          <Button variant={"ghost"} size={"icon"} onClick={onBack}>
+    <div>
+      <div className="flex flex-row w-full justify-between items-center h-12 px-6">
+        <div className="flex flex-row gap-3 items-center">
+          <Button variant={"secondary"} size={"icon-sm"} onClick={onBack}>
             <ArrowLeft />
           </Button>
-          <h1 className="">Back to test details</h1>
+          <h1 className="">Question {question?.order}</h1>
         </div>
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-3">
           {isDirty && (
             <Button
               disabled={!isDirty}
@@ -236,6 +233,19 @@ const EditQuestion = () => {
               Reset
             </Button>
           )}
+          {isDirty && testId && selectedSectionId ? (
+            <Button
+              disabled={!isDirty}
+              variant={isDirty ? "outline-solid" : "secondary"}
+              onClick={handleSubmit((data) => {
+                onSubmit(data).then(() => {
+                  onBack()
+                });
+              })}
+            >
+              Save & Back
+            </Button>
+          ) : null}
           <Button
             disabled={!isDirty}
             variant={isDirty ? "default" : "secondary"}
@@ -243,19 +253,13 @@ const EditQuestion = () => {
               onSubmit(data);
             })}
           >
-            <SaveIcon />
             Save
           </Button>
         </div>
       </div>
 
-      <div className="flex flex-row gap-2 justify-between items-center mt-4">
+      <div className="flex flex-row gap-2 justify-between items-center container mt-8">
         <div className="flex flex-row gap-2 items-center mb-3">
-          <Badge variant={"outline"} size={"lg"}>
-            {question === undefined
-              ? "Question #"
-              : `Question ${question?.order}`}
-          </Badge>
           <Controller
             control={control}
             name="type"
@@ -349,7 +353,7 @@ const EditQuestion = () => {
         )}
       </div>
 
-      <div className="pb-4">
+      <div className="pb-4 container">
         <Controller
           control={control}
           name="question"
@@ -730,7 +734,7 @@ const Pagination = ({ referenceId }: { referenceId: string }) => {
     <div className="flex flex-row items-center gap-2">
       <Button
         variant={"outline"}
-        size={"icon-sm"}
+        size={"icon"}
         disabled={currentQuestion?.order === 1}
         onClick={() => {
           if (!currentQuestion) return;
@@ -750,9 +754,9 @@ const Pagination = ({ referenceId }: { referenceId: string }) => {
         <ChevronLeft />
       </Button>
       {question && currentQuestion ? (
-        <div className="gap-0.5 flex flex-row items-center text-sm select-none">
+        <div className="gap-0.5 flex flex-row items-center text-base select-none">
           {currentQuestion?.order}
-          <span className="text-xs">/</span>
+          <span className="text-sm">/</span>
           {questions?.length}
         </div>
       ) : (
@@ -760,7 +764,7 @@ const Pagination = ({ referenceId }: { referenceId: string }) => {
       )}
       <Button
         variant={"outline"}
-        size={"icon-sm"}
+        size={"icon"}
         disabled={currentQuestion?.order === questions?.length}
         onClick={() => {
           if (!currentQuestion) return;

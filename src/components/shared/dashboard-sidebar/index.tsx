@@ -3,17 +3,18 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
 } from "@/components/ui/sidebar";
-import { NavUser } from "./nav-user";
-import { NavOrganization } from "./nav-organization";
 import NavLinks from "./nav-links";
+import { LogoType } from "../logo";
 
-const DashboardSidebar = () => {
+const DashboardSidebars = () => {
   return (
     <Sidebar>
       <SidebarHeader className="gap-4">
-        <NavUser />
-        <NavOrganization />
+        <SidebarMenu className="p-2">
+          <LogoType href="/app" />
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <NavLinks />
@@ -23,4 +24,4 @@ const DashboardSidebar = () => {
   );
 };
 
-export default DashboardSidebar;
+export default DashboardSidebars;

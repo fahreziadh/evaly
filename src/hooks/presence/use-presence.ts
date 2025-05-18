@@ -49,7 +49,7 @@ export const usePresence = <T extends { [key: string]: Value }>(
   heartbeatPeriod = HEARTBEAT_PERIOD
 ) => {
   const [data, setData] = useState(initialData);
-  let presence: PresenceData<T>[] | undefined = useQuery(api.participant.testPresence.list, {
+  let presence = useQuery(api.participant.testPresence.list, {
     testId: testId as Id<"test">
   });
 

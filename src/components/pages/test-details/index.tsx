@@ -35,7 +35,6 @@ export default function TestsDetails() {
 
   return (
     <Tabs
-      className="container dashboard-margin gap-6"
       value={tabs}
       onValueChange={(value) => {
         navigate({
@@ -48,27 +47,29 @@ export default function TestsDetails() {
       }}
     >
       <Headers />
-      <TabsContent value="questions">
-        {selectedSection ? (
-          <Questions
-            selectedSectionId={selectedSection as Id<"testSection">}
-            testId={testId as Id<"test">}
-          />
-        ) : (
-          <TextShimmer className="w-full h-full">
-            Loading section...
-          </TextShimmer>
-        )}
-      </TabsContent>
-      <TabsContent value="results">
-        <Results />
-      </TabsContent>
-      <TabsContent value="settings">
-        <Settings />
-      </TabsContent>
-      <TabsContent value="share">
-        <Share testId={testId as Id<"test">} />
-      </TabsContent>
+      <div className="container mt-2">
+        <TabsContent value="questions">
+          {selectedSection ? (
+            <Questions
+              selectedSectionId={selectedSection as Id<"testSection">}
+              testId={testId as Id<"test">}
+            />
+          ) : (
+            <TextShimmer className="w-full h-full">
+              Loading section...
+            </TextShimmer>
+          )}
+        </TabsContent>
+        <TabsContent value="results">
+          <Results />
+        </TabsContent>
+        <TabsContent value="settings">
+          <Settings />
+        </TabsContent>
+        <TabsContent value="share">
+          <Share testId={testId as Id<"test">} />
+        </TabsContent>
+      </div>
     </Tabs>
   );
 }

@@ -6,6 +6,7 @@ export const setAnswer = mutation({
   args: {
     testAttemptId: v.id("testAttempt"),
     questionId: v.id("question"),
+    testId: v.id("test"),
     answerOptions: v.optional(v.array(v.string())),
     answerText: v.optional(v.string()),
   },
@@ -36,6 +37,7 @@ export const setAnswer = mutation({
       });
     } else {
       await ctx.db.insert("testAttemptAnswer", {
+        testId: args.testId,
         testAttemptId: args.testAttemptId,
         questionId: args.questionId,
         answerOptions: args.answerOptions,

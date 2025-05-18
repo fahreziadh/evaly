@@ -8,10 +8,12 @@ const CardQuestion = ({
   question,
   answers,
   attemptId,
+  testId
 }: {
   question: DataModel["question"]["document"];
   answers?: DataModel["testAttemptAnswer"]["document"];
   attemptId: Id<"testAttempt">;
+  testId: Id<"test">
 }) => {
   const setAnswer = useMutation(
     api.participant.testAttemptAnswer.setAnswer
@@ -50,6 +52,7 @@ const CardQuestion = ({
       questionId: question._id,
       answerOptions,
       answerText,
+      testId
     });
   };
   return (
@@ -81,7 +84,7 @@ const CardQuestion = ({
               key={option.id}
               onClick={() => handleSubmitAnswer({ answerOptions: [option.id] })}
               className={cn(
-                "max-w-full w-max h-auto border rounded-md py-1 px-3 text-start cursor-pointer transition-all",
+                "max-w-full w-max h-auto border rounded-md py-1 px-3 text-start  transition-all",
                 answers?.answerOptions?.includes(option.id)
                   ? "border-primary bg-secondary "
                   : "border-border hover:border-primary/50 active:border-primary active:bg-primary/5"

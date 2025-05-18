@@ -45,8 +45,8 @@ const DialogDeleteQuestion = ({
       <DialogTrigger asChild>
         <Button
           disabled={disabled}
-          size={"icon-xxs"}
-          variant={"ghost"}
+          size={"icon-xs"}
+          variant={"secondary"}
           className={cn("text-muted-foreground", className)}
           onClick={(e) => {
             e.stopPropagation();

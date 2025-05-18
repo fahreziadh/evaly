@@ -70,7 +70,7 @@ const OrganizationTypeStep: React.FC<OrganizationTypeStepProps> = ({ value, onCh
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => onChange(type.id)}
-          className={`relative cursor-pointer p-4 rounded-xl border-2 ${
+          className={`relative  p-4 rounded-xl border-2 ${
             value === type.id
               ? 'border-primary bg-primary/10'
               : 'border-gray-200 hover:border-gray-300'

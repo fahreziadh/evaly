@@ -44,7 +44,7 @@ const CardQuestion = ({
 
   return (
     <Card
-      className={cn("cursor-pointer group px-6 py-4 border-dashed", className)}
+      className={cn(" group p-4", className)}
       onClick={onClickEdit}
     >
       <div className="flex flex-row justify-between items-center">

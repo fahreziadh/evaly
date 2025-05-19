@@ -17,6 +17,9 @@ export default $config({
         dns: sst.cloudflare.dns(),
         redirects: $app.stage === "main" ? ["www.evaly.io"] : undefined,
       },
+      environment: {
+        VITE_CONVEX_URL: process.env.VITE_CONVEX_URL ?? "",
+      },
     });
   },
 });

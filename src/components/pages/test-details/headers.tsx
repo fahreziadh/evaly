@@ -174,7 +174,7 @@ const SecondSection = () => {
   if (dataTest === undefined)
     return (
       <div className="container">
-        <TextShimmer>Loading...</TextShimmer>
+        <TextShimmer className="h-9">Loading...</TextShimmer>
       </div>
     );
 

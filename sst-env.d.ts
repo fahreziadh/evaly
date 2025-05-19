@@ -9,6 +9,10 @@ declare module "sst" {
       "type": "sst.aws.TanstackStart"
       "url": string
     }
+    "VITE_CONVEX_URL": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
   }
 }
 /// <reference path="sst-env.d.ts" />

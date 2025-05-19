@@ -172,7 +172,11 @@ const SecondSection = () => {
   }, [dataTest]);
 
   if (dataTest === undefined)
-    return <Skeleton className="w-full max-w-sm h-9" />;
+    return (
+      <div className="container">
+        <TextShimmer>Loading...</TextShimmer>
+      </div>
+    );
 
   return (
     <div className="flex flex-row gap-2 items-center justify-between container">

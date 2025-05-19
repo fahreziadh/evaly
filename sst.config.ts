@@ -18,7 +18,7 @@ export default $config({
         redirects: $app.stage === "main" ? ["www.evaly.io"] : undefined,
       },
       environment: {
-        VITE_CONVEX_URL: process.env.VITE_CONVEX_URL ?? "",
+        VITE_CONVEX_URL: new sst.Secret("VITE_CONVEX_URL").value,
       },
     });
   },

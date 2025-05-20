@@ -214,7 +214,7 @@ const EditQuestion = () => {
 
   return (
     <div>
-      <div className="flex flex-row w-full justify-between items-center h-12 px-6">
+      <div className="flex flex-row w-full justify-between items-center">
         <div className="flex flex-row gap-3 items-center">
           <Button variant={"secondary"} size={"icon-sm"} onClick={onBack}>
             <ArrowLeft />
@@ -258,7 +258,7 @@ const EditQuestion = () => {
         </div>
       </div>
 
-      <div className="flex flex-row gap-2 justify-between items-center container mt-8">
+      <div className="flex flex-row gap-2 justify-between items-center mt-8">
         <div className="flex flex-row gap-2 items-center mb-3">
           <Controller
             control={control}
@@ -353,7 +353,7 @@ const EditQuestion = () => {
         )}
       </div>
 
-      <div className="pb-4 container">
+      <div className="pb-4">
         <Controller
           control={control}
           name="question"

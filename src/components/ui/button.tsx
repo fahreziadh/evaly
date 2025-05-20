@@ -5,7 +5,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center duration-100 border border-transparent whitespace-nowrap text-sm font-medium disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 transition-all active:opacity-90",
+  "inline-flex items-center justify-center duration-100 border border-transparent whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 transition-all active:opacity-90 font-medium",
   {
     variants: {
       variant: {
@@ -16,12 +16,12 @@ const buttonVariants = cva(
         outline:
           "border border-border bg-card hover:text-muted-foreground shadow-sm shadow-black/5",
         "outline-solid":
-          "border border-primary bg-card hover:text-muted-foreground",
+          "border border-primary bg-card hover:border-primary/50",
         secondary:
           "bg-secondary text-secondary-foreground  hover:bg-foreground/15",
         "secondary-outline":
           "bg-secondary border-foreground/10 text-secondary-foreground  hover:bg-secondary/80 hover:border-transparent",
-        ghost: "hover:bg-secondary hover:text-secondary-foreground",
+        ghost: "hover:bg-muted hover:primary",
         link: "text-primary underline-offset-4 hover:underline",
         success: "bg-emerald-500/10 text-emerald-500",
         accent: "bg-accent text-accent-foreground hover:bg-accent/90",

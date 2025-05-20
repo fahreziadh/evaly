@@ -1,8 +1,7 @@
 import LoginOrganizerPage from "@/components/pages/login-organizer";
 import OrganizerOnboarding from "@/components/pages/organizer-onboarding";
-import DashboardSidebar from "@/components/shared/dashboard-sidebar";
+import DashboardNavbar from "@/components/shared/dashboard-navbar/dashboard-navbar";
 import LoadingScreen from "@/components/shared/loading-screen";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { api } from "@convex/_generated/api";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import {
@@ -41,12 +40,12 @@ function App() {
         {user && !user?.selectedOrganizationId ? (
           <OrganizerOnboarding defaultFullname={user?.name} />
         ) : (
-          <SidebarProvider>
-            <DashboardSidebar />
-            <div className="flex-1">
+          <>
+            <DashboardNavbar />
+            <main className="container dashboard-margin">
               <Outlet />
-            </div>
-          </SidebarProvider>
+            </main>
+          </>
         )}
       </Authenticated>
     </>

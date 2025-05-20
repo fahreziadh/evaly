@@ -183,13 +183,13 @@ a {
 
 @layer components {
   .dashboard-title {
-    @apply font-semibold md:text-xl;
+    @apply font-semibold md:text-lg;
   }
   .dashboard-description {
-    @apply text-muted-foreground font-medium text-sm md:text-base;
+    @apply text-muted-foreground text-sm md:text-base;
   }
   .dashboard-margin {
-    @apply mt-4 md:mt-6;
+    @apply mt-4 md:mt-6 lg:mt-8;
   }
   .custom-prose {
     @apply prose prose-base dark:prose-invert prose-neutral

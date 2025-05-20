@@ -47,7 +47,7 @@ export default function TestsDetails() {
       }}
     >
       <Headers />
-      <div className="container mt-2">
+      <div className="mt-2">
         <TabsContent value="questions">
           {selectedSection ? (
             <Questions

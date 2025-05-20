@@ -1,28 +1,32 @@
 "use client";
 
-import { Building2, LogOut, User, Home, Settings } from "lucide-react";
+import { LogOut, Home, User, Building2, Settings } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuContent, DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { useSidebar } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const NavUser = () => {
-  const { isMobile } = useSidebar();
+  const isMobile = useIsMobile()
   const user = useQuery(api.organizer.profile.getProfile);
   const { signOut } = useAuthActions();
   const navigate = useNavigate();
+
+  if (!user) {
+    return <Skeleton />
+  }
 
   return (
     <DropdownMenu>

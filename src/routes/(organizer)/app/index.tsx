@@ -26,7 +26,7 @@ function RouteComponent() {
     );
   }
   return (
-    <div className="container dashboard-margin">
+    <div>
       <div className="flex flex-row items-start justify-between">
         <div>
           <h1 className="dashboard-title">Dashboard</h1>

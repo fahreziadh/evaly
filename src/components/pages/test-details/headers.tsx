@@ -53,7 +53,7 @@ const FirstSection = () => {
   }, [dataTest]);
 
   return (
-    <div className="flex md:flex-row flex-col-reverse gap-2 justify-between items-center h-12 px-6 bg-card border-b border-dashed">
+    <div className="flex md:flex-row flex-col-reverse gap-2 justify-between items-center bg-card">
       {/* Left */}
       <div className="flex flex-row gap-3 items-center">
         <Button
@@ -173,13 +173,13 @@ const SecondSection = () => {
 
   if (dataTest === undefined)
     return (
-      <div className="container">
+      <div>
         <TextShimmer className="h-9">Loading...</TextShimmer>
       </div>
     );
 
   return (
-    <div className="flex flex-row gap-2 items-center justify-between container">
+    <div className="flex flex-row gap-2 items-center justify-between">
       <TabsList>
         <TabsTrigger
           value="results"

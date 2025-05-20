@@ -6,11 +6,11 @@ import {
   useRouterState,
   type ReactNode,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Toaster } from "../components/ui/sonner.tsx";
 import appCss from "../styles/app.css?url";
 import { NotFound } from "@/components/pages/not-found.tsx";
 import { QueryClient } from "@tanstack/react-query";
+import { cn } from "@/lib/utils.ts";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
@@ -56,10 +56,10 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <head>
         <HeadContent />
       </head>
-      <body className={status.isLoading ? "animate-pulse" : ""}>
+      <body className={cn("antialiased font-sans",status.isLoading ? "animate-pulse" : "")}>
         {children}
         <Toaster position="top-center" />
-        <TanStackRouterDevtools />
+        {/* <TanStackRouterDevtools /> */}
         <Scripts />
       </body>
     </html>

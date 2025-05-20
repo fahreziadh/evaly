@@ -21,10 +21,10 @@ const CardTest = ({ data }: { data: DataModel["test"]["document"] }) => {
   return (
     <Link
       to={redirectLink}
-      className="border rounded-lg transition-all duration-100 bg-card w-full active:opacity-80 flex flex-col gap-2 p-4 hover:shadow-lg shadow-muted"
+      className="border rounded-lg transition-all duration-100 bg-card w-full active:opacity-80 flex flex-col gap-2 p-4 hover:border-primary/30"
     >
       <div className="flex justify-between items-start">
-        <h3 className="font-medium">{data.title || "Untitled Test"}</h3>
+        <h3 className="font-normal">{data.title || "Untitled Test"}</h3>
 
         <div>
           {data.isPublished && !data.finishedAt ? (

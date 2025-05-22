@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap');
-@import "tailwindcss" source("../");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
 
 @plugin "tailwindcss-animate";
 @plugin "@tailwindcss/typography";
@@ -99,8 +99,7 @@
 
 @theme inline {
   
-  --font-sans: "Geist", sans-serif; 
-  --font-mono: "Geist Mono", monospace;
+  --font-sans: "Inter", sans-serif; 
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -151,7 +150,7 @@
 
 @utility container {
   @apply mx-auto px-4;
-  @apply 2xl:max-w-[1200px] max-w-[1100px];
+  @apply 2xl:max-w-[1400px] max-w-[1300px];
 }
 
 a {

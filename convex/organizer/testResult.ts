@@ -105,6 +105,21 @@ export const getProgress = query({
       })
     );
 
-    return participantsWithAttemptsAndAnswer;
+    const sortedParticipantsByCorrectAnswer = participantsWithAttemptsAndAnswer.sort((a, b) => {
+      const correctAnswerA = Object.values(a.results).reduce((acc, curr) => {
+        return acc + Object.values(curr).filter((e) => e.isCorrect).length;
+      }, 0);
+
+      const correctAnswerB = Object.values(b.results).reduce((acc, curr) => {
+        return acc + Object.values(curr).filter((e) => e.isCorrect).length;
+      }, 0);
+
+      return correctAnswerB - correctAnswerA;
+    });
+
+    return {
+      progress: participantsWithAttemptsAndAnswer,
+      leaderboard: sortedParticipantsByCorrectAnswer,
+    };
   },
 });

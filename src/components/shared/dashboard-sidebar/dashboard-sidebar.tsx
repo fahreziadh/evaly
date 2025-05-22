@@ -1,10 +1,12 @@
-import { NavUser } from "../dashboard-sidebar/nav-user";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { BookLock, Home, Settings, SquareUserRound } from "lucide-react";
+import { NavUser } from "./nav-user";
+import { NavOrganization } from "./nav-organization";
+import { LogoLink } from "../logo";
 
-const DashboardNavbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
+const DashboardSidebar = ({ className }: { className?: string }) => {
   const pathname = useLocation({
     select(state) {
       return state.pathname;
@@ -16,18 +18,22 @@ const DashboardNavbar = () => {
     {
       name: "Dashboard",
       href: "/app",
+      icon: Home,
     },
     {
       name: "Questions",
       href: "/app/questions",
+      icon: BookLock,
     },
     {
       name: "Participants",
       href: "/app/participants",
+      icon: SquareUserRound,
     },
     {
       name: "Settings",
       href: "/app/settings",
+      icon: Settings,
     },
   ];
 
@@ -53,48 +59,34 @@ const DashboardNavbar = () => {
     }
   }, [pathname, navItems]);
 
-
-  useEffect(() => {
-    if (!window) return;
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
   return (
-    <div
-      className={cn(
-        "h-14 flex flex-row justify-between items-center px-4 md:px-6 sticky top-0 bg-background border-b border-transparent",
-        isScrolled ? "border-border" : ""
-      )}
-    >
-      <div className="flex flex-row items-center gap-2">
-        {/* <Button variant={"outline"} className="mr-8">
-          <Building2 />
-          SMK Adi Sanggoro
-          <ChevronsUpDown />
-        </Button> */}
-
+    <div className={cn("flex flex-col", className)}>
+      <div className="flex flex-col gap-4">
+        <LogoLink />
+        <NavOrganization />
+      </div>
+      <div className="flex flex-col mt-6 flex-1">
         {navItems.map((e) => (
-          <Link to={e.href}>
+          <Link to={e.href} key={e.href}>
             <button
               className={cn(
-                "text-[15px] font-medium px-2",
-                activeItem === e.href ? "" : "text-muted-foreground hover:text-foreground"
+                "font-medium py-2 flex flex-row items-center text-[15px] gap-2 w-full",
+                activeItem === e.href
+                  ? "font-medium"
+                  : "text-muted-foreground hover:text-foreground"
               )}
             >
+              <e.icon className="size-4" />
               {e.name}
             </button>
           </Link>
         ))}
       </div>
-      <div className="flex flex-row items-center gap-2">
+      <div>
         <NavUser />
       </div>
     </div>
   );
 };
 
-export default DashboardNavbar;
+export default DashboardSidebar;

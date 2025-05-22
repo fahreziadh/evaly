@@ -1,55 +1,60 @@
 "use client";
 
-import { LogOut, Home, User, Building2, Settings } from "lucide-react";
+import {
+  LogOut,
+  Home,
+  User,
+  Building2,
+  Settings, EllipsisVertical
+} from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
-  DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export const NavUser = () => {
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
   const user = useQuery(api.organizer.profile.getProfile);
   const { signOut } = useAuthActions();
   const navigate = useNavigate();
 
   if (!user) {
-    return <Skeleton />
+    return <Skeleton className="h-12 w-full" />;
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size={"icon"} variant={"ghost"} className="rounded-full">
-          <Avatar className="rounded-full">
+        <button className="w-full justify-start text-sm h-12 flex flex-row gap-2 items-center hover:opacity-70">
+          <Avatar className="size-8 rounded-lg">
             {user?.image ? (
               <AvatarImage src={user?.image} alt="User" asChild>
-                <img
-                  src={user?.image}
-                  alt="User"
-                  width={60}
-                  height={60}
-                  className="rounded-full size-8"
-                />
+                <img src={user?.image} alt="User" width={100} height={100} />
               </AvatarImage>
             ) : (
-              <AvatarFallback>
+              <AvatarFallback className="rounded-lg bg-foreground/10">
                 {user?.email?.charAt(0).toUpperCase()}
               </AvatarFallback>
             )}
           </Avatar>
-        </Button>
+          <div className="flex-1 text-start grid">
+            <span className="font-medium">{user.name}</span>
+            <span className="text-xs text-muted-foreground">{user.email}</span>
+          </div>
+          <EllipsisVertical className="size-4 text-muted-foreground" />
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"

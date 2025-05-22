@@ -1,6 +1,6 @@
 import LoginOrganizerPage from "@/components/pages/login-organizer";
 import OrganizerOnboarding from "@/components/pages/organizer-onboarding";
-import DashboardNavbar from "@/components/shared/dashboard-navbar/dashboard-navbar";
+import DashboardSidebar from "@/components/shared/dashboard-sidebar/dashboard-sidebar";
 import LoadingScreen from "@/components/shared/loading-screen";
 import { api } from "@convex/_generated/api";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
@@ -40,12 +40,13 @@ function App() {
         {user && !user?.selectedOrganizationId ? (
           <OrganizerOnboarding defaultFullname={user?.name} />
         ) : (
-          <>
-            <DashboardNavbar />
-            <main className="container dashboard-margin">
+          <div className="container flex flex-row gap-10">
+            {/* <DashboardNavbar /> */}
+            <DashboardSidebar className="w-[240px] sticky top-0 h-dvh pt-10 pb-5"/>
+            <main className="flex-1 pt-10 pb-5">
               <Outlet />
             </main>
-          </>
+          </div>
         )}
       </Authenticated>
     </>

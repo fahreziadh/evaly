@@ -1,15 +1,15 @@
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import Headers from "./headers";
-import Questions from "./questions";
 import type { Id } from "@convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import Settings from "./settings";
 import Share from "./share";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import Results from "./results";
+const Questions = lazy(() => import("./questions"));
+const Results = lazy(() => import("./results"));
 
 export default function TestsDetails() {
   const { tabs, testId, selectedSection } = useSearch({
@@ -50,10 +50,18 @@ export default function TestsDetails() {
       <div className="mt-2">
         <TabsContent value="questions">
           {selectedSection ? (
-            <Questions
-              selectedSectionId={selectedSection as Id<"testSection">}
-              testId={testId as Id<"test">}
-            />
+            <Suspense
+              fallback={
+                <TextShimmer className="w-full h-full">
+                  Loading section...
+                </TextShimmer>
+              }
+            >
+              <Questions
+                selectedSectionId={selectedSection as Id<"testSection">}
+                testId={testId as Id<"test">}
+              />
+            </Suspense>
           ) : (
             <TextShimmer className="w-full h-full">
               Loading section...
@@ -61,7 +69,13 @@ export default function TestsDetails() {
           )}
         </TabsContent>
         <TabsContent value="results">
-          <Results />
+          <Suspense
+            fallback={
+              <TextShimmer className="w-full h-full">Loading results...</TextShimmer>
+            }
+          >
+            <Results />
+          </Suspense>
         </TabsContent>
         <TabsContent value="settings">
           <Settings />

@@ -7,10 +7,10 @@ import { Progress } from "@radix-ui/react-progress";
 import { useSearch } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
 import {
-    CircleUserRoundIcon,
-    ClockIcon,
-    FileInput,
-    FolderCheckIcon,
+  CircleUserRoundIcon,
+  ClockIcon,
+  FileInput,
+  FolderCheckIcon,
 } from "lucide-react";
 import { useMemo } from "react";
 
@@ -23,29 +23,29 @@ const SectionStats = ({ className }: { className?: string }) => {
     testId: testId as Id<"test">,
   });
 
-  const progress = useQuery(api.organizer.testResult.getProgress, {
+  const results = useQuery(api.organizer.testResult.getProgress, {
     testId: testId as Id<"test">,
   });
 
   const { totalSubmissions, averageFinished, completitionRate } =
     useMemo(() => {
-      if (!progress)
+      if (!results?.progress)
         return {
           totalSubmissions: 0,
           averageFinished: { h: 0, m: 0, s: 0 },
           completitionRate: 0,
         };
       //Total Submissions
-      const totalSubmissions = progress.filter(
+      const totalSubmissions = results.progress.filter(
         (e) => e.isFinished === true
       ).length;
 
       // AverageTime
-      const totalTime = progress.reduce(
+      const totalTime = results.progress.reduce(
         (acc, curr) => acc + curr.totalFinishedInSecond,
         0
       );
-      const averageTotalTime = totalTime / progress.length;
+      const averageTotalTime = totalTime / results.progress.length;
 
       const h = Math.floor(averageTotalTime / 3600) || 0;
       const m = Math.floor((averageTotalTime % 3600) / 60) || 0;
@@ -54,14 +54,14 @@ const SectionStats = ({ className }: { className?: string }) => {
 
       // Completition Rate
       const completitionRate =
-        Math.floor((totalSubmissions / progress.length) * 100) || 0;
+        Math.floor((totalSubmissions / results.progress.length) * 100) || 0;
 
       return { totalSubmissions, averageFinished, completitionRate };
-    }, [progress]);
+    }, [results]);
 
   return (
-    <div className={cn("grid grid-cols-4 gap-3", className)}>
-      <Card className="p-4 flex flex-row justify-between">
+    <Card className={cn("grid grid-cols-4 gap-3 divide-x divide-dashed", className)}>
+      <div className="p-4 flex flex-row justify-between">
         <div>
           <h1 className="font-medium text-sm">Working in progress</h1>
           <NumberFlow
@@ -70,15 +70,15 @@ const SectionStats = ({ className }: { className?: string }) => {
           />
         </div>
         <CircleUserRoundIcon className="size-5 stroke-rose-400" />
-      </Card>
-      <Card className="p-4 flex flex-row justify-between">
+      </div>
+      <div className="p-4 flex flex-row justify-between">
         <div>
           <h1 className="font-medium text-sm">Submission</h1>
           <NumberFlow value={totalSubmissions} className="text-3xl font-bold" />
         </div>
         <FileInput className="size-5 stroke-blue-500" />
-      </Card>
-      <Card className="p-4 flex flex-row justify-between">
+      </div>
+      <div className="p-4 flex flex-row justify-between">
         <div>
           <h1 className="font-medium text-sm">Average Time</h1>
           <NumberFlowGroup>
@@ -117,8 +117,8 @@ const SectionStats = ({ className }: { className?: string }) => {
           </NumberFlowGroup>
         </div>
         <ClockIcon className="size-5 stroke-emerald-500" />
-      </Card>
-      <Card className="p-4 flex flex-row justify-between">
+      </div>
+      <div className="p-4 flex flex-row justify-between">
         <div className="flex-1">
           <h1 className="font-medium text-sm">Completetion Rate</h1>
           <div className="flex flex-row items-center gap-4">
@@ -131,8 +131,8 @@ const SectionStats = ({ className }: { className?: string }) => {
           </div>
         </div>
         <FolderCheckIcon className="size-5 stroke-indigo-500" />
-      </Card>
-    </div>
+      </div>
+    </Card>
   );
 };
 

@@ -23,7 +23,7 @@ const SectionProgress = ({ className }: { className?: string }) => {
     testId: testId as Id<"test">,
   });
 
-  const progress = useQuery(api.organizer.testResult.getProgress, {
+  const results = useQuery(api.organizer.testResult.getProgress, {
     testId: testId as Id<"test">,
   });
 
@@ -31,8 +31,8 @@ const SectionProgress = ({ className }: { className?: string }) => {
 
   const progressFiltered = useMemo(() => {
     const filtered =
-      progress && Array.isArray(progress)
-        ? progress.filter((item) => {
+      results?.progress && Array.isArray(results.progress)
+        ? results.progress.filter((item) => {
             if (!searchInputDebounce) return true;
             const name = item.participant?.name || "";
             return name
@@ -41,7 +41,7 @@ const SectionProgress = ({ className }: { className?: string }) => {
           })
         : [];
     return filtered;
-  }, [progress, searchInputDebounce]);
+  }, [results?.progress, searchInputDebounce]);
 
   // The virtualizer
   const rowVirtualizer = useVirtualizer({
@@ -81,11 +81,11 @@ const SectionProgress = ({ className }: { className?: string }) => {
           />
         </div>
       </CardHeader>
-      {progress === undefined || testSections === undefined ? (
+      {results === undefined || testSections === undefined ? (
         <div className="px-6">
           <Loader2 className="animate-spin" />
         </div>
-      ) : progress?.length && testSections.length ? (
+      ) : results?.progress?.length && testSections.length ? (
         <CardContent className="pt-0">
           <div ref={parentRef} className="h-[200px] overflow-auto rounded-md">
             <div style={{ height: `${rowVirtualizer.getTotalSize()}px` }}>
@@ -214,7 +214,7 @@ const SectionProgress = ({ className }: { className?: string }) => {
             </div>
           </div>
         </CardContent>
-      ) : progress?.length === 0 ? (
+      ) : results?.progress?.length === 0 ? (
         <div className="px-6">
           <p className="bg-muted px-3 py-2 rounded-lg text-muted-foreground">
             No participant progress yet. Share this test to get started!

@@ -6,6 +6,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { useRef } from "react";
 import type { Id } from "@convex/_generated/dataModel";
 import { useSearch } from "@tanstack/react-router";
+import { Badge } from "@/components/ui/badge";
 const SectionLeaderBoards = ({ className }: { className?: string }) => {
   const parentRef = useRef(null);
   const { testId } = useSearch({ from: "/(organizer)/app/tests/details" });
@@ -27,12 +28,16 @@ const SectionLeaderBoards = ({ className }: { className?: string }) => {
         <CardTitle>Leaderboards</CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
-        <div ref={parentRef} className="h-[200px] overflow-auto rounded-md">
+        <div
+          ref={parentRef}
+          className="min-h-[200px] max-h-[200px] overflow-auto rounded-md"
+        >
           <div style={{ height: `${rowVirtualizer.getTotalSize()}px` }}>
-            <div className="flex flex-row items-center">
-              <span className="w-8"></span>
-              <span className="flex-1 text-xs text-muted-foreground">Name</span>
-            </div>
+            {!rowVirtualizer.getVirtualItems().length ? (
+              <div className="bg-secondary px-4 py-2 rounded-md text-foreground/60">
+                No participant progress yet.
+              </div>
+            ) : null}
             {rowVirtualizer.getVirtualItems().map((virtualItem, i) => {
               const participant = results?.leaderboard[virtualItem.index];
               const name = participant?.participant?.name || "Unknown";
@@ -43,9 +48,11 @@ const SectionLeaderBoards = ({ className }: { className?: string }) => {
                     height: `${virtualItem.size}px`,
                     transform: `translateY(${virtualItem.start - i * virtualItem.size}px)`,
                   }}
-                  className="flex flex-row items-center"
+                  className="flex flex-row items-center bg-secondary px-2 rounded-md"
                 >
-                  <span className="w-6">{virtualItem.index + 1}.</span>
+                  <Badge className="w-6" variant={"outline"}>
+                    {virtualItem.index + 1}
+                  </Badge>
                   <span className="flex-1 ml-2">{name}</span>
                 </div>
               );

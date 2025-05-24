@@ -5,8 +5,8 @@ import { z } from "zod";
 const searchSchema = z.object({
   testId: z.string().catch(""),
   tabs: z
-    .enum(["questions", "results", "settings", "share"])
-    .catch("questions"),
+    .enum(["questions", "results", "settings", "share"]).default("questions"),
+  resultsTab: z.enum(["submission", "report"]).optional().default("submission"),
   selectedSection: z.string().optional(),
 });
 

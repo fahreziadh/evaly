@@ -62,7 +62,7 @@ const DashboardSidebar = ({ className }: { className?: string }) => {
   return (
     <div className={cn("flex flex-col", className)}>
       <div className="flex flex-col gap-4">
-        <LogoLink />
+        <LogoLink href="/app"/>
         <NavOrganization />
       </div>
       <div className="flex flex-col mt-6 flex-1">

@@ -12,7 +12,7 @@ const Questions = lazy(() => import("./questions"));
 const Results = lazy(() => import("./results"));
 
 export default function TestsDetails() {
-  const { tabs, testId, selectedSection } = useSearch({
+  const { tabs, testId, selectedSection, resultsTab } = useSearch({
     from: "/(organizer)/app/tests/details",
   });
   const navigate = useNavigate({ from: "/app/tests/details" });
@@ -27,6 +27,7 @@ export default function TestsDetails() {
           tabs: "questions",
           testId,
           selectedSection: testSections[0]._id,
+          resultsTab
         },
         replace: true,
       });
@@ -42,6 +43,7 @@ export default function TestsDetails() {
             tabs: value as "questions" | "results" | "settings" | "share",
             testId,
             selectedSection,
+            resultsTab
           },
         });
       }}

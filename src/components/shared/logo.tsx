@@ -18,8 +18,8 @@ export const LogoLink = ({ className, href = "/" }: Props) => {
 
 export const LogoType = ({ className }: { className?: string}) => {
   return (
-    <div className={cn("font-extrabold text-primary text-3xl italic", className)}>
-      evaly
+    <div className={cn("font-extrabold text-primary text-xl", className)}>
+      Evaly
     </div>
   );
 };

@@ -87,7 +87,7 @@ const SectionProgress = ({ className }: { className?: string }) => {
         </div>
       ) : results?.progress?.length && testSections.length ? (
         <CardContent className="pt-0">
-          <div ref={parentRef} className="h-[200px] overflow-auto rounded-md">
+          <div ref={parentRef} className="max-h-[200px] min-h-[200px] overflow-auto rounded-md">
             <div style={{ height: `${rowVirtualizer.getTotalSize()}px` }}>
               <table>
                 <thead>

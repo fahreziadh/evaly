@@ -1,5 +1,5 @@
-import { QuestionType } from "@/types/question-types";
 import { nanoid } from "nanoid";
+import type { QuestionType } from "./question-type";
 
 export const getDefaultOptions = (type: QuestionType) => {
   switch (type) { 

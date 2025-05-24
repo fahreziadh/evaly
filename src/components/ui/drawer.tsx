@@ -138,7 +138,7 @@ function DrawerNavbar({
       <div className="mx-auto flex items-center">
         <button
           onClick={onBack}
-          className="p-2 rounded-full hover:bg-muted transition-all duration-100 cursor-pointer"
+          className="p-2 rounded-full hover:bg-muted transition-all duration-100 "
         >
           <ChevronLeft className="text-muted-foreground" size={20} />
         </button>

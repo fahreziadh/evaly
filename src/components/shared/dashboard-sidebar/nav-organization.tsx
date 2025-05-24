@@ -1,89 +1,58 @@
 "use client";
 
-import { ChevronsUpDown, SchoolIcon } from "lucide-react";
+import { EllipsisVertical } from "lucide-react";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
+  DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { trpc } from "@/trpc/trpc.client";
+import { useQuery } from "convex/react";
+import { api } from "@convex/_generated/api";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-export function NavOrganization() {
-  // const { isMobile } = useSidebar();
-  const { data, isPending } = trpc.organization.profile.useQuery();
+export const NavOrganization = () => {
+  const isMobile = useIsMobile();
+  const user = useQuery(api.organizer.profile.getProfile);
 
-  if (isPending) return <Skeleton className="h-12 w-full" />;
+  const org = user?.organization
+
+  if (!user) {
+    return <Skeleton className="h-12 w-full" />;
+  }
 
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size={"lg"}
-              className="bg-secondary data-[state=open]:bg-sidebar-secondary data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <div className="size-7 flex items-center justify-center bg-foreground/10 rounded-md">
-                <SchoolIcon className="size-5 stroke-foreground/80" />
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight ml-1">
-                <span className="truncate">
-                  {data?.organizer?.organization.name}
-                </span>
-                <span className="text-xs text-muted-foreground">Free</span>
-              </div>
-              <ChevronsUpDown className="ml-auto size-4 stroke-muted-foreground" />
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
-          {/* <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
-            align="end"
-            sideOffset={4}
-          >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{data?.organizer?.organization.name}</span>
-                </div>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
-              Log out
-            </DropdownMenuItem>
-          </DropdownMenuContent> */}
-        </DropdownMenu>
-      </SidebarMenuItem>
-    </SidebarMenu>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="w-full justify-start text-sm h-12 flex flex-row gap-2 items-center hover:opacity-70">
+          <Avatar className="size-8 rounded-lg">
+            {org?.image ? (
+              <AvatarImage src={org?.image} alt="User" asChild>
+                <img src={org?.image} alt="User" width={100} height={100} />
+              </AvatarImage>
+            ) : (
+              <AvatarFallback className="rounded-lg bg-foreground/10">
+                {org?.name?.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            )}
+          </Avatar>
+          <div className="flex-1 text-start grid">
+            <span className="font-medium">{org?.name}</span>
+            <span className="text-xs text-muted-foreground">Free</span>
+          </div>
+          <EllipsisVertical className="size-4 text-muted-foreground" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+        side={isMobile ? "bottom" : "right"}
+        align="start"
+        sideOffset={4}
+        alignOffset={4}
+      >
+        <DropdownMenuLabel>Will be available soon</DropdownMenuLabel>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
-}
+};

@@ -72,7 +72,7 @@ export default function TagsInput({
           <button
             type="button"
             onClick={() => removeTag(index)}
-            className="ml-1  hover:opacity-70 cursor-pointer p-0.5"
+            className="ml-1  hover:opacity-70  p-0.5"
             disabled={disabled}
             aria-label={`Remove ${tag}`}
           >

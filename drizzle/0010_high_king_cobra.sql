@@ -1,1 +1,0 @@
-ALTER TABLE "organization" DROP COLUMN "test";

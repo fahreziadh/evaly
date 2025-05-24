@@ -68,7 +68,7 @@ export function TooltipInfo({
     <Tooltip>
       <TooltipTrigger asChild>
         <Button size={"icon"} {...props}>
-          <InfoIcon />
+          <InfoIcon className="size-3"/>
         </Button>
       </TooltipTrigger>
       <TooltipContent>{children}</TooltipContent>
@@ -81,7 +81,7 @@ export function TooltipMessage({
   message,
 }: {
   children: React.ReactNode;
-  message: string;
+  message: string | React.ReactNode
 }) {
   return (
     <Tooltip>

@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @plugin "tailwindcss-animate";
 @plugin "@tailwindcss/typography";
@@ -43,7 +43,7 @@
 
   --code-background: hsl(0 0% 6%);
   --code-foreground: hsl(0 0% 98%);
-  
+
   --warning: hsla(32, 95%, 44%, 0.151);
   --warning-foreground: hsl(32.1 94.6% 43.7%);
 
@@ -149,7 +149,7 @@
 
 @utility container {
   @apply mx-auto px-4;
-  @apply 2xl:max-w-[1200px] max-w-[1000px]
+  @apply max-w-[1000px] 2xl:max-w-[1200px];
 }
 
 @layer base {
@@ -176,26 +176,18 @@
 
 @layer components {
   .dashboard-title {
-    @apply font-semibold md:text-xl
+    @apply font-semibold md:text-xl;
   }
   .dashboard-description {
-    @apply text-muted-foreground font-medium text-sm md:text-base
+    @apply text-muted-foreground text-sm font-medium md:text-base;
   }
   .dashboard-margin {
-    @apply mt-4 md:mt-8
+    @apply mt-4 md:mt-8;
   }
   .custom-prose {
-    @apply prose prose-base dark:prose-invert prose-neutral
-       prose-li:leading-normal prose-li:m-0  
-       prose-headings:mb-3 prose-headings:mt-0 
-       prose-h1:text-3xl prose-h1:mt-14  prose-h1:mb-10
-       prose-h2:text-2xl prose-h2:mt-12  prose-h2:mb-6  
-       prose-h3:text-xl prose-h3:mt-10 prose-h3:mb-4
-       prose-p:my-6 prose-p:leading-normal prose-p:text-foreground
-       prose-a:text-foreground prose-a:underline-offset-4 prose-a:decoration-1 prose-a:decoration-foreground/30 prose-a:cursor-pointer prose-a:font-medium
-       prose-img:my-2; 
+    @apply prose prose-base dark:prose-invert prose-neutral prose-li:leading-normal prose-li:m-0 prose-headings:mb-3 prose-headings:mt-0 prose-h1:text-3xl prose-h1:mt-14 prose-h1:mb-10 prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6 prose-h3:text-xl prose-h3:mt-10 prose-h3:mb-4 prose-p:my-6 prose-p:leading-normal prose-p:text-foreground prose-a:text-foreground prose-a:underline-offset-4 prose-a:decoration-1 prose-a:decoration-foreground/30 prose-a:cursor-pointer prose-a:font-medium prose-img:my-2;
   }
-  
+
   .custom-prose > h1:first-child {
     margin-top: 0;
   }
@@ -220,7 +212,7 @@
     /* :first-child {
       margin-top: 0;
     } */
-  
+
     pre {
       background: var(--code-background);
       border-radius: 0.5rem;
@@ -228,20 +220,20 @@
       font-family: 'Geist_Mono', monospace;
       margin: 1.5rem 0;
       padding: 0.75rem 1rem;
-  
+
       code {
         background: none;
         color: inherit;
         font-size: 0.8rem;
         padding: 0;
       }
-  
+
       /* Code styling */
       .hljs-comment,
       .hljs-quote {
         color: #616161;
       }
-  
+
       .hljs-variable,
       .hljs-template-variable,
       .hljs-attribute,
@@ -254,7 +246,7 @@
       .hljs-selector-class {
         color: #f98181;
       }
-  
+
       .hljs-number,
       .hljs-meta,
       .hljs-built_in,
@@ -264,27 +256,27 @@
       .hljs-params {
         color: #fbbc88;
       }
-  
+
       .hljs-string,
       .hljs-symbol,
       .hljs-bullet {
         color: #b9f18d;
       }
-  
+
       .hljs-title,
       .hljs-section {
         color: #faf594;
       }
-  
+
       .hljs-keyword,
       .hljs-selector-tag {
         color: #70cff8;
       }
-  
+
       .hljs-emphasis {
         font-style: italic;
       }
-  
+
       .hljs-strong {
         font-weight: 700;
       }
@@ -293,8 +285,8 @@
 }
 
 @layer base {
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button {
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
@@ -302,38 +294,83 @@
 
 /* Animation keyframes for floating particles */
 @keyframes float1 {
-  0%, 100% { transform: translate(10vw, 10vh); }
-  25% { transform: translate(15vw, 15vh); }
-  50% { transform: translate(20vw, 10vh); }
-  75% { transform: translate(15vw, 5vh); }
+  0%,
+  100% {
+    transform: translate(10vw, 10vh);
+  }
+  25% {
+    transform: translate(15vw, 15vh);
+  }
+  50% {
+    transform: translate(20vw, 10vh);
+  }
+  75% {
+    transform: translate(15vw, 5vh);
+  }
 }
 
 @keyframes float2 {
-  0%, 100% { transform: translate(70vw, 20vh); }
-  25% { transform: translate(75vw, 25vh); }
-  50% { transform: translate(80vw, 20vh); }
-  75% { transform: translate(75vw, 15vh); }
+  0%,
+  100% {
+    transform: translate(70vw, 20vh);
+  }
+  25% {
+    transform: translate(75vw, 25vh);
+  }
+  50% {
+    transform: translate(80vw, 20vh);
+  }
+  75% {
+    transform: translate(75vw, 15vh);
+  }
 }
 
 @keyframes float3 {
-  0%, 100% { transform: translate(30vw, 80vh); }
-  25% { transform: translate(35vw, 85vh); }
-  50% { transform: translate(40vw, 80vh); }
-  75% { transform: translate(35vw, 75vh); }
+  0%,
+  100% {
+    transform: translate(30vw, 80vh);
+  }
+  25% {
+    transform: translate(35vw, 85vh);
+  }
+  50% {
+    transform: translate(40vw, 80vh);
+  }
+  75% {
+    transform: translate(35vw, 75vh);
+  }
 }
 
 @keyframes float4 {
-  0%, 100% { transform: translate(60vw, 60vh); }
-  25% { transform: translate(65vw, 65vh); }
-  50% { transform: translate(70vw, 60vh); }
-  75% { transform: translate(65vw, 55vh); }
+  0%,
+  100% {
+    transform: translate(60vw, 60vh);
+  }
+  25% {
+    transform: translate(65vw, 65vh);
+  }
+  50% {
+    transform: translate(70vw, 60vh);
+  }
+  75% {
+    transform: translate(65vw, 55vh);
+  }
 }
 
 @keyframes float5 {
-  0%, 100% { transform: translate(40vw, 30vh); }
-  25% { transform: translate(45vw, 35vh); }
-  50% { transform: translate(50vw, 30vh); }
-  75% { transform: translate(45vw, 25vh); }
+  0%,
+  100% {
+    transform: translate(40vw, 30vh);
+  }
+  25% {
+    transform: translate(45vw, 35vh);
+  }
+  50% {
+    transform: translate(50vw, 30vh);
+  }
+  75% {
+    transform: translate(45vw, 25vh);
+  }
 }
 
 /* Particle animations */
@@ -365,8 +402,13 @@
 
 /* Add animation for the cursor follower */
 @keyframes pulse {
-  0%, 100% { transform: scale(1) translate(-50%, -50%); }
-  50% { transform: scale(1.1) translate(-50%, -50%); }
+  0%,
+  100% {
+    transform: scale(1) translate(-50%, -50%);
+  }
+  50% {
+    transform: scale(1.1) translate(-50%, -50%);
+  }
 }
 
 #cursor-follower {

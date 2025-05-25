@@ -2,11 +2,12 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
-} from "@/components/ui/sidebar";
-import { NavUser } from "./nav-user";
-import { NavOrganization } from "./nav-organization";
-import NavLinks from "./nav-links";
+  SidebarHeader
+} from '@/components/ui/sidebar'
+
+import NavLinks from './nav-links'
+import { NavOrganization } from './nav-organization'
+import { NavUser } from './nav-user'
 
 const DashboardSidebar = () => {
   return (
@@ -20,7 +21,7 @@ const DashboardSidebar = () => {
       </SidebarContent>
       <SidebarFooter></SidebarFooter>
     </Sidebar>
-  );
-};
+  )
+}
 
-export default DashboardSidebar;
+export default DashboardSidebar

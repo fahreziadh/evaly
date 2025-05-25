@@ -1,7 +1,8 @@
-import { asc, eq } from "drizzle-orm";
-import db from "../../../lib/db";
-import { testInvitation } from "../../../lib/db/schema/test.invitation";
-import { user } from "../../../lib/db/schema";
+import { asc, eq } from 'drizzle-orm'
+
+import db from '../../../lib/db'
+import { user } from '../../../lib/db/schema'
+import { testInvitation } from '../../../lib/db/schema/test.invitation'
 
 export async function getInvitationListTest(testId: string) {
   const res = await db
@@ -13,12 +14,12 @@ export async function getInvitationListTest(testId: string) {
       updatedAt: testInvitation.updatedAt,
       testId: testInvitation.testId,
       name: user.name,
-      image: user.image,
+      image: user.image
     })
     .from(testInvitation)
     .leftJoin(user, eq(testInvitation.email, user.email))
     .where(eq(testInvitation.testId, testId))
-    .orderBy(asc(testInvitation.email));
+    .orderBy(asc(testInvitation.email))
 
-  return res;
+  return res
 }

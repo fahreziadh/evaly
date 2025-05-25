@@ -1,47 +1,49 @@
-"use client";
+'use client'
 
-import { useMemo, useTransition } from "react";
+import { cn } from '@/lib/utils'
+import dayjs from 'dayjs'
+import {
+  BookOpen,
+  Calendar,
+  FileText,
+  Loader2,
+  MinusIcon,
+  Plus,
+  Search,
+  Smile,
+  WandSparkles
+} from 'lucide-react'
+import { parseAsString, useQueryState } from 'nuqs'
+import { useMemo, useTransition } from 'react'
+import { toast } from 'sonner'
+
+import LoadingScreen from '@/components/shared/loading/loading-screen'
+import { Link, useProgressRouter } from '@/components/shared/progress-bar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import {
-  Search,
-  FileText,
-  Calendar,
-  WandSparkles,
-  Plus,
-  Loader2,
-  MinusIcon,
-  BookOpen,
-  Smile,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Link, useProgressRouter } from "@/components/shared/progress-bar";
-import { toast } from "sonner";
-import dayjs from "dayjs";
-import { parseAsString, useQueryState } from "nuqs";
-import { trpc } from "@/trpc/trpc.client";
-import LoadingScreen from "@/components/shared/loading/loading-screen";
+  CardTitle
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
+import { trpc } from '@/trpc/trpc.client'
 
 const Page = () => {
   return (
-    <div className="container dashboard-margin">
+    <div className="dashboard-margin container">
       <div className="flex flex-row justify-between">
-        <div className="flex flex-col mb-8">
+        <div className="mb-8 flex flex-col">
           <h1 className="dashboard-title">Question Bank</h1>
           <p className="dashboard-description">
             Create and manage your question templates.
           </p>
         </div>
-        <div className="flex md:flex-row flex-col items-end justify-start md:items-start gap-2">
+        <div className="flex flex-col items-end justify-start gap-2 md:flex-row md:items-start">
           <CreateQuestionTemplateButton />
           <Link href="/dashboard/question/generate">
             <Button>
@@ -52,40 +54,40 @@ const Page = () => {
       </div>
       <QuestionTemplateSection />
     </div>
-  );
-};
+  )
+}
 
 const CreateQuestionTemplateButton = () => {
-  const router = useProgressRouter();
-  const [transitionReady, startTransition] = useTransition();
+  const router = useProgressRouter()
+  const [transitionReady, startTransition] = useTransition()
 
   const { mutate: createQuestionTemplate, isPending: isLoading } =
     trpc.organization.questionTemplate.create.useMutation({
       onError(error) {
-        toast.error(error.message || "Failed to create question template");
+        toast.error(error.message || 'Failed to create question template')
       },
       onSuccess(data) {
-        toast.success("Question template created successfully");
+        toast.success('Question template created successfully')
         startTransition(() => {
-          router.push(`/dashboard/question/${data.id}`);
-        });
-      },
-    });
+          router.push(`/dashboard/question/${data.id}`)
+        })
+      }
+    })
 
   return (
     <Button
-      variant={"outline"}
-      onClick={() => createQuestionTemplate({ title: "" })}
+      variant={'outline'}
+      onClick={() => createQuestionTemplate({ title: '' })}
       disabled={transitionReady || isLoading}
     >
       {isLoading ? (
         <>
-          <Loader2 className="w-4 h-4 animate-spin" />
+          <Loader2 className="h-4 w-4 animate-spin" />
           <span>Creating...</span>
         </>
       ) : transitionReady ? (
         <>
-          <Loader2 className="w-4 h-4 animate-spin" />
+          <Loader2 className="h-4 w-4 animate-spin" />
           <span>Redirecting...</span>
         </>
       ) : (
@@ -94,57 +96,56 @@ const CreateQuestionTemplateButton = () => {
         </>
       )}
     </Button>
-  );
-};
+  )
+}
 
 const QuestionTemplateSection = ({
   className,
-  gridClassName,
+  gridClassName
 }: {
-  className?: string;
-  gridClassName?: string;
+  className?: string
+  gridClassName?: string
 }) => {
   const [searchQuery, setSearchQuery] = useQueryState(
-    "search",
-    parseAsString.withDefault("")
-  );
-  const [tab, setTab] = useQueryState("tab", parseAsString.withDefault("all"));
+    'search',
+    parseAsString.withDefault('')
+  )
+  const [tab, setTab] = useQueryState('tab', parseAsString.withDefault('all'))
 
-  const { data: dataQuestionTemplate, isPending: isPendingQuestionTemplate } = trpc.organization.questionTemplate.getAll.useQuery();
+  const { data: dataQuestionTemplate, isPending: isPendingQuestionTemplate } =
+    trpc.organization.questionTemplate.getAll.useQuery()
 
   const filteredDataQuestionTemplate = useMemo(() => {
-    if (!dataQuestionTemplate) return [];
-    let list = dataQuestionTemplate;
-    if (tab === "all") list = dataQuestionTemplate;
-    if (tab === "owned")
-      list = dataQuestionTemplate.filter((e) => {
-        return !e.isAiGenerated;
-      });
+    if (!dataQuestionTemplate) return []
+    let list = dataQuestionTemplate
+    if (tab === 'all') list = dataQuestionTemplate
+    if (tab === 'owned')
+      list = dataQuestionTemplate.filter(e => {
+        return !e.isAiGenerated
+      })
 
-    if (tab === "generated")
-      list = dataQuestionTemplate.filter((e) => {
-        return e.isAiGenerated;
-      });
+    if (tab === 'generated')
+      list = dataQuestionTemplate.filter(e => {
+        return e.isAiGenerated
+      })
 
-    if (!searchQuery) return list;
+    if (!searchQuery) return list
 
-    return list.filter((template) => {
-      if (!template.title) return false;
+    return list.filter(template => {
+      if (!template.title) return false
       return (
         template.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        template.tags.some((tag) =>
-          tag.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-      );
-    });
-  }, [dataQuestionTemplate, searchQuery, tab]);
+        template.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
+    })
+  }, [dataQuestionTemplate, searchQuery, tab])
 
   if (isPendingQuestionTemplate) return <LoadingScreen />
 
   return (
-    <div className={cn("space-y-6", className)}>
+    <div className={cn('space-y-6', className)}>
       <Tabs className="w-full" value={tab} onValueChange={setTab}>
-        <div className="flex flex-col-reverse gap-4 md:flex-row justify-between mb-4">
+        <div className="mb-4 flex flex-col-reverse justify-between gap-4 md:flex-row">
           <TabsList>
             <TabsTrigger value="all">
               <FileText className="size-3.5" />
@@ -160,26 +161,25 @@ const QuestionTemplateSection = ({
             </TabsTrigger>
           </TabsList>
           <div className="relative w-full md:w-80">
-            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+            <Search className="text-muted-foreground absolute top-2 left-2.5 h-3.5 w-3.5" />
             <Input
               placeholder="Search templates..."
               className="pl-8"
-              value={searchQuery ?? ""}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchQuery ?? ''}
+              onChange={e => setSearchQuery(e.target.value)}
             />
           </div>
         </div>
 
         {/* Owned Templates Tab */}
-        {filteredDataQuestionTemplate &&
-        filteredDataQuestionTemplate?.length > 0 ? (
+        {filteredDataQuestionTemplate && filteredDataQuestionTemplate?.length > 0 ? (
           <div
             className={cn(
-              "grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6",
+              'grid grid-cols-1 gap-6 md:grid-cols-2 2xl:grid-cols-3',
               gridClassName
             )}
           >
-            {filteredDataQuestionTemplate?.map((template) => (
+            {filteredDataQuestionTemplate?.map(template => (
               <CardQuestionTemplate key={template.id} template={template} />
             ))}
           </div>
@@ -188,41 +188,41 @@ const QuestionTemplateSection = ({
         )}
       </Tabs>
     </div>
-  );
-};
+  )
+}
 
 const CardQuestionTemplate = ({
-  template,
+  template
 }: {
   template: {
-    id: string;
-    createdAt: string;
-    updatedAt: string;
-    organizationId: string;
-    deletedAt: string | null;
-    title: string | null;
-    organizerId: string;
-    tags: string[];
-    isAiGenerated: boolean;
+    id: string
+    createdAt: string
+    updatedAt: string
+    organizationId: string
+    deletedAt: string | null
+    title: string | null
+    organizerId: string
+    tags: string[]
+    isAiGenerated: boolean
     questions: {
-      id: string;
-      question: string | null;
-    }[];
-  };
+      id: string
+      question: string | null
+    }[]
+  }
 }) => {
   return (
     <Link href={`/dashboard/question/${template.id}`}>
       <Card
         className={cn(
-          "overflow-hidden group border-border h-full hover:shadow-2xl hover:shadow-black/5",
-          "bg-card hover:bg-muted/20"
+          'group border-border h-full overflow-hidden hover:shadow-2xl hover:shadow-black/5',
+          'bg-card hover:bg-muted/20'
         )}
       >
         <CardHeader className="pb-3">
-          <div className="flex justify-between items-start">
+          <div className="flex items-start justify-between">
             <div>
               <CardTitle className="line-clamp-1">
-                {template.title || "Untitled"}
+                {template.title || 'Untitled'}
               </CardTitle>
               {/* <CardDescription className="text-xs mt-1">
                 {template.title}
@@ -233,47 +233,44 @@ const CardQuestionTemplate = ({
             </Button> */}
           </div>
         </CardHeader>
-        <CardContent className="pb-3 space-y-3">
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <CardContent className="space-y-3 pb-3">
+          <div className="text-muted-foreground flex items-center justify-between text-sm">
             <div className="flex items-center">
-              <FileText className="h-4 w-4 mr-1" />
+              <FileText className="mr-1 h-4 w-4" />
               {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (template as any).totalQuestions
-              }{" "}
+              }{' '}
               questions
             </div>
             <div className="flex items-center">
-              <Calendar className="h-4 w-4 mr-1" />
-              {dayjs(template.createdAt).format("DD MMM YYYY")}
+              <Calendar className="mr-1 h-4 w-4" />
+              {dayjs(template.createdAt).format('DD MMM YYYY')}
             </div>
           </div>
 
           {/* Question Highlights */}
           <div className="space-y-1.5">
-            {template.questions?.map((question) => {
+            {template.questions?.map(question => {
               return (
-                <div
-                  key={question.id}
-                  className="flex items-center gap-1.5 text-xs"
-                >
-                  <div className="flex-shrink-0 size-3 rounded-full bg-muted/50 flex items-center justify-center">
+                <div key={question.id} className="flex items-center gap-1.5 text-xs">
+                  <div className="bg-muted/50 flex size-3 flex-shrink-0 items-center justify-center rounded-full">
                     <MinusIcon className="size-3" />
                   </div>
                   <div
-                    className="flex-1 line-clamp-1 text-muted-foreground"
+                    className="text-muted-foreground line-clamp-1 flex-1"
                     dangerouslySetInnerHTML={{
-                      __html: question.question || "No preview available",
+                      __html: question.question || 'No preview available'
                     }}
                   />
                 </div>
-              );
+              )
             })}
           </div>
         </CardContent>
         <CardFooter className="flex justify-between pt-0">
           <div className="flex flex-wrap gap-1">
-            {template.tags.map((tag) => (
+            {template.tags.map(tag => (
               <Badge key={tag} variant="outline" className="text-xs">
                 {tag}
               </Badge>
@@ -282,28 +279,22 @@ const CardQuestionTemplate = ({
         </CardFooter>
       </Card>
     </Link>
-  );
-};
+  )
+}
 
-const EmptyState = ({
-  message,
-  icon,
-}: {
-  message: string;
-  icon?: React.ReactNode;
-}) => {
+const EmptyState = ({ message, icon }: { message: string; icon?: React.ReactNode }) => {
   return (
-    <div className="flex flex-col items-center justify-center py-16 bg-muted/20 rounded-lg border border-dashed">
+    <div className="bg-muted/20 flex flex-col items-center justify-center rounded-lg border border-dashed py-16">
       <div className="bg-background rounded-full p-4">
-        {icon || <BookOpen className="size-20 text-muted-foreground" />}
+        {icon || <BookOpen className="text-muted-foreground size-20" />}
       </div>
       <p className="text-muted-foreground mt-2 mb-1">{message}</p>
-      <p className="text-xs text-muted-foreground/70 mb-4">
+      <p className="text-muted-foreground/70 mb-4 text-xs">
         Try adjusting your search or browse all templates
       </p>
       <CreateQuestionTemplateButton />
     </div>
-  );
-};
+  )
+}
 
-export default Page;
+export default Page

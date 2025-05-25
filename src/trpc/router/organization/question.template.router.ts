@@ -1,42 +1,43 @@
-import { questionTemplate } from "@/lib/db/schema";
-import { createQuestionTemplate } from "@/services/organization/question/create-question-template";
-import { deleteQuestionTemplate } from "@/services/organization/question/delete-question-template";
-import { getAllQuestionTemplate } from "@/services/organization/question/get-all-question-template";
-import { getQuestionTemplateById } from "@/services/organization/question/get-question-template-by-id";
-import { updateQuestionTemplate } from "@/services/organization/question/update-question-template";
-import { organizerProcedure, router } from "@/trpc";
-import { createUpdateSchema } from "drizzle-zod";
-import { z } from "zod";
+import { questionTemplate } from '@/lib/db/schema'
+import { organizerProcedure, router } from '@/trpc'
+import { createUpdateSchema } from 'drizzle-zod'
+import { z } from 'zod'
+
+import { createQuestionTemplate } from '@/services/organization/question/create-question-template'
+import { deleteQuestionTemplate } from '@/services/organization/question/delete-question-template'
+import { getAllQuestionTemplate } from '@/services/organization/question/get-all-question-template'
+import { getQuestionTemplateById } from '@/services/organization/question/get-question-template-by-id'
+import { updateQuestionTemplate } from '@/services/organization/question/update-question-template'
 
 export const questionTemplateRouter = router({
   create: organizerProcedure
     .input(
       z.object({
-        title: z.string(),
+        title: z.string()
       })
     )
     .mutation(
       async ({
         input,
         ctx: {
-          organizer: { organizationId, id },
-        },
+          organizer: { organizationId, id }
+        }
       }) => {
         return await createQuestionTemplate({
           organizationId,
           organizerId: id,
-          title: input.title,
-        });
+          title: input.title
+        })
       }
     ),
 
   getAll: organizerProcedure.query(
     async ({
       ctx: {
-        organizer: { organizationId },
-      },
+        organizer: { organizationId }
+      }
     }) => {
-      return await getAllQuestionTemplate(organizationId);
+      return await getAllQuestionTemplate(organizationId)
     }
   ),
 
@@ -44,10 +45,10 @@ export const questionTemplateRouter = router({
     async ({
       input,
       ctx: {
-        organizer: { organizationId },
-      },
+        organizer: { organizationId }
+      }
     }) => {
-      return await getQuestionTemplateById(input.id, organizationId);
+      return await getQuestionTemplateById(input.id, organizationId)
     }
   ),
 
@@ -55,29 +56,23 @@ export const questionTemplateRouter = router({
     async ({
       input,
       ctx: {
-        organizer: { organizationId },
-      },
+        organizer: { organizationId }
+      }
     }) => {
-      return await deleteQuestionTemplate(input.id, organizationId);
+      return await deleteQuestionTemplate(input.id, organizationId)
     }
   ),
 
   update: organizerProcedure
-    .input(
-      z.object({ id: z.string(), data: createUpdateSchema(questionTemplate) })
-    )
+    .input(z.object({ id: z.string(), data: createUpdateSchema(questionTemplate) }))
     .mutation(
       async ({
         input,
         ctx: {
-          organizer: { organizationId },
-        },
+          organizer: { organizationId }
+        }
       }) => {
-        return await updateQuestionTemplate(
-          input.id,
-          organizationId,
-          input.data
-        );
+        return await updateQuestionTemplate(input.id, organizationId, input.data)
       }
-    ),
-});
+    )
+})

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 // Define the environment schema
 const envSchema = z.object({
@@ -19,8 +19,8 @@ const envSchema = z.object({
   EVALY_AWS_ACCESS_KEY_ID: z.string(),
   EVALY_AWS_SECRET_ACCESS_KEY: z.string(),
   OPENAI_API_KEY: z.string(),
-  GOOGLE_GENERATIVE_AI_API_KEY: z.string(),
-});
+  GOOGLE_GENERATIVE_AI_API_KEY: z.string()
+})
 
 // Parse the environment variables
-export const env = envSchema.parse(process.env);
+export const env = envSchema.parse(process.env)

@@ -1,34 +1,35 @@
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { account, session, user, verification } from "@/lib/db/schema";
-import db from "@/lib/db";
-import { env } from "@/lib/env";
-import { emailOTP } from "better-auth/plugins";
-import EmailLoginOTPEmail from "@/lib/emails/email-login-otp";
-import { render } from "@react-email/components";
-import { sendEmail } from "./email";
+import db from '@/lib/db'
+import { account, session, user, verification } from '@/lib/db/schema'
+import EmailLoginOTPEmail from '@/lib/emails/email-login-otp'
+import { env } from '@/lib/env'
+import { render } from '@react-email/components'
+import { betterAuth } from 'better-auth'
+import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { emailOTP } from 'better-auth/plugins'
+
+import { sendEmail } from './email'
 
 export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET!,
   plugins: [
     emailOTP({
       async sendVerificationOTP({ email, otp }) {
-        const emailHtml = await render(<EmailLoginOTPEmail otp={otp} />);
+        const emailHtml = await render(<EmailLoginOTPEmail otp={otp} />)
         await sendEmail({
           from: {
-            name: "Evaly",
-            address: "noreply@evaly.io",
+            name: 'Evaly',
+            address: 'noreply@evaly.io'
           },
           to: email,
           subject: `Your OTP for Evaly is ${otp}`,
-          html: emailHtml,
-        });
-      },
-    }),
+          html: emailHtml
+        })
+      }
+    })
   ],
   database: drizzleAdapter(db, {
     // We're using Drizzle as our database
-    provider: "pg",
+    provider: 'pg',
     /*
      * Map your schema into a better-auth schema
      */
@@ -36,11 +37,11 @@ export const auth = betterAuth({
       user,
       session,
       verification,
-      account,
-    },
+      account
+    }
   }),
   emailAndPassword: {
-    enabled: true, // If you want to use email and password auth
+    enabled: true // If you want to use email and password auth
   },
   socialProviders: {
     /*
@@ -49,7 +50,7 @@ export const auth = betterAuth({
      */
     google: {
       clientId: env.GOOGLE_CLIENT_ID!,
-      clientSecret: env.GOOGLE_CLIENT_SECRET!,
-    },
-  },
-});
+      clientSecret: env.GOOGLE_CLIENT_SECRET!
+    }
+  }
+})

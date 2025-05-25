@@ -1,27 +1,29 @@
-"use client";
-import ParticipantAccount from "@/components/shared/account/participant-account";
-import { LogoType } from "@/components/shared/logo";
-import { cn } from "@/lib/utils";
-import { useEffect } from "react";
-import { useState } from "react";
+'use client'
+
+import { cn } from '@/lib/utils'
+import { useEffect } from 'react'
+import { useState } from 'react'
+
+import ParticipantAccount from '@/components/shared/account/participant-account'
+import { LogoType } from '@/components/shared/logo'
 
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 80);
-    };
+      setIsScrolled(window.scrollY > 80)
+    }
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
     <div
       className={cn(
-        "flex flex-row items-center border-b border-dashed justify-between px-6 py-3 sticky top-0 bg-background transition-all duration-300",
-        isScrolled ? "border-border" : "border-transparent"
+        'bg-background sticky top-0 flex flex-row items-center justify-between border-b border-dashed px-6 py-3 transition-all duration-300',
+        isScrolled ? 'border-border' : 'border-transparent'
       )}
     >
       <LogoType href="/" />
@@ -29,7 +31,7 @@ const Navbar = () => {
         <ParticipantAccount />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

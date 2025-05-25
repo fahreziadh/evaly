@@ -1,21 +1,37 @@
-import { useState, useMemo } from "react";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import {
-  XCircle,
-  HelpCircle,
-  Loader2,
-  Clock,
+  AlertCircle,
+  AlertTriangle,
   BarChart3,
   Calendar,
+  CheckCircle2,
+  Clock,
+  HelpCircle,
+  Loader2,
   Mail,
   Timer,
-  AlertCircle,
-  CheckCircle2,
-  XIcon,
-  AlertTriangle,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+  XCircle,
+  XIcon
+} from 'lucide-react'
+import { useMemo, useState } from 'react'
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '@/components/ui/accordion'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
 import {
   Drawer,
   DrawerClose,
@@ -24,38 +40,24 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerNavbar,
-  DrawerTitle,
-} from "@/components/ui/drawer";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+  DrawerTitle
+} from '@/components/ui/drawer'
+import { Progress } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import { Submission, Section } from "./types";
-import { ExportDialogDetails } from "./export-dialog-details";
-import { trpc } from "@/trpc/trpc.client";
+import { trpc } from '@/trpc/trpc.client'
 
-dayjs.extend(relativeTime);
+import { ExportDialogDetails } from './export-dialog-details'
+import { Section, Submission } from './types'
+
+dayjs.extend(relativeTime)
 
 interface SubmissionDrawerProps {
-  submission: Submission | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  sections: Section[];
-  testId: string;
+  submission: Submission | null
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  sections: Section[]
+  testId: string
 }
 
 export const SubmissionDrawer = ({
@@ -63,72 +65,76 @@ export const SubmissionDrawer = ({
   open,
   onOpenChange,
   sections,
-  testId,
+  testId
 }: SubmissionDrawerProps) => {
-  const [activeTab, setActiveTab] = useState<string>("overview");
+  const [activeTab, setActiveTab] = useState<string>('overview')
 
   // Fetch detailed submission data when drawer is open
-  const { data: submissionDetails, isLoading } = trpc.organization.test.getTestResultsByParticipant.useQuery({
-    id: testId,
-    email: submission?.email || "",
-  },{
-    enabled: !!submission?.email,
-  });
+  const { data: submissionDetails, isLoading } =
+    trpc.organization.test.getTestResultsByParticipant.useQuery(
+      {
+        id: testId,
+        email: submission?.email || ''
+      },
+      {
+        enabled: !!submission?.email
+      }
+    )
 
   // Use the detailed questions from the API response
   const questions = useMemo(() => {
-    if (!submissionDetails) return [];
-    return submissionDetails.questions || [];
-  }, [submissionDetails]);
+    if (!submissionDetails) return []
+    return submissionDetails.questions || []
+  }, [submissionDetails])
 
   // Group questions by section
   const questionsBySection = useMemo(() => {
-    if (!questions.length) return {};
+    if (!questions.length) return {}
 
     return questions.reduce(
       (acc, question) => {
-        const sectionId = question.sectionId;
+        const sectionId = question.sectionId
         if (!acc[sectionId]) {
-          acc[sectionId] = [];
+          acc[sectionId] = []
         }
-        acc[sectionId].push(question);
-        return acc;
+        acc[sectionId].push(question)
+        return acc
       },
       {} as Record<string, typeof questions>
-    );
-  }, [questions]);
+    )
+  }, [questions])
 
-  if (!submission) return null;
+  if (!submission) return null
 
   // Calculate section performance
   const getSectionPerformance = (sectionId: string) => {
-    const answered = submission.sectionAnswers?.[sectionId] || 0;
-    const correct = submission.sectionCorrect?.[sectionId] || 0;
-    const wrong = submission.sectionWrong?.[sectionId] || 0;
-    const section = sections.find((s) => s.id === sectionId);
-    const total = section?.questionsCount || 0;
-    const unanswered = total - answered;
-    const score = total > 0 ? Math.round((correct / total) * 100) : 0;
+    const answered = submission.sectionAnswers?.[sectionId] || 0
+    const correct = submission.sectionCorrect?.[sectionId] || 0
+    const wrong = submission.sectionWrong?.[sectionId] || 0
+    const section = sections.find(s => s.id === sectionId)
+    const total = section?.questionsCount || 0
+    const unanswered = total - answered
+    const score = total > 0 ? Math.round((correct / total) * 100) : 0
 
-    return { answered, correct, wrong, unanswered, total, score };
-  };
+    return { answered, correct, wrong, unanswered, total, score }
+  }
 
   // Get progress color based on score
   const getProgressColor = (score: number) => {
-    if (score >= 80) return "bg-green-600";
-    if (score >= 60) return "bg-amber-600";
-    return "bg-red-600";
-  };
+    if (score >= 80) return 'bg-green-600'
+    if (score >= 60) return 'bg-amber-600'
+    return 'bg-red-600'
+  }
 
   // Get initials for avatar
   const getInitials = (name: string) => {
     return name
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
+      .split(' ')
+      .map(part => part[0])
+      .join('')
       .toUpperCase()
-      .substring(0, 2);
-  };
+      .substring(0, 2)
+  }
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
@@ -136,24 +142,22 @@ export const SubmissionDrawer = ({
         <DrawerNavbar
           onBack={() => onOpenChange(false)}
           titleComponent={
-            <DrawerHeader className="text-left py-0">
+            <DrawerHeader className="py-0 text-left">
               <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10 border-2 border-primary/10">
+                <Avatar className="border-primary/10 h-10 w-10 border-2">
                   <AvatarFallback className="bg-primary/10 text-primary">
                     {getInitials(submission.name)}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <DrawerTitle className="font-semibold">
-                    {submission.name}
-                  </DrawerTitle>
-                  <DrawerDescription className="text-sm text-muted-foreground leading-1 flex items-center gap-2">
+                  <DrawerTitle className="font-semibold">{submission.name}</DrawerTitle>
+                  <DrawerDescription className="text-muted-foreground flex items-center gap-2 text-sm leading-1">
                     <Mail className="h-3 w-3" /> {submission.email}
                     {submission.submittedAt && (
                       <>
                         <span className="mx-1">•</span>
-                        <Calendar className="h-3 w-3" />{" "}
-                        {dayjs(submission.submittedAt).format("MMM D, YYYY")}
+                        <Calendar className="h-3 w-3" />{' '}
+                        {dayjs(submission.submittedAt).format('MMM D, YYYY')}
                       </>
                     )}
                   </DrawerDescription>
@@ -167,7 +171,7 @@ export const SubmissionDrawer = ({
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
-            className="container max-w-4xl py-6 "
+            className="container max-w-4xl py-6"
           >
             <TabsList className="mb-4">
               <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -175,76 +179,64 @@ export const SubmissionDrawer = ({
             </TabsList>
 
             <TabsContent value="overview">
-              <div className="space-y-8 ">
+              <div className="space-y-8">
                 {/* Status Card */}
                 <Card className="border-none">
                   <CardHeader className="px-0">
-                    <CardTitle className="font-medium flex items-center gap-2">
-                      <BarChart3 className="h-5 w-5 text-primary" />
+                    <CardTitle className="flex items-center gap-2 font-medium">
+                      <BarChart3 className="text-primary h-5 w-5" />
                       Test Performance
                     </CardTitle>
                     <CardDescription>
-                      {submission.status === "in-progress" ? (
+                      {submission.status === 'in-progress' ? (
                         <div className="flex items-center gap-1 text-amber-500">
                           <Timer className="h-4 w-4" />
                           <span>This test is still in progress</span>
                         </div>
-                      ) : submission.status === "test-ended" ? (
+                      ) : submission.status === 'test-ended' ? (
                         <div className="flex items-center gap-1 text-red-500">
                           <AlertTriangle className="h-4 w-4" />
                           <span>Time&apos;s up before completion</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <Calendar className="text-muted-foreground h-4 w-4" />
                           <span>
-                            Completed on{" "}
+                            Completed on{' '}
                             {submission.submittedAt
                               ? dayjs(submission.submittedAt).format(
-                                  "MMMM D, YYYY [at] h:mm A"
+                                  'MMMM D, YYYY [at] h:mm A'
                                 )
-                              : "Unknown date"}
+                              : 'Unknown date'}
                           </span>
                         </div>
                       )}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="px-0">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-2">
-                      <div className="flex flex-col p-3 border border-dashed">
+                    <div className="mt-2 grid grid-cols-2 gap-6 md:grid-cols-4">
+                      <div className="flex flex-col border border-dashed p-3">
                         <div className={`text-2xl font-medium`}>
                           {submission.score}%
                         </div>
-                        <div className="text-sm text-muted-foreground">
-                          Score
-                        </div>
+                        <div className="text-muted-foreground text-sm">Score</div>
                       </div>
 
-                      <div className="flex flex-col p-3 border border-dashed">
+                      <div className="flex flex-col border border-dashed p-3">
                         <div className="text-3xl font-medium">
-                          #{submission.rank || "-"}
+                          #{submission.rank || '-'}
                         </div>
-                        <div className="text-sm text-muted-foreground mt-1">
-                          Rank
-                        </div>
+                        <div className="text-muted-foreground mt-1 text-sm">Rank</div>
                       </div>
 
-                      <div className="flex flex-col p-3 border border-dashed">
-                        <div className="text-3xl font-medium">
-                          {submission.correct}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          Correct
-                        </div>
+                      <div className="flex flex-col border border-dashed p-3">
+                        <div className="text-3xl font-medium">{submission.correct}</div>
+                        <div className="text-muted-foreground text-sm">Correct</div>
                       </div>
 
-                      <div className="flex flex-col p-3 border border-dashed">
-                        <div className="text-3xl font-medium">
-                          {submission.wrong}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          Wrong
-                        </div>
+                      <div className="flex flex-col border border-dashed p-3">
+                        <div className="text-3xl font-medium">{submission.wrong}</div>
+                        <div className="text-muted-foreground text-sm">Wrong</div>
                       </div>
                     </div>
 
@@ -252,19 +244,15 @@ export const SubmissionDrawer = ({
                       <div className="flex justify-between text-sm">
                         <span className="font-medium">Progress</span>
                         <span className="font-medium">
-                          {submission.answered}/{submission.totalQuestions}{" "}
-                          questions
+                          {submission.answered}/{submission.totalQuestions} questions
                         </span>
                       </div>
 
                       <Progress
-                        value={
-                          (submission.answered / submission.totalQuestions) *
-                          100
-                        }
+                        value={(submission.answered / submission.totalQuestions) * 100}
                       />
 
-                      <div className="flex justify-between text-sm text-muted-foreground mt-2 px-1">
+                      <div className="text-muted-foreground mt-2 flex justify-between px-1 text-sm">
                         <div className="flex items-center gap-1">
                           <CheckCircle2 className="size-4 text-green-600" />
                           <span>{submission.correct} correct</span>
@@ -274,28 +262,27 @@ export const SubmissionDrawer = ({
                           <span>{submission.wrong} wrong</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <HelpCircle className="size-4 text-muted-foreground" />
+                          <HelpCircle className="text-muted-foreground size-4" />
                           <span>{submission.unanswered} unanswered</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="mt-8 flex items-center justify-between text-sm p-3 rounded-lg bg-muted/30">
+                    <div className="bg-muted/30 mt-8 flex items-center justify-between rounded-lg p-3 text-sm">
                       <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <Clock className="text-muted-foreground h-4 w-4" />
                         <span>
-                          Started:{" "}
+                          Started:{' '}
                           {submission.startedAt
-                            ? dayjs(submission.startedAt).format("h:mm A")
-                            : "Unknown"}
+                            ? dayjs(submission.startedAt).format('h:mm A')
+                            : 'Unknown'}
                         </span>
                       </div>
                       {submission.submittedAt && (
                         <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          <Clock className="text-muted-foreground h-4 w-4" />
                           <span>
-                            Submitted:{" "}
-                            {dayjs(submission.submittedAt).format("h:mm A")}
+                            Submitted: {dayjs(submission.submittedAt).format('h:mm A')}
                           </span>
                         </div>
                       )}
@@ -305,54 +292,50 @@ export const SubmissionDrawer = ({
 
                 {/* Section Performance */}
                 <div className="space-y-4">
-                  <h3 className="font-medium flex items-center gap-2 px-1">
-                    <BarChart3 className="h-5 w-5 text-primary" />
+                  <h3 className="flex items-center gap-2 px-1 font-medium">
+                    <BarChart3 className="text-primary h-5 w-5" />
                     Section Performance
                   </h3>
                   <div className="grid grid-cols-1 gap-4">
                     {sections.map((section, index) => {
-                      const performance = getSectionPerformance(section.id);
+                      const performance = getSectionPerformance(section.id)
                       return (
                         <Card key={section.id} className="overflow-hidden">
                           <CardHeader className={`py-3`}>
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                               <CardTitle className="text-base font-medium">
                                 {section.name || `Section ${index + 1}`}
                               </CardTitle>
                               <Badge>{performance.score}%</Badge>
                             </div>
                           </CardHeader>
-                          <CardContent className="pt-6 border-t border-dashed">
+                          <CardContent className="border-t border-dashed pt-6">
                             <div className="grid grid-cols-4 gap-4">
-                              <div className="flex flex-col p-3 border border-dashed">
+                              <div className="flex flex-col border border-dashed p-3">
                                 <span className="text-lg">
                                   {performance.answered}/{performance.total}
                                 </span>
-                                <span className="text-xs text-muted-foreground">
+                                <span className="text-muted-foreground text-xs">
                                   Answered
                                 </span>
                               </div>
-                              <div className="flex flex-col p-3 border border-dashed">
-                                <span className="text-lg">
-                                  {performance.correct}
-                                </span>
-                                <span className="text-xs text-muted-foreground">
+                              <div className="flex flex-col border border-dashed p-3">
+                                <span className="text-lg">{performance.correct}</span>
+                                <span className="text-muted-foreground text-xs">
                                   Correct
                                 </span>
                               </div>
-                              <div className="flex flex-col p-3 border border-dashed">
-                                <span className="text-lg">
-                                  {performance.wrong}
-                                </span>
-                                <span className="text-xs text-muted-foreground">
+                              <div className="flex flex-col border border-dashed p-3">
+                                <span className="text-lg">{performance.wrong}</span>
+                                <span className="text-muted-foreground text-xs">
                                   Wrong
                                 </span>
                               </div>
-                              <div className="flex flex-col p-3 border border-dashed">
+                              <div className="flex flex-col border border-dashed p-3">
                                 <span className="font-medium">
                                   {performance.unanswered}
                                 </span>
-                                <span className="text-xs text-muted-foreground">
+                                <span className="text-muted-foreground text-xs">
                                   Unanswered
                                 </span>
                               </div>
@@ -360,14 +343,12 @@ export const SubmissionDrawer = ({
                             <div className="mt-4">
                               <Progress
                                 value={performance.score}
-                                className={`h-2 ${getProgressColor(
-                                  performance.score
-                                )}`}
+                                className={`h-2 ${getProgressColor(performance.score)}`}
                               />
                             </div>
                           </CardContent>
                         </Card>
-                      );
+                      )
                     })}
                   </div>
                 </div>
@@ -376,15 +357,13 @@ export const SubmissionDrawer = ({
 
             <TabsContent
               value="questions"
-              className="focus-visible:outline-none focus-visible:ring-0"
+              className="focus-visible:ring-0 focus-visible:outline-none"
             >
               <div className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <div className="flex justify-between items-center">
-                      <CardTitle className="font-medium">
-                        Questions
-                      </CardTitle>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="font-medium">Questions</CardTitle>
                       <div className="flex items-center gap-3 text-sm">
                         <div className="flex items-center gap-1">
                           <CheckCircle2 className="size-5 text-green-600" />
@@ -395,7 +374,7 @@ export const SubmissionDrawer = ({
                           <span>Wrong</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <HelpCircle className="size-4 text-muted-foreground" />
+                          <HelpCircle className="text-muted-foreground size-4" />
                           <span>Unanswered</span>
                         </div>
                       </div>
@@ -407,12 +386,12 @@ export const SubmissionDrawer = ({
                 </Card>
 
                 {isLoading ? (
-                  <div className="flex flex-col justify-center items-center py-20 gap-3">
+                  <div className="flex flex-col items-center justify-center gap-3 py-20">
                     <div className="relative">
-                      <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                      <div className="bg-primary/10 flex h-16 w-16 items-center justify-center rounded-full">
+                        <Loader2 className="text-primary h-8 w-8 animate-spin" />
                       </div>
-                      <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-primary flex items-center justify-center">
+                      <div className="bg-primary absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-full">
                         <AlertCircle className="h-4 w-4 text-white" />
                       </div>
                     </div>
@@ -421,77 +400,64 @@ export const SubmissionDrawer = ({
                     </span>
                   </div>
                 ) : (
-                  <Accordion
-                    type="multiple"
-                    className="w-full min-h-dvh space-y-4"
-                  >
+                  <Accordion type="multiple" className="min-h-dvh w-full space-y-4">
                     {sections.map((section, i) => {
-                      const sectionQuestions =
-                        questionsBySection[section.id] || [];
-                      const performance = getSectionPerformance(section.id);
+                      const sectionQuestions = questionsBySection[section.id] || []
+                      const performance = getSectionPerformance(section.id)
 
                       return (
                         <Card key={section.id} className="">
-                          <AccordionItem
-                            value={section.id}
-                            className="border-none"
-                          >
-                            <AccordionTrigger className="px-6 py-4 hover:bg-primary/5 transition-colors cursor-pointer">
-                              <div className="flex flex-1 justify-between items-center">
+                          <AccordionItem value={section.id} className="border-none">
+                            <AccordionTrigger className="hover:bg-primary/5 cursor-pointer px-6 py-4 transition-colors">
+                              <div className="flex flex-1 items-center justify-between">
                                 <div className="flex items-center gap-2">
                                   <span className="font-medium">
                                     {section.name || `Section ${i + 1}`}
                                   </span>
-                                  <Badge className={`ml-2`} variant={"outline"}>
+                                  <Badge className={`ml-2`} variant={'outline'}>
                                     {performance.score}%
                                   </Badge>
                                 </div>
-                                <div className="flex items-center gap-2 text-sm mr-4">
+                                <div className="mr-4 flex items-center gap-2 text-sm">
                                   <span className="flex items-center gap-1">
                                     <CheckCircle2 className="size-4 text-green-600" />
                                     {performance.correct}
                                   </span>
-                                  <span className="text-muted-foreground/50">
-                                    /
-                                  </span>
+                                  <span className="text-muted-foreground/50">/</span>
                                   <span className="flex items-center gap-1">
                                     <XIcon className="size-4 text-red-600" />
                                     {performance.wrong}
                                   </span>
-                                  <span className="text-muted-foreground/50">
-                                    /
-                                  </span>
+                                  <span className="text-muted-foreground/50">/</span>
                                   <span className="flex items-center gap-1">
-                                    <HelpCircle className="size-4 text-muted-foreground" />
+                                    <HelpCircle className="text-muted-foreground size-4" />
                                     {performance.unanswered}
                                   </span>
                                 </div>
                               </div>
                             </AccordionTrigger>
-                            <AccordionContent className="px-0 pt-4 border-t border-dashed">
+                            <AccordionContent className="border-t border-dashed px-0 pt-4">
                               <div className="space-y-4 px-4">
                                 {sectionQuestions.map((question, index) => (
                                   <div key={question.id} className="border">
-                                    <div
-                                      className={`p-4 border-b border-dashed`}
-                                    >
-                                      <div className="flex items-start gap-3 bgbl">
+                                    <div className={`border-b border-dashed p-4`}>
+                                      <div className="bgbl flex items-start gap-3">
                                         <div className="mt-0.5 flex-shrink-0">
                                           {question.isCorrect === true ? (
-                                            <div className="h-7 w-7 rounded-full bg-green-500/10 flex items-center justify-center">
+                                            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-green-500/10">
                                               <CheckCircle2 className="h-4 w-4 text-green-600" />
                                             </div>
                                           ) : question.isCorrect === false ? (
-                                            <div className="h-7 w-7 rounded-full bg-red-500/10 flex items-center justify-center">
+                                            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-red-500/10">
                                               <XCircle className="h-4 w-4 text-red-600" />
                                             </div>
                                           ) : (
-                                            <div className="h-7 w-7 rounded-full bg-gray-500/10 flex items-center justify-center">
-                                              <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                                            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-500/10">
+                                              <HelpCircle className="text-muted-foreground h-4 w-4" />
                                             </div>
                                           )}
                                         </div>
-                                        <div className="space-y-2 flex-1">
+                                        <div className="flex-1 space-y-2">
                                           <div className="flex justify-between">
                                             <h4 className="font-medium">
                                               Question {index + 1}
@@ -500,16 +466,14 @@ export const SubmissionDrawer = ({
                                               variant="outline"
                                               className="capitalize shadow-sm"
                                             >
-                                              {question.type?.replace(
-                                                /_/g,
-                                                " "
-                                              ) || "Unknown"}
+                                              {question.type?.replace(/_/g, ' ') ||
+                                                'Unknown'}
                                             </Badge>
                                           </div>
                                           <div
-                                            className="text-sm custom-prose "
+                                            className="custom-prose text-sm"
                                             dangerouslySetInnerHTML={{
-                                              __html: question.text || "",
+                                              __html: question.text || ''
                                             }}
                                           />
                                         </div>
@@ -517,52 +481,52 @@ export const SubmissionDrawer = ({
                                     </div>
 
                                     <div className="p-4">
-                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-2 p-3 rounded-lg bg-primary/10">
-                                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                        <div className="bg-primary/10 space-y-2 rounded-lg p-3">
+                                          <p className="text-muted-foreground flex items-center gap-1 text-xs font-medium tracking-wider uppercase">
                                             <CheckCircle2 className="h-3 w-3 text-green-600" />
                                             Correct Answer
                                           </p>
                                           <div
-                                            className="text-sm font-medium custom-prose"
+                                            className="custom-prose text-sm font-medium"
                                             dangerouslySetInnerHTML={{
                                               __html:
                                                 question.correctAnswer ||
-                                                "Not available",
+                                                'Not available'
                                             }}
                                           />
                                         </div>
                                         <div
-                                          className={`space-y-2 p-3 rounded-lg ${
+                                          className={`space-y-2 rounded-lg p-3 ${
                                             question.isCorrect === true
-                                              ? "bg-green-500/10"
+                                              ? 'bg-green-500/10'
                                               : question.isCorrect === false
-                                                ? "bg-red-500/10"
-                                                : "bg-primary/10"
+                                                ? 'bg-red-500/10'
+                                                : 'bg-primary/10'
                                           }`}
                                         >
-                                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                                          <p className="text-muted-foreground flex items-center gap-1 text-xs font-medium tracking-wider uppercase">
                                             {question.isCorrect === true ? (
                                               <CheckCircle2 className="size-3 text-green-600" />
                                             ) : question.isCorrect === false ? (
                                               <XCircle className="size-3 text-red-600" />
                                             ) : (
-                                              <HelpCircle className="size-3 text-muted-foreground" />
+                                              <HelpCircle className="text-muted-foreground size-3" />
                                             )}
                                             Participant&apos;s Answer
                                           </p>
                                           <div
                                             className={`text-sm font-medium ${
                                               question.isCorrect === true
-                                                ? "text-green-600"
+                                                ? 'text-green-600'
                                                 : question.isCorrect === false
-                                                  ? "text-red-600"
-                                                  : "text-muted-foreground italic"
+                                                  ? 'text-red-600'
+                                                  : 'text-muted-foreground italic'
                                             }`}
                                             dangerouslySetInnerHTML={{
                                               __html:
                                                 question.participantAnswer ||
-                                                "Not answered",
+                                                'Not answered'
                                             }}
                                           />
                                         </div>
@@ -574,7 +538,7 @@ export const SubmissionDrawer = ({
                             </AccordionContent>
                           </AccordionItem>
                         </Card>
-                      );
+                      )
                     })}
                   </Accordion>
                 )}
@@ -584,7 +548,7 @@ export const SubmissionDrawer = ({
         </div>
 
         <DrawerFooter className="border-t py-3">
-          <div className="container max-w-4xl flex justify-between items-center gap-2">
+          <div className="container flex max-w-4xl items-center justify-between gap-2">
             <DrawerClose asChild>
               <Button variant="outline">Close</Button>
             </DrawerClose>
@@ -598,5 +562,5 @@ export const SubmissionDrawer = ({
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  );
-};
+  )
+}

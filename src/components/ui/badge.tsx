@@ -1,30 +1,29 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
-
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
+import { Slot } from '@radix-ui/react-slot'
+import { type VariantProps, cva } from 'class-variance-authority'
+import * as React from 'react'
 
 const badgeVariants = cva(
-  "inline-flex items-center justify-center rounded-sm border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-auto",
+  'inline-flex items-center justify-center rounded-sm border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-auto',
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground [a&]:hover:opacity-90",
+          'border-transparent bg-primary text-primary-foreground [a&]:hover:opacity-90',
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground [a&]:hover:opacity-90",
+          'border-transparent bg-secondary text-secondary-foreground [a&]:hover:opacity-90',
         destructive:
-          "border-transparent bg-destructive text-white [a&]:hover:opacity-90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
+          'border-transparent bg-destructive text-white [a&]:hover:opacity-90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40',
         outline:
-          "text-foreground [a&]:hover:bg-secondary [a&]:hover:text-secondary-foreground",
+          'text-foreground [a&]:hover:bg-secondary [a&]:hover:text-secondary-foreground',
         ghost:
-          "text-foreground [a&]:hover:bg-secondary [a&]:hover:text-secondary-foreground border-transparent",
-        "success": "bg-success text-success-foreground border-success-foreground/20"
-        },
+          'text-foreground [a&]:hover:bg-secondary [a&]:hover:text-secondary-foreground border-transparent',
+        success: 'bg-success text-success-foreground border-success-foreground/20'
+      }
     },
     defaultVariants: {
-      variant: "default",
-    },
+      variant: 'default'
+    }
   }
 )
 
@@ -33,9 +32,9 @@ function Badge({
   variant,
   asChild = false,
   ...props
-}: React.ComponentProps<"span"> &
+}: React.ComponentProps<'span'> &
   VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot : "span"
+  const Comp = asChild ? Slot : 'span'
 
   return (
     <Comp

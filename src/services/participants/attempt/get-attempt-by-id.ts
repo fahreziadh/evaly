@@ -1,6 +1,7 @@
-import { eq } from "drizzle-orm";
-import db from "../../../lib/db";
-import { testAttempt } from "../../../lib/db/schema/test.attempt";
+import { eq } from 'drizzle-orm'
+
+import db from '../../../lib/db'
+import { testAttempt } from '../../../lib/db/schema/test.attempt'
 
 export async function getAttemptById(attemptId: string) {
   const attempt = await db.query.testAttempt.findFirst({
@@ -14,20 +15,20 @@ export async function getAttemptById(attemptId: string) {
               options: true,
               order: true,
               question: true,
-              type: true,
+              type: true
             },
             where(fields, { isNull }) {
-              return isNull(fields.deletedAt);
+              return isNull(fields.deletedAt)
             },
             orderBy(fields, { asc }) {
-              return asc(fields.order);
-            },
-          },
-        },
-      },
+              return asc(fields.order)
+            }
+          }
+        }
+      }
     },
-    where: eq(testAttempt.id, attemptId),
-  });
+    where: eq(testAttempt.id, attemptId)
+  })
 
-  return attempt;
+  return attempt
 }

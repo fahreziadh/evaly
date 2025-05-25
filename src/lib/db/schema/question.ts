@@ -1,67 +1,70 @@
-import { relations, sql } from "drizzle-orm";
+import { relations, sql } from 'drizzle-orm'
 import {
+  boolean,
   index,
+  jsonb,
   pgTable,
   smallint,
   text,
   timestamp,
-  varchar, boolean,
-  jsonb
-} from "drizzle-orm/pg-core";
-import { ulid } from "ulidx";
+  varchar
+} from 'drizzle-orm/pg-core'
+import { ulid } from 'ulidx'
 
-import { QUESTION_TYPES } from "../../../types/question-types";
-import { MediaType } from "../../../types/media";
-import { testSection } from "./test.section";
-import { questionTemplate } from "./question.template";
+import { MediaType } from '../../../types/media'
+import { QUESTION_TYPES } from '../../../types/question-types'
+import { questionTemplate } from './question.template'
+import { testSection } from './test.section'
 
 // Main question table
 export const question = pgTable(
-  "question",
+  'question',
   {
-    id: varchar("id", { length: 255 })
+    id: varchar('id', { length: 255 })
       .primaryKey()
-      .$defaultFn(() => "qst-" + ulid()),
-    question: text("question"),
-    referenceId: varchar("reference_id", { length: 255 }).notNull(),
-    organizationId: varchar("organization_id", { length: 255 }), // Owner of the question
-    order: smallint("order").default(1).notNull(),
-    type: varchar("type", {
+      .$defaultFn(() => 'qst-' + ulid()),
+    question: text('question'),
+    referenceId: varchar('reference_id', { length: 255 }).notNull(),
+    organizationId: varchar('organization_id', { length: 255 }), // Owner of the question
+    order: smallint('order').default(1).notNull(),
+    type: varchar('type', {
       length: 20,
-      enum: QUESTION_TYPES,
-    }).default("multiple-choice"),
-    pointValue: smallint("point_value"),
-    options: jsonb("options").$type<
-      {
-        id: string;
-        text: string;
-        isCorrect: boolean;
-        mediaUrl?: string;
-        mediaType?: MediaType;
-        pointValue?: number;
-      }[]
-    >().default([]),
-    allowMultipleAnswers: boolean("allow_multiple_answers").default(false).notNull(),
-    createdAt: timestamp("created_at", {
-      mode: "string",
-      withTimezone: true,
+      enum: QUESTION_TYPES
+    }).default('multiple-choice'),
+    pointValue: smallint('point_value'),
+    options: jsonb('options')
+      .$type<
+        {
+          id: string
+          text: string
+          isCorrect: boolean
+          mediaUrl?: string
+          mediaType?: MediaType
+          pointValue?: number
+        }[]
+      >()
+      .default([]),
+    allowMultipleAnswers: boolean('allow_multiple_answers').default(false).notNull(),
+    createdAt: timestamp('created_at', {
+      mode: 'string',
+      withTimezone: true
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
-    updatedAt: timestamp("updated_at", {
-      mode: "string",
-      withTimezone: true,
+    updatedAt: timestamp('updated_at', {
+      mode: 'string',
+      withTimezone: true
     })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`)
       .$onUpdate(() => new Date().toISOString()),
-    deletedAt: timestamp("deleted_at", {
-      mode: "string",
-      withTimezone: true,
-    }),
+    deletedAt: timestamp('deleted_at', {
+      mode: 'string',
+      withTimezone: true
+    })
   },
-  (table) => ({
-    referenceIdIndex: index("reference_idx").on(table.referenceId),
+  table => ({
+    referenceIdIndex: index('reference_idx').on(table.referenceId)
   })
 ).enableRLS()
 
@@ -432,9 +435,9 @@ export const questionRelation = relations(question, ({ one }) => ({
   questionTemplate: one(questionTemplate, {
     fields: [question.referenceId],
     references: [questionTemplate.id],
-    relationName: "question.questionTemplate",
-  }),
-}));
+    relationName: 'question.questionTemplate'
+  })
+}))
 
 // export const textFieldConfigRelation = relations(
 //   textFieldConfig,

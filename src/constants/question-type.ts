@@ -1,195 +1,216 @@
 import {
-  CheckSquare, // Single choice
-  ToggleLeft, // Point based
-  AlignLeft, // Text field
-  Upload, // File upload
-  TextCursor, // Fill the blank
-  Mic, // Audio response
-  Video, // Video response
-  ChevronsDown, // Dropdown
-  ListOrdered, // Ranking
-  Sliders, // Slider scale
-  Calendar, // Date picker
-  Clock, // Time picker
-  Image, // Image choice
-  Combine, // Matching pairs
-  Grid, // Matrix
-  MousePointer, // Hotspot
-  SquarePi, // Formula input
-  Code, ThumbsUp, // Likert scale
-  FileText, // Open-ended
-  Braces, // Code snippet
+  // Point based
+  AlignLeft,
+  // Open-ended
+  Braces,
+  // Slider scale
+  Calendar,
+  CheckSquare,
+  // Video response
+  ChevronsDown,
+  // Date picker
+  Clock,
+  // Formula input
+  Code,
+  // Image choice
+  Combine,
+  // Likert scale
+  FileText,
+  // Matching pairs
+  Grid,
+  HandIcon,
+  // Time picker
+  Image,
+  // Dropdown
+  ListOrdered,
+  // Fill the blank
+  Mic,
+  // Matrix
+  MousePointer,
+  // Code snippet
   PenTool,
-  HandIcon
-} from "lucide-react";
+  // Ranking
+  Sliders,
+  // Hotspot
+  SquarePi,
+  // File upload
+  TextCursor,
+  ThumbsUp,
+  // Single choice
+  ToggleLeft,
+  // Text field
+  Upload,
+  // Audio response
+  Video
+} from 'lucide-react'
 
 export const questionTypes = {
-  "multiple-choice": {
-    value: "multiple-choice",
-    label: "Multiple Choice",
+  'multiple-choice': {
+    value: 'multiple-choice',
+    label: 'Multiple Choice',
     icon: CheckSquare,
-    group: "choice",
+    group: 'choice',
     isHidden: false
   },
-  "yes-or-no": {
-    value: "yes-or-no",
-    label: "Yes or No",
+  'yes-or-no': {
+    value: 'yes-or-no',
+    label: 'Yes or No',
     icon: ToggleLeft,
-    group: "choice",
+    group: 'choice',
     isHidden: false
   },
-  "text-field": {
-    value: "text-field",
-    label: "Text Field",
+  'text-field': {
+    value: 'text-field',
+    label: 'Text Field',
     icon: AlignLeft,
-    group: "input",
+    group: 'input',
     isHidden: true
   },
-  "file-upload": {
-    value: "file-upload",
-    label: "File Upload",
+  'file-upload': {
+    value: 'file-upload',
+    label: 'File Upload',
     icon: Upload,
-    group: "input",
+    group: 'input',
     isHidden: true
   },
-  "fill-the-blank": {
-    value: "fill-the-blank",
-    label: "Fill the Blank",
+  'fill-the-blank': {
+    value: 'fill-the-blank',
+    label: 'Fill the Blank',
     icon: TextCursor,
-    group: "input",
+    group: 'input',
     isHidden: true
   },
-  "audio-response": {
-    value: "audio-response",
-    label: "Audio Response",
+  'audio-response': {
+    value: 'audio-response',
+    label: 'Audio Response',
     icon: Mic,
-    group: "input",
+    group: 'input',
     isHidden: true
   },
-  "video-response": {
-    value: "video-response",
-    label: "Video Response",
+  'video-response': {
+    value: 'video-response',
+    label: 'Video Response',
     icon: Video,
-    group: "input",
+    group: 'input',
     isHidden: true
   },
-  "dropdown": {
-    value: "dropdown",
-    label: "Dropdown",
+  dropdown: {
+    value: 'dropdown',
+    label: 'Dropdown',
     icon: ChevronsDown,
-    group: "choice",
+    group: 'choice',
     isHidden: true
   },
-  "ranking": {
-    value: "ranking",
-    label: "Ranking",
+  ranking: {
+    value: 'ranking',
+    label: 'Ranking',
     icon: ListOrdered,
-    group: "scaleStructure",
+    group: 'scaleStructure',
     isHidden: true
   },
-  "slider-scale": {
-    value: "slider-scale",
-    label: "Slider Scale",
+  'slider-scale': {
+    value: 'slider-scale',
+    label: 'Slider Scale',
     icon: Sliders,
-    group: "scaleStructure",
+    group: 'scaleStructure',
     isHidden: true
   },
-  "date-picker": {
-    value: "date-picker",
-    label: "Date Picker",
+  'date-picker': {
+    value: 'date-picker',
+    label: 'Date Picker',
     icon: Calendar,
-    group: "scaleStructure",
+    group: 'scaleStructure',
     isHidden: true
   },
-  "time-picker": {
-    value: "time-picker",
-    label: "Time Picker",
+  'time-picker': {
+    value: 'time-picker',
+    label: 'Time Picker',
     icon: Clock,
-    group: "scaleStructure",
+    group: 'scaleStructure',
     isHidden: true
   },
-  "image-choice": {
-    value: "image-choice",
-    label: "Image Choice",
+  'image-choice': {
+    value: 'image-choice',
+    label: 'Image Choice',
     icon: Image,
-    group: "choice",
+    group: 'choice',
     isHidden: true
   },
-  "matching-pairs": {
-    value: "matching-pairs",
-    label: "Matching Pairs",
+  'matching-pairs': {
+    value: 'matching-pairs',
+    label: 'Matching Pairs',
     icon: Combine,
-    group: "scaleStructure",
+    group: 'scaleStructure',
     isHidden: true
   },
-  "matrix": {
-    value: "matrix",
-    label: "Matrix",
+  matrix: {
+    value: 'matrix',
+    label: 'Matrix',
     icon: Grid,
-    group: "scaleStructure",
+    group: 'scaleStructure',
     isHidden: true
   },
-  "hotspot": {
-    value: "hotspot",
-    label: "Hotspot",
+  hotspot: {
+    value: 'hotspot',
+    label: 'Hotspot',
     icon: MousePointer,
-    group: "advanced",
+    group: 'advanced',
     isHidden: true
   },
-  "formula-input": {
-    value: "formula-input",
-    label: "Formula Input",
+  'formula-input': {
+    value: 'formula-input',
+    label: 'Formula Input',
     icon: SquarePi,
-    group: "advanced",
+    group: 'advanced',
     isHidden: true
   },
-  "drag-and-drop": {
-    value: "drag-and-drop",
-    label: "Drag and Drop",
+  'drag-and-drop': {
+    value: 'drag-and-drop',
+    label: 'Drag and Drop',
     icon: HandIcon,
-    group: "advanced",
+    group: 'advanced',
     isHidden: true
   },
-  "likert-scale": {
-    value: "likert-scale",
-    label: "Likert Scale",
+  'likert-scale': {
+    value: 'likert-scale',
+    label: 'Likert Scale',
     icon: ThumbsUp,
-    group: "scaleStructure",
+    group: 'scaleStructure',
     isHidden: true
   },
-  "open-ended": {
-    value: "open-ended",
-    label: "Open Ended",
+  'open-ended': {
+    value: 'open-ended',
+    label: 'Open Ended',
     icon: FileText,
-    group: "input",
+    group: 'input',
     isHidden: true
   },
-  "code-snippet": {
-    value: "code-snippet",
-    label: "Code Snippet",
+  'code-snippet': {
+    value: 'code-snippet',
+    label: 'Code Snippet',
     icon: Braces,
-    group: "advanced",
+    group: 'advanced',
     isHidden: true
   },
-  "math-formula": {
-    value: "math-formula",
-    label: "Math Formula",
+  'math-formula': {
+    value: 'math-formula',
+    label: 'Math Formula',
     icon: SquarePi,
-    group: "advanced",
+    group: 'advanced',
     isHidden: true
   },
-  "drawing": {
-    value: "drawing",
-    label: "Drawing",
+  drawing: {
+    value: 'drawing',
+    label: 'Drawing',
     icon: PenTool,
-    group: "advanced",
+    group: 'advanced',
     isHidden: true
   },
-  "code-editor": {
-    value: "code-editor",
-    label: "Code Editor",
+  'code-editor': {
+    value: 'code-editor',
+    label: 'Code Editor',
     icon: Code,
-    group: "advanced",
+    group: 'advanced',
     isHidden: true
   }
-};
+}

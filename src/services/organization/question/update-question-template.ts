@@ -1,6 +1,7 @@
-import { and, eq } from "drizzle-orm";
-import db from "../../../lib/db";
-import { questionTemplate } from "../../../lib/db/schema";
+import { and, eq } from 'drizzle-orm'
+
+import db from '../../../lib/db'
+import { questionTemplate } from '../../../lib/db/schema'
 
 export const updateQuestionTemplate = async (
   templateId: string,
@@ -16,7 +17,7 @@ export const updateQuestionTemplate = async (
         eq(questionTemplate.organizationId, organizationId)
       )
     )
-    .returning();
+    .returning()
 
-  return updateQuestionTemplate[0];
-};
+  return updateQuestionTemplate[0]
+}

@@ -1,82 +1,82 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { BookDashed } from 'lucide-react'
+import { useMemo, useState } from 'react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  CardTitle
+} from '@/components/ui/card'
 import {
   Dialog,
-  DialogContent, DialogHeader,
+  DialogContent,
+  DialogHeader,
   DialogTitle,
   DialogTrigger
-} from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookDashed } from "lucide-react";
-import { useMemo, useState } from "react";
+} from '@/components/ui/dialog'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const DialogTestDescriptionTemplate = ({
   className,
-  onSelect,
+  onSelect
 }: {
-  className?: string;
-  onSelect?: (template: string) => void;
+  className?: string
+  onSelect?: (template: string) => void
 }) => {
-  const [tabs, setTabs] = useState<"short" | "long">("short");
-  const [open, setOpen] = useState(false);
+  const [tabs, setTabs] = useState<'short' | 'long'>('short')
+  const [open, setOpen] = useState(false)
   const onSelectTemplate = (template: string) => {
-    onSelect?.(template);
-    setOpen(false);
-  };
+    onSelect?.(template)
+    setOpen(false)
+  }
 
   const templateList = useMemo(() => {
-    return tabs === "short" ? TemplateListShort : TemplateListLong;
-  }, [tabs]);
+    return tabs === 'short' ? TemplateListShort : TemplateListLong
+  }, [tabs])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={"outline"} size={"sm"} className={className}>
+        <Button variant={'outline'} size={'sm'} className={className}>
           <BookDashed /> Use template
         </Button>
       </DialogTrigger>
-      <DialogContent className="md:max-w-[800px] w-full">
+      <DialogContent className="w-full md:max-w-[800px]">
         <DialogHeader>
           <DialogTitle>Template for Test Description</DialogTitle>
           <div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Choose a template to help you create a test description.
             </p>
             <Tabs
               value={tabs}
-              onValueChange={(value) => setTabs(value as "short" | "long")}
+              onValueChange={value => setTabs(value as 'short' | 'long')}
             >
               <TabsList className="mt-4">
                 <TabsTrigger value="short">Compact</TabsTrigger>
-                <TabsTrigger value="long">
-                Detailed
-                </TabsTrigger>
+                <TabsTrigger value="long">Detailed</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
         </DialogHeader>
         <ScrollArea className="h-[70vh]">
           <div className="flex flex-col gap-4">
-            {templateList.map((template) => (
+            {templateList.map(template => (
               <Card
                 key={template.title}
                 className="flex flex-col gap-2 overflow-y-auto"
               >
                 <CardHeader>
                   <CardTitle>
-                    <Badge variant={"secondary"}>{template.title}</Badge>
+                    <Badge variant={'secondary'}>{template.title}</Badge>
                   </CardTitle>
                   <CardDescription className="">
                     <div
-                      className="prose prose-sm overflow-y-auto prose-neutral dark:prose-invert"
+                      className="prose prose-sm prose-neutral dark:prose-invert overflow-y-auto"
                       dangerouslySetInnerHTML={{ __html: template.content }}
                     />
                   </CardDescription>
@@ -84,8 +84,8 @@ const DialogTestDescriptionTemplate = ({
                 <CardFooter>
                   <Button
                     onClick={() => onSelectTemplate(template.content)}
-                    variant={"default"}
-                    size={"sm"}
+                    variant={'default'}
+                    size={'sm'}
                     className={className}
                   >
                     Use template
@@ -97,12 +97,12 @@ const DialogTestDescriptionTemplate = ({
         </ScrollArea>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
 const TemplateListShort: { title: string; content: string }[] = [
   {
-    title: "Tech Skills Assessment",
+    title: 'Tech Skills Assessment',
     content: `
         <h2>Technical Skills Assessment</h2>
         <p>
@@ -112,10 +112,10 @@ const TemplateListShort: { title: string; content: string }[] = [
           <strong>[beginner/intermediate/advanced]</strong>. Your results will help us understand your technical capabilities in 
           <strong>[specific skill area]</strong>.
         </p>
-      `,
+      `
   },
   {
-    title: "Academic Knowledge Test",
+    title: 'Academic Knowledge Test',
     content: `
         <h2>Academic Knowledge Test</h2>
         <p>
@@ -124,10 +124,10 @@ const TemplateListShort: { title: string; content: string }[] = [
           This assessment is aligned with <strong>[curriculum/standard]</strong> for <strong>[grade/level]</strong> students. Your score will be used to 
           <strong>[purpose of assessment]</strong>.
         </p>
-      `,
+      `
   },
   {
-    title: "Job Candidate Evaluation",
+    title: 'Job Candidate Evaluation',
     content: `
         <h2>Job Candidate Screening</h2>
         <p>
@@ -136,10 +136,10 @@ const TemplateListShort: { title: string; content: string }[] = [
           which are essential for success in this role. You have <strong>[time]</strong> minutes to complete this assessment. 
           Your responses will be evaluated based on <strong>[evaluation criteria]</strong> and will be used as part of our hiring decision process.
         </p>
-      `,
+      `
   },
   {
-    title: "Certification Exam Prep",
+    title: 'Certification Exam Prep',
     content: `
         <h2>Certification Preparation Test</h2>
         <p>
@@ -147,10 +147,10 @@ const TemplateListShort: { title: string; content: string }[] = [
           <strong>[objective 1]</strong>, <strong>[objective 2]</strong>, and <strong>[objective 3]</strong>. You have <strong>[time]</strong> minutes to complete this test. 
           Upon completion, you'll receive detailed feedback on your performance in each domain to help you prepare for the actual certification exam.
         </p>
-      `,
+      `
   },
   {
-    title: "Team Skills Analysis",
+    title: 'Team Skills Analysis',
     content: `
         <h2>Team Skills Gap Analysis</h2>
         <p>
@@ -159,10 +159,10 @@ const TemplateListShort: { title: string; content: string }[] = [
           <strong>[time]</strong> minutes to complete. Results will be used to identify training opportunities and optimize resource allocation. 
           All responses are confidential and will be used solely for team development purposes.
         </p>
-      `,
+      `
   },
   {
-    title: "Product Knowledge Check",
+    title: 'Product Knowledge Check',
     content: `
         <h2>Customer Product Knowledge Quiz</h2>
         <p>
@@ -171,13 +171,13 @@ const TemplateListShort: { title: string; content: string }[] = [
           The assessment takes approximately <strong>[time]</strong> minutes to complete. Your results will help us provide you with tailored information and support 
           to maximize the value you receive from <strong>[product/service]</strong>.
         </p>
-      `,
-  },
-];
+      `
+  }
+]
 
 const TemplateListLong: { title: string; content: string }[] = [
   {
-    title: "Tech Skills Assessment (Detailed)",
+    title: 'Tech Skills Assessment (Detailed)',
     content: `
         <h2>Comprehensive Technical Skills Assessment</h2>
         <p>
@@ -199,10 +199,10 @@ const TemplateListLong: { title: string; content: string }[] = [
           highlighting both strengths and areas for potential growth. This assessment has been developed in collaboration with industry experts
           and follows current best practices in <strong>[technology/language]</strong> development.
         </p>
-      `,
+      `
   },
   {
-    title: "Academic Knowledge Test (Detailed)",
+    title: 'Academic Knowledge Test (Detailed)',
     content: `
         <h2>Advanced Academic Knowledge Evaluation</h2>
         <p>
@@ -228,10 +228,10 @@ const TemplateListLong: { title: string; content: string }[] = [
           recommendations for further study. Your results will be used to <strong>[purpose of assessment]</strong> and to create a 
           personalized learning pathway tailored to your specific needs.
         </p>
-      `,
+      `
   },
   {
-    title: "Job Candidate Evaluation (Detailed)",
+    title: 'Job Candidate Evaluation (Detailed)',
     content: `
         <h2>Detailed Job Candidate Assessment</h2>
         <p>
@@ -258,10 +258,10 @@ const TemplateListLong: { title: string; content: string }[] = [
           The results will be considered alongside your resume, interviews, and other application materials to make a holistic hiring decision.
           All candidates will receive feedback on their performance regardless of the outcome.
         </p>
-      `,
+      `
   },
   {
-    title: "Certification Exam Prep (Detailed)",
+    title: 'Certification Exam Prep (Detailed)',
     content: `
         <h2>In-Depth Certification Preparation Assessment</h2>
         <p>
@@ -297,10 +297,10 @@ const TemplateListLong: { title: string; content: string }[] = [
           This practice exam has been developed by certified professionals with extensive experience in <strong>[field]</strong> and is 
           regularly updated to reflect the latest changes to the certification requirements.
         </p>
-      `,
+      `
   },
   {
-    title: "Team Skills Analysis (Detailed)",
+    title: 'Team Skills Analysis (Detailed)',
     content: `
         <h2>Detailed Team Competency Assessment</h2>
         <p>
@@ -338,10 +338,10 @@ const TemplateListLong: { title: string; content: string }[] = [
           shared with the respective team member and their direct manager. Aggregated, anonymized data will be used for team-level analysis 
           and planning.
         </p>
-      `,
+      `
   },
   {
-    title: "Product Knowledge Check (Detailed)",
+    title: 'Product Knowledge Check (Detailed)',
     content: `
         <h2>In-Depth Customer Product Knowledge Assessment</h2>
         <p>
@@ -379,8 +379,8 @@ const TemplateListLong: { title: string; content: string }[] = [
           <strong>[product/service]</strong>. This assessment is part of our commitment to ensuring all users can leverage the full 
           potential of our solutions to address their specific needs.
         </p>
-      `,
-  },
-];
+      `
+  }
+]
 
-export default DialogTestDescriptionTemplate;
+export default DialogTestDescriptionTemplate

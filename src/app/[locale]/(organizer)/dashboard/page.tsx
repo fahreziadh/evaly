@@ -1,9 +1,10 @@
-"use client";
+'use client'
 
-import { Suspense } from "react";
-import DashboardPageClient from "./page.client";
+import { Suspense } from 'react'
 
-export const dynamic = "force-static";
+import DashboardPageClient from './page.client'
+
+export const dynamic = 'force-static'
 
 const Page = () => {
   return (
@@ -12,6 +13,6 @@ const Page = () => {
         <DashboardPageClient />
       </Suspense>
     </div>
-  );
-};
-export default Page;
+  )
+}
+export default Page

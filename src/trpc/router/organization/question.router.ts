@@ -1,59 +1,60 @@
-import { question } from "@/lib/db/schema";
-import { checkQuestionOwner } from "@/services/organization/question/check-question-owner";
-import { createQuestion } from "@/services/organization/question/create-question";
-import { createQuestionTemplate } from "@/services/organization/question/create-question-template";
-import { deleteQuestion } from "@/services/organization/question/delete-question";
-import { getAllQuestionByReferenceId } from "@/services/organization/question/get-all-question-by-reference-id";
-import { transferBetweenReference } from "@/services/organization/question/transfer-question-between-reference";
-import { updateOrderBetweenQuestions } from "@/services/organization/question/update-order-between-questions";
-import { updateQuestion } from "@/services/organization/question/update-question";
-import { organizerProcedure, router } from "@/trpc";
-import { google } from "@ai-sdk/google";
-import { generateObject, generateText } from "ai";
-import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
-import { z } from "zod";
+import { question } from '@/lib/db/schema'
+import { organizerProcedure, router } from '@/trpc'
+import { google } from '@ai-sdk/google'
+import { generateObject, generateText } from 'ai'
+import { createInsertSchema, createUpdateSchema } from 'drizzle-zod'
+import { z } from 'zod'
+
+import { checkQuestionOwner } from '@/services/organization/question/check-question-owner'
+import { createQuestion } from '@/services/organization/question/create-question'
+import { createQuestionTemplate } from '@/services/organization/question/create-question-template'
+import { deleteQuestion } from '@/services/organization/question/delete-question'
+import { getAllQuestionByReferenceId } from '@/services/organization/question/get-all-question-by-reference-id'
+import { transferBetweenReference } from '@/services/organization/question/transfer-question-between-reference'
+import { updateOrderBetweenQuestions } from '@/services/organization/question/update-order-between-questions'
+import { updateQuestion } from '@/services/organization/question/update-question'
 
 export const questionRouter = router({
   getAll: organizerProcedure
     .input(
       z.object({
-        referenceId: z.string(),
+        referenceId: z.string()
       })
     )
     .query(async ({ input }) => {
-      return await getAllQuestionByReferenceId(input.referenceId);
+      return await getAllQuestionByReferenceId(input.referenceId)
     }),
 
   create: organizerProcedure
     .input(
       z.object({
         referenceId: z.string(),
-        questions: z.array(createInsertSchema(question)),
+        questions: z.array(createInsertSchema(question))
       })
     )
     .mutation(async ({ input }) => {
-      return await createQuestion(input.referenceId, input.questions);
+      return await createQuestion(input.referenceId, input.questions)
     }),
 
   update: organizerProcedure
     .input(
       z.object({
         id: z.string(),
-        data: createUpdateSchema(question),
+        data: createUpdateSchema(question)
       })
     )
     .mutation(async ({ input }) => {
-      return await updateQuestion(input.id, input.data);
+      return await updateQuestion(input.id, input.data)
     }),
 
   delete: organizerProcedure
     .input(
       z.object({
-        id: z.string(),
+        id: z.string()
       })
     )
     .mutation(async ({ input }) => {
-      return await deleteQuestion(input.id);
+      return await deleteQuestion(input.id)
     }),
 
   updateOrder: organizerProcedure
@@ -61,7 +62,7 @@ export const questionRouter = router({
       z.array(
         z.object({
           questionId: z.string(),
-          order: z.number(),
+          order: z.number()
         })
       )
     )
@@ -69,21 +70,21 @@ export const questionRouter = router({
       async ({
         input,
         ctx: {
-          organizer: { organizationId },
-        },
+          organizer: { organizationId }
+        }
       }) => {
         await checkQuestionOwner(
-          input.map((item) => item.questionId),
+          input.map(item => item.questionId),
           organizationId
-        );
+        )
 
-        const isUpdated = await updateOrderBetweenQuestions(input);
+        const isUpdated = await updateOrderBetweenQuestions(input)
 
         if (!isUpdated) {
-          throw new Error("Failed to update order");
+          throw new Error('Failed to update order')
         }
 
-        return { message: "Order updated successfully" };
+        return { message: 'Order updated successfully' }
       }
     ),
 
@@ -92,37 +93,37 @@ export const questionRouter = router({
       z.object({
         fromReferenceId: z.string(),
         toReferenceId: z.string(),
-        order: z.number(),
+        order: z.number()
       })
     )
     .mutation(
       async ({
         input,
         ctx: {
-          organizer: { organizationId },
-        },
+          organizer: { organizationId }
+        }
       }) => {
-        return await transferBetweenReference({ ...input, organizationId });
+        return await transferBetweenReference({ ...input, organizationId })
       }
     ),
 
   llmValidate: organizerProcedure
     .input(
       z.object({
-        prompt: z.string().min(1, { message: "Prompt is required" }),
-        context: z.enum(["educational", "hr", "quiz"]).optional(),
+        prompt: z.string().min(1, { message: 'Prompt is required' }),
+        context: z.enum(['educational', 'hr', 'quiz']).optional()
       })
     )
     .mutation(
       async ({
         input,
         ctx: {
-          organizer: { organizationId, id: organizerId },
-        },
+          organizer: { organizationId, id: organizerId }
+        }
       }) => {
-        const { prompt, context } = input;
+        const { prompt, context } = input
         const response = await generateObject({
-          model: google("gemini-2.0-flash-001"),
+          model: google('gemini-2.0-flash-001'),
           prompt: `You are an assistant designed to extract structured information from user prompts.
         
         Analyze the user's input carefully and extract the following key information:
@@ -153,21 +154,21 @@ export const questionRouter = router({
               ),
             grade: z
               .enum([
-                "Kindergarten",
-                "1st Grade",
-                "2nd Grade",
-                "3rd Grade",
-                "4th Grade",
-                "5th Grade",
-                "6th Grade",
-                "7th Grade",
-                "8th Grade",
-                "9th Grade",
-                "10th Grade",
-                "11th Grade",
-                "12th Grade",
-                "College",
-                "undefined",
+                'Kindergarten',
+                '1st Grade',
+                '2nd Grade',
+                '3rd Grade',
+                '4th Grade',
+                '5th Grade',
+                '6th Grade',
+                '7th Grade',
+                '8th Grade',
+                '9th Grade',
+                '10th Grade',
+                '11th Grade',
+                '12th Grade',
+                'College',
+                'undefined'
               ])
               .describe(
                 "The appropriate education level for the material. MUST be 'undefined' if no grade level is clearly specified"
@@ -178,42 +179,42 @@ export const questionRouter = router({
               .min(1)
               .max(50)
               .default(5)
-              .describe("Number of questions to generate, default is 5."),
+              .describe('Number of questions to generate, default is 5.'),
             questionType: z
-              .enum(["multiple-choice", "text-field", "yes-or-no"])
+              .enum(['multiple-choice', 'text-field', 'yes-or-no'])
               .describe(
                 "The type of questions to generate, based on user's description. Default to multiple-choice if not specified."
               ),
             isValid: z
               .boolean()
               .describe(
-                "Whether the input contains all required information (topic and grade) to generate questions"
+                'Whether the input contains all required information (topic and grade) to generate questions'
               ),
             suggestion: z
               .string()
               .describe(
-                "A helpful message to show to the user about what information they should provide or how they could improve their prompt. Empty if the input is valid."
+                'A helpful message to show to the user about what information they should provide or how they could improve their prompt. Empty if the input is valid.'
               ),
             title: z
               .string()
               .describe(
-                "A concise, descriptive title for the question set based on the topic and grade level"
+                'A concise, descriptive title for the question set based on the topic and grade level'
               ),
             tags: z
               .array(z.string())
               .describe(
-                "1-3 relevant tags that categorize this question set (only if necessary)"
+                '1-3 relevant tags that categorize this question set (only if necessary)'
               ),
             generationPrompt: z
               .string()
               .describe(
-                "A comprehensive, detailed prompt that can be used for question generation. This should include specific instructions about the topic, difficulty level appropriate for the grade, question format (using the detected question type), and educational objectives. Empty if either topic or grade is undefined."
-              ),
-          }),
-        });
+                'A comprehensive, detailed prompt that can be used for question generation. This should include specific instructions about the topic, difficulty level appropriate for the grade, question format (using the detected question type), and educational objectives. Empty if either topic or grade is undefined.'
+              )
+          })
+        })
 
         if (!response.object.isValid) {
-          return { ...response.object, templateCreated: null };
+          return { ...response.object, templateCreated: null }
         }
 
         const templateCreated = await createQuestionTemplate({
@@ -225,21 +226,20 @@ export const questionRouter = router({
           aiContents: [
             {
               prompt: response.object.generationPrompt,
-              context: context || "educational",
-            },
-          ],
-        });
+              context: context || 'educational'
+            }
+          ]
+        })
 
-        return { ...response.object, templateCreated };
+        return { ...response.object, templateCreated }
       }
     ),
-  
+
   improvePrompt: organizerProcedure
     .input(z.string())
     .mutation(async ({ input: prompt }) => {
-        
       const response = await generateText({
-        model: google("gemini-2.0-flash-001"),
+        model: google('gemini-2.0-flash-001'),
         prompt: `
           You are an expert at writing clear, effective prompts for question generation.
           
@@ -259,9 +259,9 @@ export const questionRouter = router({
           Do NOT include placeholder text like "[insert specific topic here]" or "[insert number]" in your response.
           
           IMPORTANT: Respond in the same language as the original prompt. If the original prompt is in English, respond in English. If it's in Spanish, respond in Spanish, etc.
-        `,
-      });
+        `
+      })
 
-      return response.text;
-    }),
-});
+      return response.text
+    })
+})

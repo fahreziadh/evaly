@@ -1,36 +1,38 @@
-"use client";
+'use client'
 
-import LoadingScreen from "@/components/shared/loading/loading-screen";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { usePathname } from "@/i18n/navigation";
-import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useTransition } from "react";
+import { useParams, useRouter } from 'next/navigation'
+
+import { usePathname } from '@/i18n/navigation'
+import React, { useEffect, useTransition } from 'react'
+
+import LoadingScreen from '@/components/shared/loading/loading-screen'
+import { SidebarProvider } from '@/components/ui/sidebar'
 
 const Provider = ({
   children,
-  isLoggedIn,
+  isLoggedIn
 }: {
-  children: React.ReactNode;
-  isLoggedIn: boolean;
+  children: React.ReactNode
+  isLoggedIn: boolean
 }) => {
-  const pathName = usePathname();
-  const [isRedirecting, startRedirecting] = useTransition();
-  const { locale } = useParams();
-  const router = useRouter();
+  const pathName = usePathname()
+  const [isRedirecting, startRedirecting] = useTransition()
+  const { locale } = useParams()
+  const router = useRouter()
 
   useEffect(() => {
     if (!isLoggedIn && pathName) {
       startRedirecting(() => {
         router.replace(
           `/${locale}/login?callbackURL=${encodeURIComponent(`${pathName}`)}`
-        );
-      });
+        )
+      })
     }
-  }, [pathName, locale, router, isLoggedIn]);
+  }, [pathName, locale, router, isLoggedIn])
 
-  if (!pathName || isRedirecting) return <LoadingScreen />;
+  if (!pathName || isRedirecting) return <LoadingScreen />
 
-  return <SidebarProvider>{children}</SidebarProvider>;
-};
+  return <SidebarProvider>{children}</SidebarProvider>
+}
 
-export default Provider;
+export default Provider

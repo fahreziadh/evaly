@@ -1,3 +1,3 @@
-import { auth } from "@/lib/auth";
+import { auth } from '@/lib/auth'
 
-export type AuthType = typeof auth;
+export type AuthType = typeof auth

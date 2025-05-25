@@ -1,125 +1,124 @@
-import { useState, useMemo, useEffect } from "react";
-import { useParams } from "next/navigation";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { Search, Info, Filter, Loader2, RefreshCw } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { useParams } from 'next/navigation'
+
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import { Filter, Info, Loader2, RefreshCw, Search } from 'lucide-react'
+import { useQueryState } from 'nuqs'
+import { useEffect, useMemo, useState } from 'react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { useQueryState } from "nuqs";
-import { Badge } from "@/components/ui/badge";
+  SelectValue
+} from '@/components/ui/select'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip'
 
-import { Submission, Section } from "./types";
-import { SubmissionDrawer } from "./submission-drawer";
-import { DataTable } from "./data-table";
-import { columns } from "./columns";
-import { ExportDialog } from "./export-dialog";
-import { Label } from "@/components/ui/label";
-import { trpc } from "@/trpc/trpc.client";
+import { trpc } from '@/trpc/trpc.client'
 
-dayjs.extend(relativeTime);
+import { columns } from './columns'
+import { DataTable } from './data-table'
+import { ExportDialog } from './export-dialog'
+import { SubmissionDrawer } from './submission-drawer'
+import { Section, Submission } from './types'
+
+dayjs.extend(relativeTime)
 
 const Submissions = () => {
-  const params = useParams();
-  const testId = params.id as string;
+  const params = useParams()
+  const testId = params.id as string
 
-  const [refetchInterval, setRefetchInterval] = useQueryState(
-    "refetchInterval",
-    {
-      defaultValue: 0,
-      parse: (value) => parseInt(value),
-      serialize: (value) => value.toString(),
-    }
-  );
+  const [refetchInterval, setRefetchInterval] = useQueryState('refetchInterval', {
+    defaultValue: 0,
+    parse: value => parseInt(value),
+    serialize: value => value.toString()
+  })
 
   // Use nuqs for state management
-  const [searchQuery, setSearchQuery] = useQueryState("search", {
-    defaultValue: "",
-  });
+  const [searchQuery, setSearchQuery] = useQueryState('search', {
+    defaultValue: ''
+  })
 
   // Local state to track search input directly
-  const [localSearchInput, setLocalSearchInput] = useState(searchQuery || "");
+  const [localSearchInput, setLocalSearchInput] = useState(searchQuery || '')
 
   // Use a key to force re-render of DataTable when search changes
-  const [tableKey, setTableKey] = useState(0);
+  const [tableKey, setTableKey] = useState(0)
 
-  const [sectionParam, setSectionParam] = useQueryState("section", {
-    defaultValue: "all",
-    parse: (value) => value,
-    serialize: (value) => value,
-  });
-  const [pageSize, setPageSize] = useQueryState("pageSize", {
-    defaultValue: "20",
-    parse: (value) => value,
-    serialize: (value) => value,
-  });
-  const [pageIndex, setPageIndex] = useQueryState("page", {
-    defaultValue: "0",
-    parse: (value) => value,
-    serialize: (value) => value,
-  });
-  const [sortColumn, setSortColumn] = useQueryState("sortColumn", {
-    defaultValue: "",
-  });
-  const [sortDirection, setSortDirection] = useQueryState("sortDirection", {
-    defaultValue: "",
-  });
+  const [sectionParam, setSectionParam] = useQueryState('section', {
+    defaultValue: 'all',
+    parse: value => value,
+    serialize: value => value
+  })
+  const [pageSize, setPageSize] = useQueryState('pageSize', {
+    defaultValue: '20',
+    parse: value => value,
+    serialize: value => value
+  })
+  const [pageIndex, setPageIndex] = useQueryState('page', {
+    defaultValue: '0',
+    parse: value => value,
+    serialize: value => value
+  })
+  const [sortColumn, setSortColumn] = useQueryState('sortColumn', {
+    defaultValue: ''
+  })
+  const [sortDirection, setSortDirection] = useQueryState('sortDirection', {
+    defaultValue: ''
+  })
 
   // Local state for selected submission and section
-  const [selectedSubmission, setSelectedSubmission] =
-    useState<Submission | null>(null);
-  const [selectedSection, setSelectedSection] = useState(sectionParam);
+  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null)
+  const [selectedSection, setSelectedSection] = useState(sectionParam)
 
   // Sync local state with URL parameter
   useEffect(() => {
-    setSelectedSection(sectionParam);
-  }, [sectionParam]);
+    setSelectedSection(sectionParam)
+  }, [sectionParam])
 
   // Update URL parameter when local state changes
   const handleSectionChange = (value: string) => {
-    console.log("Section selected:", value);
-    setSelectedSection(value);
-    setSectionParam(value);
-  };
+    console.log('Section selected:', value)
+    setSelectedSection(value)
+    setSectionParam(value)
+  }
 
   // Fetch submissions data using the provided query hook
   const { data, isLoading, error, refetch, isFetching, dataUpdatedAt } =
     trpc.organization.test.getTestResults.useQuery(
       {
-        id: testId,
+        id: testId
       },
       {
         enabled: !!testId,
-        refetchInterval: refetchInterval,
+        refetchInterval: refetchInterval
       }
-    );
+    )
 
   // Extract submissions and sections from the response
   const submissions: Submission[] = useMemo(() => {
-    if (!data?.submissions) return [];
+    if (!data?.submissions) return []
 
-    return data.submissions.map((submission) => {
+    return data.submissions.map(submission => {
       // Use the original string ID but remove the prefix for display
-      const numericId = parseInt(submission.id.replace(/^ta-/, ""), 36) || 0;
+      const numericId = parseInt(submission.id.replace(/^ta-/, ''), 36) || 0
 
       // Get all section IDs that have at least one answer
       const sectionIds = Object.entries(submission.sectionAnswers || {})
         .filter(([, count]) => count > 0)
-        .map(([sectionId]) => sectionId);
+        .map(([sectionId]) => sectionId)
 
-        return {
+      return {
         id: numericId,
         name: submission.name,
         email: submission.email,
@@ -134,71 +133,67 @@ const Submissions = () => {
         score: submission.score,
         rank: submission.rank || 0,
         // Use the first section with answers as the primary section
-        sectionId: sectionIds.length > 0 ? sectionIds[0] : "all",
+        sectionId: sectionIds.length > 0 ? sectionIds[0] : 'all',
         // Keep section data as original string IDs
         sectionAnswers: submission.sectionAnswers || {},
         sectionCorrect: submission.sectionCorrect || {},
         sectionWrong: submission.sectionWrong || {},
         status: submission.status,
-        sectionSubmitted: submission.sectionSubmitted || {},
-      };
-    }) as Submission[];
-  }, [data?.submissions]);
+        sectionSubmitted: submission.sectionSubmitted || {}
+      }
+    }) as Submission[]
+  }, [data?.submissions])
 
   const sections: Section[] = useMemo(() => {
-    if (!data?.sections) return [];
+    if (!data?.sections) return []
 
-    return data.sections.map((section) => ({
+    return data.sections.map(section => ({
       // Keep the original string ID
       id: section.id,
       name: section.name,
-      questionsCount: section.questionsCount,
-    }));
-  }, [data?.sections]);
+      questionsCount: section.questionsCount
+    }))
+  }, [data?.sections])
 
   // Get unique sections from submissions
   const sectionsWithAll = useMemo(() => {
     // If there's only one section, just return that section
     if (sections.length === 1) {
-      return sections;
+      return sections
     }
 
     // Otherwise return all sections with an "All Sections" option
-    return [
-      { id: "all", name: "All Sections", questionsCount: 0 },
-      ...sections,
-    ];
-  }, [sections]);
+    return [{ id: 'all', name: 'All Sections', questionsCount: 0 }, ...sections]
+  }, [sections])
 
   // Filter data based on section and search query
   const filteredData = useMemo(() => {
-    let filtered = [...submissions];
+    let filtered = [...submissions]
 
     // Filter by section if not "all"
-    if (selectedSection !== "all") {
+    if (selectedSection !== 'all') {
       filtered = filtered
-        .filter((submission) => {
-          const sectionAnswers = submission.sectionAnswers || {};
-          const answerCount = sectionAnswers[selectedSection] || 0;
-          return answerCount > 0;
+        .filter(submission => {
+          const sectionAnswers = submission.sectionAnswers || {}
+          const answerCount = sectionAnswers[selectedSection] || 0
+          return answerCount > 0
         })
-        .map((submission) => {
+        .map(submission => {
           // Extract section-specific data
-          const sectionAnswers =
-            submission.sectionAnswers?.[selectedSection] || 0;
-          const sectionCorrect =
-            submission.sectionCorrect?.[selectedSection] || 0;
-          const sectionWrong = submission.sectionWrong?.[selectedSection] || 0;
+          const sectionAnswers = submission.sectionAnswers?.[selectedSection] || 0
+          const sectionCorrect = submission.sectionCorrect?.[selectedSection] || 0
+          const sectionWrong = submission.sectionWrong?.[selectedSection] || 0
           const sectionQuestionsCount =
-            sections.find((s) => s.id === selectedSection)?.questionsCount || 0;
-          const sectionSubmitted = submission.sectionSubmitted?.[selectedSection] || null;
+            sections.find(s => s.id === selectedSection)?.questionsCount || 0
+          const sectionSubmitted =
+            submission.sectionSubmitted?.[selectedSection] || null
 
           // Calculate derived values
-          const sectionUnanswered = sectionQuestionsCount - sectionAnswers;
+          const sectionUnanswered = sectionQuestionsCount - sectionAnswers
           const sectionScore =
             sectionQuestionsCount > 0
               ? Math.round((sectionCorrect / sectionQuestionsCount) * 100)
-              : 0;
+              : 0
 
           return {
             ...submission,
@@ -208,139 +203,124 @@ const Submissions = () => {
             unanswered: sectionUnanswered,
             score: sectionScore,
             totalQuestions: sectionQuestionsCount,
-            submittedAt: sectionSubmitted,
-          };
-        });
-        console.log(filtered)
+            submittedAt: sectionSubmitted
+          }
+        })
+      console.log(filtered)
     }
 
     // Filter by search query
-    if (searchQuery && searchQuery.trim() !== "") {
-      const query = searchQuery.toLowerCase().trim();
+    if (searchQuery && searchQuery.trim() !== '') {
+      const query = searchQuery.toLowerCase().trim()
       filtered = filtered.filter(
-        (submission) =>
+        submission =>
           (submission.name && submission.name.toLowerCase().includes(query)) ||
           (submission.email && submission.email.toLowerCase().includes(query))
-      );
+      )
     }
 
-    return filtered;
-  }, [submissions, searchQuery, selectedSection, sections]);
+    return filtered
+  }, [submissions, searchQuery, selectedSection, sections])
 
   // Calculate ranks based on score (if not already provided by the API)
   const dataWithRanks = useMemo(() => {
     // If the API already provides ranks, use those
     if (submissions.length > 0 && submissions[0].rank) {
-      return filteredData;
+      return filteredData
     }
 
     // Otherwise, calculate ranks based on score and submission time
     const sortedData = [...filteredData].sort((a, b) => {
       // First sort by score (descending)
       if (b.score !== a.score) {
-        return b.score - a.score;
+        return b.score - a.score
       }
 
       // If scores are equal, sort by submission time (earlier submissions rank higher)
       // Earlier date = smaller timestamp = should come first in the sort
       if (a.submittedAt && b.submittedAt) {
-        return (
-          new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime()
-        );
+        return new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime()
       }
 
       // If one has submittedAt and the other doesn't, prioritize the submitted one
-      if (a.submittedAt && !b.submittedAt) return -1;
-      if (!a.submittedAt && b.submittedAt) return 1;
+      if (a.submittedAt && !b.submittedAt) return -1
+      if (!a.submittedAt && b.submittedAt) return 1
 
-      return 0;
-    });
+      return 0
+    })
 
     return sortedData.map((item, index) => ({
       ...item,
-      rank: index + 1,
-    }));
-  }, [filteredData, submissions]);
+      rank: index + 1
+    }))
+  }, [filteredData, submissions])
 
   // Handle pagination state changes
-  const handlePaginationChange = (
-    newPageIndex: number,
-    newPageSize: number
-  ) => {
-    setPageIndex(String(newPageIndex));
-    setPageSize(String(newPageSize));
+  const handlePaginationChange = (newPageIndex: number, newPageSize: number) => {
+    setPageIndex(String(newPageIndex))
+    setPageSize(String(newPageSize))
     // Force DataTable to re-render after pagination changes
-    setTableKey((prev) => prev + 1);
-  };
+    setTableKey(prev => prev + 1)
+  }
 
   // Handle sorting state changes
-  const handleSortingChange = (
-    columnId: string,
-    direction: "asc" | "desc" | ""
-  ) => {
-    setSortColumn(columnId);
-    setSortDirection(direction);
+  const handleSortingChange = (columnId: string, direction: 'asc' | 'desc' | '') => {
+    setSortColumn(columnId)
+    setSortDirection(direction)
     // Force DataTable to re-render after sorting changes
-    setTableKey((prev) => prev + 1);
-  };
+    setTableKey(prev => prev + 1)
+  }
 
   // Reset pagination when filters change
   useEffect(() => {
-    setPageIndex("0");
-  }, [selectedSection, searchQuery, setPageIndex]);
+    setPageIndex('0')
+  }, [selectedSection, searchQuery, setPageIndex])
 
   // Handle manual refresh
   const handleRefresh = () => {
-    refetch();
-  };
+    refetch()
+  }
 
   // Update search query with debounce
   useEffect(() => {
     const timer = setTimeout(() => {
-      setSearchQuery(localSearchInput);
+      setSearchQuery(localSearchInput)
       // Force DataTable to re-render after search query changes
-      setTableKey((prev) => prev + 1);
-    }, 300);
+      setTableKey(prev => prev + 1)
+    }, 300)
 
-    return () => clearTimeout(timer);
-  }, [localSearchInput, setSearchQuery]);
+    return () => clearTimeout(timer)
+  }, [localSearchInput, setSearchQuery])
 
   // Simple search handler
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalSearchInput(e.target.value);
-  };
+    setLocalSearchInput(e.target.value)
+  }
 
   // Force re-render when sorting/filtering URL params change
   useEffect(() => {
-    setTableKey((prev) => prev + 1);
-  }, [
-    sortColumn,
-    sortDirection,
-    searchQuery,
-    selectedSection,
-    pageIndex,
-    pageSize,
-  ]);
+    setTableKey(prev => prev + 1)
+  }, [sortColumn, sortDirection, searchQuery, selectedSection, pageIndex, pageSize])
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="text-primary h-8 w-8 animate-spin" />
         <span className="ml-2">Loading submissions...</span>
       </div>
-    );
+    )
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 text-destructive">
+      <div className="text-destructive flex h-64 flex-col items-center justify-center">
         <p className="mb-4">Error loading submissions. Please try again.</p>
         <Button variant="outline" onClick={handleRefresh}>
-          <RefreshCw className="h-4 w-4 mr-2" />
+          <RefreshCw className="mr-2 h-4 w-4" />
           Retry
         </Button>
       </div>
-    );
+    )
   }
 
   return (
@@ -348,27 +328,23 @@ const Submissions = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
           <h2 className="font-medium">Submissions</h2>
-          <Badge variant={"secondary"}>Total: {dataWithRanks.length}</Badge>
-          {searchQuery && searchQuery.trim() !== "" && (
+          <Badge variant={'secondary'}>Total: {dataWithRanks.length}</Badge>
+          {searchQuery && searchQuery.trim() !== '' && (
             <Badge variant="outline" className="ml-1">
               Search: {`"${searchQuery}"`}
             </Badge>
           )}
-          {selectedSection !== "all" && (
+          {selectedSection !== 'all' && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Badge variant="outline" className="ml-1 cursor-help">
-                    {sections.find((s) => s.id === selectedSection)?.name ||
-                      "Section"}{" "}
+                    {sections.find(s => s.id === selectedSection)?.name || 'Section'}{' '}
                     view
                   </Badge>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>
-                    Showing section-specific data (answered, correct, wrong,
-                    score)
-                  </p>
+                  <p>Showing section-specific data (answered, correct, wrong, score)</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -376,7 +352,7 @@ const Submissions = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                <Info className="text-muted-foreground h-4 w-4 cursor-help" />
               </TooltipTrigger>
               <TooltipContent>
                 <p>Click on any row to view detailed submission information</p>
@@ -384,22 +360,20 @@ const Submissions = () => {
             </Tooltip>
           </TooltipProvider>
         </div>
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex w-full items-center gap-3 sm:w-auto">
           <Button
             variant="ghost"
             size="icon"
             onClick={handleRefresh}
             disabled={isFetching}
           >
-            <RefreshCw
-              className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
-            />
+            <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
             <span className="sr-only">Refresh</span>
           </Button>
 
           <Select
             value={refetchInterval.toString()}
-            onValueChange={(value) => setRefetchInterval(parseInt(value))}
+            onValueChange={value => setRefetchInterval(parseInt(value))}
           >
             <Tooltip>
               <TooltipTrigger asChild>
@@ -450,13 +424,13 @@ const Submissions = () => {
             </Select>
           )}
           {sectionsWithAll.length === 1 && sectionsWithAll[0].name && (
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <div className="text-muted-foreground flex items-center gap-1 text-sm">
               <Filter className="h-4 w-4" />
               {sectionsWithAll[0].name}
             </div>
           )}
           <div className="relative w-full sm:w-[300px]">
-            <Search className="absolute left-2.5 top-2 size-3.5 text-muted-foreground" />
+            <Search className="text-muted-foreground absolute top-2 left-2.5 size-3.5" />
             <Input
               placeholder="Search participants..."
               value={localSearchInput}
@@ -478,19 +452,19 @@ const Submissions = () => {
         pageSize={Number(pageSize)}
         onPaginationChange={handlePaginationChange}
         sortColumn={sortColumn}
-        sortDirection={sortDirection as "asc" | "desc" | ""}
+        sortDirection={sortDirection as 'asc' | 'desc' | ''}
         onSortingChange={handleSortingChange}
       />
 
       <SubmissionDrawer
         submission={selectedSubmission}
         open={!!selectedSubmission}
-        onOpenChange={(open) => !open && setSelectedSubmission(null)}
+        onOpenChange={open => !open && setSelectedSubmission(null)}
         sections={sections}
         testId={testId}
       />
     </div>
-  );
-};
+  )
+}
 
-export default Submissions;
+export default Submissions

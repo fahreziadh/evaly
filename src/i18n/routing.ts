@@ -1,20 +1,21 @@
-import { defineRouting } from "next-intl/routing";
-import US from "../../public/flags/us.svg";
-import ID from "../../public/flags/id.svg";
-import JP from "../../public/flags/jp.svg";
-import ZH from "../../public/flags/cn.svg";
-import DE from "../../public/flags/de.svg";
-import ES from "../../public/flags/es.svg";
-import SA from "../../public/flags/sa.svg";
-import FR from "../../public/flags/fr.svg";
-import IN from "../../public/flags/in.svg";
-import PT from "../../public/flags/pt.svg";
-import RU from "../../public/flags/ru.svg";
+import { defineRouting } from 'next-intl/routing'
+
+import ZH from '../../public/flags/cn.svg'
+import DE from '../../public/flags/de.svg'
+import ES from '../../public/flags/es.svg'
+import FR from '../../public/flags/fr.svg'
+import ID from '../../public/flags/id.svg'
+import IN from '../../public/flags/in.svg'
+import JP from '../../public/flags/jp.svg'
+import PT from '../../public/flags/pt.svg'
+import RU from '../../public/flags/ru.svg'
+import SA from '../../public/flags/sa.svg'
+import US from '../../public/flags/us.svg'
 
 export const routing = defineRouting({
   // A list of all locales that are supported
   locales: [
-    "en", // English
+    'en' // English
     // "id", // Indonesian
     // "jp", // Japanese
     // "zh", // Chinese
@@ -28,53 +29,52 @@ export const routing = defineRouting({
   ],
 
   // Used when no locale matches
-  defaultLocale: "en",
-});
-
+  defaultLocale: 'en'
+})
 
 export const localesWithLabels: Record<string, { label: string; flag: string }> = {
   en: {
-    label: "English",
-    flag: US,
+    label: 'English',
+    flag: US
   },
   id: {
-    label: "Bahasa Indonesia",
-    flag: ID,
+    label: 'Bahasa Indonesia',
+    flag: ID
   },
   jp: {
-    label: "Japanese",
-    flag: JP,
+    label: 'Japanese',
+    flag: JP
   },
   zh: {
-    label: "Chinese",
-    flag: ZH,
+    label: 'Chinese',
+    flag: ZH
   },
   de: {
-    label: "German",
-    flag: DE,
+    label: 'German',
+    flag: DE
   },
   es: {
-    label: "Spanish",
-    flag: ES,
+    label: 'Spanish',
+    flag: ES
   },
   ar: {
-    label: "Arabic",
-    flag: SA,
+    label: 'Arabic',
+    flag: SA
   },
   fr: {
-    label: "French",
-    flag: FR,
+    label: 'French',
+    flag: FR
   },
   hi: {
-    label: "Hindi",
-    flag: IN,
+    label: 'Hindi',
+    flag: IN
   },
   pt: {
-    label: "Portuguese",
-    flag: PT,
+    label: 'Portuguese',
+    flag: PT
   },
   ru: {
-    label: "Russian",
-    flag: RU,
-  },
-};
+    label: 'Russian',
+    flag: RU
+  }
+}

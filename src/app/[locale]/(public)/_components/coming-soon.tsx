@@ -1,14 +1,14 @@
-import { Footer } from "@/components/landing/Footer";
-import { PublicHeader } from "./public-header";
-import ComingSoon from "@/components/shared/coming-soon";
+import { Footer } from '@/components/landing/Footer'
+import ComingSoon from '@/components/shared/coming-soon'
+
+import { PublicHeader } from './public-header'
 
 export default function ComingSoonPage() {
-
   return (
-    <div className="flex flex-col min-h-svh bg-background">
+    <div className="bg-background flex min-h-svh flex-col">
       <PublicHeader />
       <ComingSoon />
       <Footer />
     </div>
-  );
+  )
 }

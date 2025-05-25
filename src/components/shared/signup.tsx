@@ -1,53 +1,56 @@
-"use client";
-import { Button } from "@/components/ui/button";
+'use client'
+
+import { authClient } from '@/lib/auth.client'
+import { Loader2, X } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+
+import { Link } from '@/components/shared/progress-bar'
+import { useProgressRouter } from '@/components/shared/progress-bar'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { authClient } from "@/lib/auth.client";
-import { Image } from "@/components/ui/image";
-import { Loader2, X } from "lucide-react";
-import { toast } from "sonner";
-import { Link } from "@/components/shared/progress-bar";
-import { useProgressRouter } from "@/components/shared/progress-bar";
+  CardTitle
+} from '@/components/ui/card'
+import { Image } from '@/components/ui/image'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+
 const SignUp = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const router = useProgressRouter();
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [passwordConfirmation, setPasswordConfirmation] = useState('')
+  const [image, setImage] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const router = useProgressRouter()
   async function convertImageToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+      const reader = new FileReader()
+      reader.onloadend = () => resolve(reader.result as string)
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
   }
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
     if (file) {
-      setImage(file);
-      const reader = new FileReader();
+      setImage(file)
+      const reader = new FileReader()
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+        setImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
     }
-  };
-  const [loading, setLoading] = useState(false);
+  }
+  const [loading, setLoading] = useState(false)
   return (
-    <Card className="z-50 max-w-sm w-full">
+    <Card className="z-50 w-full max-w-sm">
       <CardHeader>
         <CardTitle className="text-lg md:text-xl">Sign Up</CardTitle>
         <CardDescription className="text-xs md:text-sm">
@@ -63,8 +66,8 @@ const SignUp = () => {
                 id="first-name"
                 placeholder="Max"
                 required
-                onChange={(e) => {
-                  setFirstName(e.target.value);
+                onChange={e => {
+                  setFirstName(e.target.value)
                 }}
                 value={firstName}
               />
@@ -75,8 +78,8 @@ const SignUp = () => {
                 id="last-name"
                 placeholder="Robinson"
                 required
-                onChange={(e) => {
-                  setLastName(e.target.value);
+                onChange={e => {
+                  setLastName(e.target.value)
                 }}
                 value={lastName}
               />
@@ -89,8 +92,8 @@ const SignUp = () => {
               type="email"
               placeholder="your-email@gmail.com"
               required
-              onChange={(e) => {
-                setEmail(e.target.value);
+              onChange={e => {
+                setEmail(e.target.value)
               }}
               value={email}
             />
@@ -100,7 +103,7 @@ const SignUp = () => {
             <Input
               id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               autoComplete="new-password"
               placeholder="Password"
             />
@@ -110,7 +113,7 @@ const SignUp = () => {
             <Input
               id="password_confirmation"
               value={passwordConfirmation}
-              onChange={(e) => setPasswordConfirmation(e.target.value)}
+              onChange={e => setPasswordConfirmation(e.target.value)}
               autoComplete="new-password"
               placeholder="Confirm Password"
             />
@@ -119,7 +122,7 @@ const SignUp = () => {
             <Label htmlFor="image">Profile Image (optional)</Label>
             <div className="flex items-end gap-4">
               {imagePreview && (
-                <div className="relative w-16 h-16 rounded-sm overflow-hidden">
+                <div className="relative h-16 w-16 overflow-hidden rounded-sm">
                   <Image
                     src={imagePreview}
                     alt="Profile preview"
@@ -128,7 +131,7 @@ const SignUp = () => {
                   />
                 </div>
               )}
-              <div className="flex items-center gap-2 w-full">
+              <div className="flex w-full items-center gap-2">
                 <Input
                   id="image"
                   type="file"
@@ -140,8 +143,8 @@ const SignUp = () => {
                   <X
                     className="cursor-pointer"
                     onClick={() => {
-                      setImage(null);
-                      setImagePreview(null);
+                      setImage(null)
+                      setImagePreview(null)
                     }}
                   />
                 )}
@@ -157,39 +160,39 @@ const SignUp = () => {
                 email,
                 password,
                 name: `${firstName} ${lastName}`,
-                image: image ? await convertImageToBase64(image) : "",
-                callbackURL: "/dashboard",
+                image: image ? await convertImageToBase64(image) : '',
+                callbackURL: '/dashboard',
                 fetchOptions: {
                   onResponse: () => {
-                    setLoading(false);
+                    setLoading(false)
                   },
                   onRequest: () => {
-                    setLoading(true);
+                    setLoading(true)
                   },
-                  onError: (ctx) => {
-                    toast.error(ctx.error.message);
+                  onError: ctx => {
+                    toast.error(ctx.error.message)
                   },
                   onSuccess: async () => {
-                    router.push("/dashboard");
-                  },
-                },
-              });
+                    router.push('/dashboard')
+                  }
+                }
+              })
             }}
           >
             {loading ? (
               <Loader2 size={16} className="animate-spin" />
             ) : (
-              "Create an account"
+              'Create an account'
             )}
           </Button>
-          <div className="flex flex-wrap items-center gap-2 w-full">
+          <div className="flex w-full flex-wrap items-center gap-2">
             <Button
               variant="outline"
-              className="gap-2 flex-1 w-full py-4"
+              className="w-full flex-1 gap-2 py-4"
               onClick={async () => {
                 await authClient.signIn.social({
-                  provider: "google",
-                });
+                  provider: 'google'
+                })
               }}
             >
               <svg
@@ -221,12 +224,14 @@ const SignUp = () => {
         </div>
       </CardContent>
       <CardFooter>
-        <div className="flex justify-center w-full border-t py-4 gap-1">
-            <span className="text-sm text-gray-500">Already have an account?</span>
-            <Link href="/login" className="text-blue-500 text-sm">Login</Link>
+        <div className="flex w-full justify-center gap-1 border-t py-4">
+          <span className="text-sm text-gray-500">Already have an account?</span>
+          <Link href="/login" className="text-sm text-blue-500">
+            Login
+          </Link>
         </div>
       </CardFooter>
     </Card>
-  );
-};
-export default SignUp;
+  )
+}
+export default SignUp

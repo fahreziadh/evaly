@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "lint": "next lint",
-    "check-types": "tsc --noEmit",
+    "lint:fix": "eslint ./src --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier -c .",
+    "check-types": "tsc --noEmit --pretty",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
@@ -14,7 +17,8 @@
     "db:generate": "bunx drizzle-kit generate --dialect postgresql --schema ./src/lib/db/schema --out ./drizzle",
     "db:migrate": "bun db:generate && bun drizzle-kit migrate",
     "deploy:staging": "bunx sst deploy --stage staging",
-    "deploy:production": "bunx sst deploy --stage production"
+    "deploy:production": "bunx sst deploy --stage production",
+    "prepare": "husky"
   },
   "dependencies": {
     "@ai-sdk/google": "1.2.13",
@@ -111,7 +115,9 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@next/bundle-analyzer": "^15.4.0-canary.51",
     "@tailwindcss/typography": "^0.5.16",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/bun": "1.2.5",
     "@types/file-saver": "^2.0.7",
     "@types/node": "^20",
@@ -119,6 +125,11 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
+    "eslint-config-prettier": "^10.1.5",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.0.0",
+    "prettier": "3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "react-email": "4.0.7",
     "typescript": "^5"
   },

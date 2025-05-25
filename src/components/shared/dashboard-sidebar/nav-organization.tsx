@@ -1,24 +1,22 @@
-"use client";
+'use client'
 
-import { ChevronsUpDown, SchoolIcon } from "lucide-react";
+import { ChevronsUpDown, SchoolIcon } from 'lucide-react'
 
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import {
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { trpc } from "@/trpc/trpc.client";
-import { Skeleton } from "@/components/ui/skeleton";
+  SidebarMenuItem
+} from '@/components/ui/sidebar'
+import { Skeleton } from '@/components/ui/skeleton'
+
+import { trpc } from '@/trpc/trpc.client'
 
 export function NavOrganization() {
   // const { isMobile } = useSidebar();
-  const { data, isPending } = trpc.organization.profile.useQuery();
+  const { data, isPending } = trpc.organization.profile.useQuery()
 
-  if (isPending) return <Skeleton className="h-12 w-full" />;
+  if (isPending) return <Skeleton className="h-12 w-full" />
 
   return (
     <SidebarMenu>
@@ -26,19 +24,17 @@ export function NavOrganization() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
-              size={"lg"}
+              size={'lg'}
               className="bg-secondary data-[state=open]:bg-sidebar-secondary data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="size-7 flex items-center justify-center bg-foreground/10 rounded-md">
-                <SchoolIcon className="size-5 stroke-foreground/80" />
+              <div className="bg-foreground/10 flex size-7 items-center justify-center rounded-md">
+                <SchoolIcon className="stroke-foreground/80 size-5" />
               </div>
-              <div className="grid flex-1 text-left text-sm leading-tight ml-1">
-                <span className="truncate">
-                  {data?.organizer?.organization.name}
-                </span>
-                <span className="text-xs text-muted-foreground">Free</span>
+              <div className="ml-1 grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate">{data?.organizer?.organization.name}</span>
+                <span className="text-muted-foreground text-xs">Free</span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4 stroke-muted-foreground" />
+              <ChevronsUpDown className="stroke-muted-foreground ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           {/* <DropdownMenuContent
@@ -85,5 +81,5 @@ export function NavOrganization() {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  );
+  )
 }

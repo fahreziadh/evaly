@@ -1,14 +1,20 @@
-import { Button } from "@/components/ui/button";
-import { Drawer, DrawerContent, DrawerNavbar, DrawerTrigger } from "@/components/ui/drawer";
-import { Eye } from "lucide-react";
-import { useState } from "react";
+import { Eye } from 'lucide-react'
+import { useState } from 'react'
+
+import { Button } from '@/components/ui/button'
+import {
+  Drawer,
+  DrawerContent,
+  DrawerNavbar,
+  DrawerTrigger
+} from '@/components/ui/drawer'
 
 const DialogPreviewTest = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
   return (
-    <Drawer open={open} onOpenChange={setOpen} >
+    <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant={"outline"}>
+        <Button variant={'outline'}>
           <Eye /> Preview
         </Button>
       </DrawerTrigger>
@@ -16,7 +22,7 @@ const DialogPreviewTest = () => {
         <DrawerNavbar onBack={() => setOpen(false)} title="Preview Test" />
       </DrawerContent>
     </Drawer>
-  );
-};
+  )
+}
 
-export default DialogPreviewTest;
+export default DialogPreviewTest

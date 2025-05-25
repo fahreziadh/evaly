@@ -1,28 +1,29 @@
-import db from "@/lib/db";
-import { question, test, testSection } from "@/lib/db/schema";
-import { InsertQuestion } from "@/types/question";
+import db from '@/lib/db'
+import { question, test, testSection } from '@/lib/db/schema'
+
+import { InsertQuestion } from '@/types/question'
 
 export async function duplicateTest(testId: string, organizationId: string) {
   // Duplicate everything from the original test
   const currentTest = await db.query.test.findFirst({
     where(fields, operators) {
-      return operators.eq(fields.id, testId);
+      return operators.eq(fields.id, testId)
     },
     with: {
       testSections: {
         with: {
           question: {
             orderBy(fields, operators) {
-              return operators.asc(fields.order);
-            },
-          },
+              return operators.asc(fields.order)
+            }
+          }
         },
         orderBy(fields, operators) {
-          return operators.asc(fields.order);
-        },
-      },
-    },
-  });
+          return operators.asc(fields.order)
+        }
+      }
+    }
+  })
 
   // Create a new test with the same data
   const createNewTest = await db
@@ -31,29 +32,29 @@ export async function duplicateTest(testId: string, organizationId: string) {
       ...currentTest,
       id: undefined, // Let the database generate the id
       organizationId: organizationId,
-      createdByOrganizerId: currentTest?.createdByOrganizerId || "",
+      createdByOrganizerId: currentTest?.createdByOrganizerId || '',
       isPublished: false,
       finishedAt: null,
-      access: "public",
+      access: 'public',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       heldAt: null
     })
-    .returning();
+    .returning()
 
-  const newTestCreated = createNewTest[0];
+  const newTestCreated = createNewTest[0]
 
   if (!newTestCreated) {
-    throw new Error("Failed to create a new test");
+    throw new Error('Failed to create a new test')
   }
 
-  let newTestOrder = 1;
+  let newTestOrder = 1
 
   // Duplicate the test sections along with the questions
   for await (const section of currentTest?.testSections || []) {
     if (section.deletedAt) {
-      continue;
+      continue
     }
 
     const createNewTestSection = await db
@@ -65,25 +66,25 @@ export async function duplicateTest(testId: string, organizationId: string) {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         deletedAt: null,
-        order: newTestOrder,
+        order: newTestOrder
       })
-      .returning();
+      .returning()
 
-    const newTestSection = createNewTestSection[0];
+    const newTestSection = createNewTestSection[0]
 
     if (!newTestSection) {
-      throw new Error("Failed to create a new test section");
+      throw new Error('Failed to create a new test section')
     }
 
-    newTestOrder++;
+    newTestOrder++
 
     // Duplicate the questions
-    const currentSectionQuestions = section.question;
-    const newQuestions: InsertQuestion[] = [];
-    
+    const currentSectionQuestions = section.question
+    const newQuestions: InsertQuestion[] = []
+
     for (const question of currentSectionQuestions) {
       if (question.deletedAt) {
-        continue;
+        continue
       }
 
       newQuestions.push({
@@ -92,15 +93,15 @@ export async function duplicateTest(testId: string, organizationId: string) {
         referenceId: newTestSection.id,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        deletedAt: null,
-      });
+        deletedAt: null
+      })
     }
 
     if (newQuestions.length > 0) {
       // Create the questions
-      await db.insert(question).values(newQuestions);
+      await db.insert(question).values(newQuestions)
     }
   }
 
-  return newTestCreated;
+  return newTestCreated
 }

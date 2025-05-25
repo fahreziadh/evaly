@@ -1,34 +1,35 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
-import { ArrowRight, TwitterIcon } from "lucide-react";
-import { motion } from "motion/react";
-import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation'
+import { ArrowRight, TwitterIcon } from 'lucide-react'
+import { motion } from 'motion/react'
+import { useTranslations } from 'next-intl'
 
-const MotionDiv = motion.div;
+import { Button } from '@/components/ui/button'
+
+const MotionDiv = motion.div
 
 export const CTASection = () => {
-  const t = useTranslations('HomePage.cta');
-  
+  const t = useTranslations('HomePage.cta')
+
   return (
-    <section className="py-20 bg-foreground/[0.02] relative">
-      <div className="absolute inset-0 bg-grid-pattern opacity-[0.015] pointer-events-none"></div>
+    <section className="bg-foreground/[0.02] relative py-20">
+      <div className="bg-grid-pattern pointer-events-none absolute inset-0 opacity-[0.015]"></div>
       <div className="container text-center">
-        <MotionDiv 
+        <MotionDiv
           initial={{ opacity: 0, scale: 0.98 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
-          <div className="bg-background p-8 rounded-2xl shadow-sm border border-border/40">
-            <h2 className="text-2xl font-bold mb-3">{t('title')}</h2>
-            <p className="text-muted-foreground mb-6 max-w-[600px] mx-auto">
+          <div className="bg-background border-border/40 rounded-2xl border p-8 shadow-sm">
+            <h2 className="mb-3 text-2xl font-bold">{t('title')}</h2>
+            <p className="text-muted-foreground mx-auto mb-6 max-w-[600px]">
               {t('subtitle')}
             </p>
-            <div className="flex flex-wrap gap-4 justify-center">
+            <div className="flex flex-wrap justify-center gap-4">
               <Link href="https://evaly.io/dashboard">
-                <Button variant="default" size="lg" >
+                <Button variant="default" size="lg">
                   {t('button')} <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
@@ -43,5 +44,5 @@ export const CTASection = () => {
         </MotionDiv>
       </div>
     </section>
-  );
-}; 
+  )
+}

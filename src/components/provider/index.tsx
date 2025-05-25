@@ -1,13 +1,14 @@
-"use client";
+'use client'
 
-import React, { useEffect } from "react";
-import TanstackQueryProvider from "./tanstack-query.provider";
-import NuqsProvider from "./nuqs.provider";
-import { ProgressBar } from "../shared/progress-bar";
-import { PostHogProvider as PHProvider } from "posthog-js/react";
-import posthog from "posthog-js";
-import { env } from "@/lib/env.client";
-import SuspendedPostHogPageView from "./posthog-page-view";
+import { env } from '@/lib/env.client'
+import posthog from 'posthog-js'
+import { PostHogProvider as PHProvider } from 'posthog-js/react'
+import React, { useEffect } from 'react'
+
+import { ProgressBar } from '../shared/progress-bar'
+import NuqsProvider from './nuqs.provider'
+import SuspendedPostHogPageView from './posthog-page-view'
+import TanstackQueryProvider from './tanstack-query.provider'
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
@@ -15,8 +16,8 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
       api_host: env.NEXT_PUBLIC_POSTHOG_HOST,
       capture_pageview: false, // Disable automatic pageview capture, as we capture manually
       capture_pageleave: true
-    });
-  }, []);
+    })
+  }, [])
 
   return (
     <PHProvider client={posthog}>
@@ -29,7 +30,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
         </NuqsProvider>
       </TanstackQueryProvider>
     </PHProvider>
-  );
-};
+  )
+}
 
-export default Provider;
+export default Provider

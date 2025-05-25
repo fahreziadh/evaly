@@ -1,10 +1,12 @@
-"use client"
+'use client'
 
-import { useState, type KeyboardEvent, type ChangeEvent, useEffect } from "react"
-import { X } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
+import { X } from 'lucide-react'
+import { type ChangeEvent, type KeyboardEvent, useEffect, useState } from 'react'
+
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+
 interface TagsInputProps {
   value?: string[]
   onChange?: (tags: string[]) => void
@@ -17,13 +19,13 @@ interface TagsInputProps {
 export default function TagsInput({
   value,
   onChange,
-  placeholder = "Add tags...",
+  placeholder = 'Add tags...',
   maxTags = Number.POSITIVE_INFINITY,
   disabled = false,
-  className,
+  className
 }: TagsInputProps) {
   const [tags, setTags] = useState<string[]>(value || [])
-  const [inputValue, setInputValue] = useState("")
+  const [inputValue, setInputValue] = useState('')
 
   useEffect(() => {
     setTags(value || [])
@@ -37,12 +39,12 @@ export default function TagsInput({
     if (disabled) return
 
     // Add tag on Enter or comma
-    if ((e.key === "Enter" || e.key === ",") && inputValue.trim()) {
+    if ((e.key === 'Enter' || e.key === ',') && inputValue.trim()) {
       e.preventDefault()
       addTag(inputValue.trim())
     }
     // Remove last tag on Backspace if input is empty
-    else if (e.key === "Backspace" && !inputValue && tags.length > 0) {
+    else if (e.key === 'Backspace' && !inputValue && tags.length > 0) {
       removeTag(tags.length - 1)
     }
   }
@@ -52,7 +54,7 @@ export default function TagsInput({
       const newTags = [...tags, tag]
       setTags(newTags)
       onChange?.(newTags)
-      setInputValue("")
+      setInputValue('')
     }
   }
 
@@ -65,14 +67,14 @@ export default function TagsInput({
   }
 
   return (
-    <div className={cn("flex flex-wrap items-center gap-1.5  select-none", className)}>
+    <div className={cn('flex flex-wrap items-center gap-1.5 select-none', className)}>
       {tags.map((tag, index) => (
-        <Badge key={index} variant="outline" className="h-7 pl-3 pr-2 text-sm">
+        <Badge key={index} variant="outline" className="h-7 pr-2 pl-3 text-sm">
           {tag}
           <button
             type="button"
             onClick={() => removeTag(index)}
-            className="ml-1  hover:opacity-70 cursor-pointer p-0.5"
+            className="ml-1 cursor-pointer p-0.5 hover:opacity-70"
             disabled={disabled}
             aria-label={`Remove ${tag}`}
           >
@@ -85,11 +87,10 @@ export default function TagsInput({
         value={inputValue}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
-        placeholder={tags.length < maxTags ? placeholder : ""}
-        className="flex-1 font-medium min-w-[120px] px-1 h-7 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0 border-0 outline-none"
+        placeholder={tags.length < maxTags ? placeholder : ''}
+        className="h-7 min-w-[120px] flex-1 border-0 px-1 text-sm font-medium outline-none focus-visible:border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
         disabled={disabled || tags.length >= maxTags}
       />
     </div>
   )
 }
-

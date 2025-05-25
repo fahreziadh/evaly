@@ -1,20 +1,24 @@
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useParams } from 'next/navigation'
+
+import { cn } from '@/lib/utils'
 import {
   ArrowLeft,
   ArrowRight,
   ChevronDownIcon,
   Loader2,
   PlusIcon,
-  PointerIcon,
-} from "lucide-react";
-import { useSelectedSection } from "../../_hooks/use-selected-section";
-import { useParams } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect, useMemo, useState } from "react";
-import CardSection from "@/components/shared/card/card-section";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Reorder } from "motion/react";
+  PointerIcon
+} from 'lucide-react'
+import { Reorder } from 'motion/react'
+import { useTranslations } from 'next-intl'
+import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
+
+import CardSection from '@/components/shared/card/card-section'
+import DialogDeleteSection from '@/components/shared/dialog/dialog-delete-section'
+import DialogEditSection from '@/components/shared/dialog/dialog-edit-section'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogClose,
@@ -23,71 +27,67 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { QuestionTemplateSection } from "./question-template-section";
-import { toast } from "sonner";
-import { trpc } from "@/trpc/trpc.client";
-import { useTranslations } from "next-intl";
-import { Badge } from "@/components/ui/badge";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { TooltipMessage } from "@/components/ui/tooltip";
-import DialogEditSection from "@/components/shared/dialog/dialog-edit-section";
-import DialogDeleteSection from "@/components/shared/dialog/dialog-delete-section";
+  DialogTrigger
+} from '@/components/ui/dialog'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
+import { Skeleton } from '@/components/ui/skeleton'
+import { TooltipMessage } from '@/components/ui/tooltip'
+
+import { trpc } from '@/trpc/trpc.client'
+
+import { useSelectedSection } from '../../_hooks/use-selected-section'
+import { QuestionTemplateSection } from './question-template-section'
 
 const TestSections = ({ className }: { className?: string }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const { id } = useParams();
-  const [selectedSection, setSelectedSection] = useSelectedSection();
+  const [isOpen, setIsOpen] = useState(false)
+  const { id } = useParams()
+  const [selectedSection, setSelectedSection] = useSelectedSection()
 
   const { data, isPending, isRefetching, refetch } =
     trpc.organization.testSection.getAll.useQuery({
-      testId: id as string,
-    });
+      testId: id as string
+    })
 
   const selectedSectionData = useMemo(() => {
-    if (!selectedSection || !data) return null;
-    return data.find((e) => e.id === selectedSection);
-  }, [selectedSection, data]);
+    if (!selectedSection || !data) return null
+    return data.find(e => e.id === selectedSection)
+  }, [selectedSection, data])
 
   if (isPending) {
     return (
-      <div className="flex flex-row gap-2 items-center">
-        <Skeleton className="w-40 h-8 rounded-md" />
+      <div className="flex flex-row items-center gap-2">
+        <Skeleton className="h-8 w-40 rounded-md" />
       </div>
-    );
+    )
   }
 
   if (data?.length === 1) {
     return (
-      <div className="flex flex-row gap-2 items-center">
+      <div className="flex flex-row items-center gap-2">
         <AddSession>
-          <Button variant={"outline"}>
+          <Button variant={'outline'}>
             <PlusIcon /> New section
           </Button>
         </AddSession>
       </div>
-    );
+    )
   }
 
   return (
-    <div className="flex flex-row-reverse md:flex-row gap-2 items-center">
+    <div className="flex flex-row-reverse items-center gap-2 md:flex-row">
       <DialogDeleteSection
         disabled={isRefetching || isPending}
         isLastSection={data?.length === 1}
         sectionId={selectedSection as string}
         onSuccess={() => {
-          refetch();
+          refetch()
           if (selectedSectionData?.id === selectedSection) {
             const nearestSection = data?.find(
-              (section) => section.id !== selectedSectionData?.id
-            );
+              section => section.id !== selectedSectionData?.id
+            )
             if (nearestSection) {
-              setSelectedSection(nearestSection.id);
+              setSelectedSection(nearestSection.id)
             }
           }
         }}
@@ -95,22 +95,22 @@ const TestSections = ({ className }: { className?: string }) => {
       <DialogEditSection sectionId={selectedSection as string} />
       <AddSession />
 
-      <div className={cn("flex flex-row", className)}>
+      <div className={cn('flex flex-row', className)}>
         <Button
           onClick={() => {
-            const order = selectedSectionData?.order;
-            if (!order) return;
-            if (order === 1) return;
+            const order = selectedSectionData?.order
+            if (!order) return
+            if (order === 1) return
 
-            const previousSection = data?.find((e) => e.order === order - 1);
+            const previousSection = data?.find(e => e.order === order - 1)
             if (previousSection) {
-              setSelectedSection(previousSection.id);
+              setSelectedSection(previousSection.id)
             }
           }}
           disabled={selectedSectionData?.order === 1}
-          variant={"outline"}
-          size={"icon"}
-          className="border-r-0 rounded-r-none"
+          variant={'outline'}
+          size={'icon'}
+          className="rounded-r-none border-r-0"
         >
           <ArrowLeft />
         </Button>
@@ -119,20 +119,18 @@ const TestSections = ({ className }: { className?: string }) => {
             <div>
               <TooltipMessage message="Click to check all sections">
                 <Button
-                  variant={"outline"}
-                  className="rounded-r-none rounded-l-none group"
+                  variant={'outline'}
+                  className="group rounded-l-none rounded-r-none"
                 >
                   <span>
-                    {selectedSectionData?.order || 1}.{" "}
-                    {selectedSectionData?.title || "Untitled"}
+                    {selectedSectionData?.order || 1}.{' '}
+                    {selectedSectionData?.title || 'Untitled'}
                   </span>
                   {selectedSectionData?.duration &&
                   selectedSectionData?.duration > 0 ? (
-                    <Badge variant={"secondary"}>
-                      {selectedSectionData.duration}m
-                    </Badge>
+                    <Badge variant={'secondary'}>{selectedSectionData.duration}m</Badge>
                   ) : null}
-                  <ChevronDownIcon className={cn(isOpen ? "rotate-180" : "")} />
+                  <ChevronDownIcon className={cn(isOpen ? 'rotate-180' : '')} />
                 </Button>
               </TooltipMessage>
             </div>
@@ -144,92 +142,92 @@ const TestSections = ({ className }: { className?: string }) => {
 
         <Button
           onClick={() => {
-            const order = selectedSectionData?.order;
-            if (!order) return;
-            if (order === data?.length) return;
+            const order = selectedSectionData?.order
+            if (!order) return
+            if (order === data?.length) return
 
-            const nextSection = data?.find((e) => e.order === order + 1);
+            const nextSection = data?.find(e => e.order === order + 1)
             if (nextSection) {
-              setSelectedSection(nextSection.id);
+              setSelectedSection(nextSection.id)
             }
           }}
           disabled={selectedSectionData?.order === data?.length}
-          variant={"outline"}
-          size={"icon"}
+          variant={'outline'}
+          size={'icon'}
           className="rounded-l-none border-l-0"
         >
           <ArrowRight />
         </Button>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const ListSession = () => {
-  const { id } = useParams();
-  const [selectedSection, setSelectedSection] = useSelectedSection();
+  const { id } = useParams()
+  const [selectedSection, setSelectedSection] = useSelectedSection()
 
   const { data, isPending, isRefetching, refetch } =
     trpc.organization.testSection.getAll.useQuery({
-      testId: id as string,
-    });
+      testId: id as string
+    })
 
   const { refetch: refetchSectionById } =
     trpc.organization.testSection.getById.useQuery({
-      id: selectedSection as string,
-    });
+      id: selectedSection as string
+    })
 
-  const [orderedData, setOrderedData] = useState<typeof data>([]);
+  const [orderedData, setOrderedData] = useState<typeof data>([])
 
   useEffect(() => {
     if (data) {
-      setOrderedData(data);
+      setOrderedData(data)
     }
-  }, [data]);
+  }, [data])
 
   useEffect(() => {
     if (data?.length && !selectedSection) {
-      setSelectedSection(data[0].id);
+      setSelectedSection(data[0].id)
     }
-  }, [data, selectedSection, setSelectedSection]);
+  }, [data, selectedSection, setSelectedSection])
 
   const { mutateAsync: updateOrder, isPending: isPendingUpdateOrder } =
-    trpc.organization.testSection.updateOrder.useMutation();
+    trpc.organization.testSection.updateOrder.useMutation()
 
   const onChangeOrder = async () => {
-    const sectionIds = orderedData?.map((e) => e.id) || [];
-    await updateOrder({ testId: id as string, order: sectionIds });
-    await refetch();
-    await refetchSectionById();
-  };
+    const sectionIds = orderedData?.map(e => e.id) || []
+    await updateOrder({ testId: id as string, order: sectionIds })
+    await refetch()
+    await refetchSectionById()
+  }
 
   if (isPending) {
     return (
       <div className="flex flex-col gap-2">
-        <Skeleton className="w-full h-20" />
-        <Skeleton className="w-full h-20" />
-        <Skeleton className="w-full h-20" />
-        <Skeleton className="w-full h-20" />
+        <Skeleton className="h-20 w-full" />
+        <Skeleton className="h-20 w-full" />
+        <Skeleton className="h-20 w-full" />
+        <Skeleton className="h-20 w-full" />
       </div>
-    );
+    )
   }
 
   if (!data || !data.length || !orderedData) {
-    return <div>No session found</div>;
+    return <div>No session found</div>
   }
 
   return (
     <ScrollArea>
       <Reorder.Group
         className={cn(
-          "flex flex-col gap-2 max-h-[60vh]",
-          isRefetching || isPendingUpdateOrder ? "animate-pulse opacity-80" : ""
+          'flex max-h-[60vh] flex-col gap-2',
+          isRefetching || isPendingUpdateOrder ? 'animate-pulse opacity-80' : ''
         )}
         axis="y"
         values={orderedData}
         onReorder={setOrderedData}
       >
-        {orderedData?.map((e) => (
+        {orderedData?.map(e => (
           <Reorder.Item
             key={e.id}
             value={e}
@@ -247,54 +245,54 @@ const ListSession = () => {
       </Reorder.Group>
       <ScrollBar />
     </ScrollArea>
-  );
-};
+  )
+}
 
 const AddSession = ({ children }: { children?: React.ReactNode }) => {
-  const { id } = useParams();
-  const [, setSelectedSection] = useSelectedSection();
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState("");
-  const tCommon = useTranslations("Common");
+  const { id } = useParams()
+  const [, setSelectedSection] = useSelectedSection()
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedId, setSelectedId] = useState('')
+  const tCommon = useTranslations('Common')
   const {
     refetch,
     isPending: isPendingSession,
-    isRefetching: isRefetchingSection,
-  } = trpc.organization.testSection.getAll.useQuery({ testId: id as string });
+    isRefetching: isRefetchingSection
+  } = trpc.organization.testSection.getAll.useQuery({ testId: id as string })
 
   const { mutateAsync, isPending: isPendingCreateSection } =
-    trpc.organization.testSection.create.useMutation();
+    trpc.organization.testSection.create.useMutation()
 
   const { mutateAsync: tranferQuestion, isPending: isPendingTransferQuestion } =
     trpc.organization.question.transferBetweenReference.useMutation({
       onError(error) {
-        toast.error(error.message || tCommon("genericUpdateError"));
-      },
-    });
+        toast.error(error.message || tCommon('genericUpdateError'))
+      }
+    })
 
   async function onUseTemplate() {
-    if (!selectedId) return;
-    const createdSection = await mutateAsync({ testId: id as string });
+    if (!selectedId) return
+    const createdSection = await mutateAsync({ testId: id as string })
     if (!createdSection?.sections?.length) {
-      toast.error("Something went wrong!");
-      return;
+      toast.error('Something went wrong!')
+      return
     }
-    const order = 1;
-    const toReferenceId = createdSection?.sections[0]?.id;
-    const fromReferenceId = selectedId;
+    const order = 1
+    const toReferenceId = createdSection?.sections[0]?.id
+    const fromReferenceId = selectedId
 
     const transferredQuestion = await tranferQuestion({
       order: Number(order),
       toReferenceId: toReferenceId as string,
-      fromReferenceId,
-    });
+      fromReferenceId
+    })
 
     if (transferredQuestion && transferredQuestion.length > 0) {
-      const sectionId = createdSection?.sections[0]?.id;
-      setIsOpen(false);
+      const sectionId = createdSection?.sections[0]?.id
+      setIsOpen(false)
       if (sectionId) {
-        setSelectedSection(sectionId);
-        refetch();
+        setSelectedSection(sectionId)
+        refetch()
       }
     }
   }
@@ -303,9 +301,9 @@ const AddSession = ({ children }: { children?: React.ReactNode }) => {
     <div className="flex flex-col items-end">
       <Dialog
         open={isOpen}
-        onOpenChange={(e) => {
-          if (!e) setSelectedId("");
-          setIsOpen(e);
+        onOpenChange={e => {
+          if (!e) setSelectedId('')
+          setIsOpen(e)
         }}
       >
         <DialogTrigger asChild>
@@ -313,12 +311,10 @@ const AddSession = ({ children }: { children?: React.ReactNode }) => {
             <TooltipMessage message="Add new section">
               {children || (
                 <Button
-                  variant={"ghost"}
-                  size={"icon"}
+                  variant={'ghost'}
+                  size={'icon'}
                   disabled={
-                    isPendingCreateSection ||
-                    isRefetchingSection ||
-                    isPendingSession
+                    isPendingCreateSection || isRefetchingSection || isPendingSession
                   }
                 >
                   {isPendingCreateSection || isRefetchingSection ? (
@@ -335,8 +331,8 @@ const AddSession = ({ children }: { children?: React.ReactNode }) => {
           <DialogHeader>
             <DialogTitle>Add new section</DialogTitle>
             <DialogDescription className="flex flex-wrap">
-              Add an empty section or use a question template. Click to
-              selecting the template <PointerIcon className="size-4 ml-2" />
+              Add an empty section or use a question template. Click to selecting the
+              template <PointerIcon className="ml-2 size-4" />
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className="h-[40vh]">
@@ -346,23 +342,23 @@ const AddSession = ({ children }: { children?: React.ReactNode }) => {
             />
           </ScrollArea>
           <DialogFooter>
-            <div className="flex flex-row justify-between w-full">
+            <div className="flex w-full flex-row justify-between">
               <DialogClose asChild>
-                <Button variant={"secondary"}>Back</Button>
+                <Button variant={'secondary'}>Back</Button>
               </DialogClose>
 
               <div className="flex gap-2">
                 <Button
-                  variant={"outline"}
+                  variant={'outline'}
                   className="w-max"
                   disabled={isPendingCreateSection || isRefetchingSection}
                   onClick={async () => {
-                    const data = await mutateAsync({ testId: id as string });
-                    const sectionId = data?.sections[0]?.id;
-                    setIsOpen(false);
+                    const data = await mutateAsync({ testId: id as string })
+                    const sectionId = data?.sections[0]?.id
+                    setIsOpen(false)
                     if (sectionId) {
-                      setSelectedSection(sectionId);
-                      refetch();
+                      setSelectedSection(sectionId)
+                      refetch()
                     }
                   }}
                 >
@@ -375,11 +371,9 @@ const AddSession = ({ children }: { children?: React.ReactNode }) => {
                 </Button>
                 <Button
                   onClick={onUseTemplate}
-                  variant={"default"}
+                  variant={'default'}
                   disabled={
-                    !selectedId ||
-                    isPendingTransferQuestion ||
-                    isPendingCreateSection
+                    !selectedId || isPendingTransferQuestion || isPendingCreateSection
                   }
                 >
                   {selectedId ? (
@@ -387,7 +381,7 @@ const AddSession = ({ children }: { children?: React.ReactNode }) => {
                       Use template <ArrowRight />
                     </>
                   ) : (
-                    "Choose template"
+                    'Choose template'
                   )}
                 </Button>
               </div>
@@ -396,7 +390,7 @@ const AddSession = ({ children }: { children?: React.ReactNode }) => {
         </DialogContent>
       </Dialog>
     </div>
-  );
-};
+  )
+}
 
-export default TestSections;
+export default TestSections

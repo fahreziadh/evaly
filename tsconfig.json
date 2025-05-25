@@ -1,34 +1,92 @@
 {
   "compilerOptions": {
+    // ======================================================================
+    // Language & Environment
+    // Defines JavaScript version and runtime environment
+    // ======================================================================
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
     "module": "esnext",
+    "lib": ["dom", "dom.iterable", "esnext"],
     "moduleResolution": "bundler",
-    "resolveJsonModule": true,
     "isolatedModules": true,
+
+    // ======================================================================
+    // Type Safety - Foundation
+    // Core type checking settings for a robust codebase
+    // ======================================================================
+    "strict": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+
+    // ======================================================================
+    // Type Safety - Advanced
+    // Additional checks for higher code quality
+    // ======================================================================
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowUnreachableCode": true, // Should be false, current "true" bcs need of development
+    "useUnknownInCatchVariables": true,
+    "noImplicitOverride": true,
+    // "noUncheckedIndexedAccess": true,
+    // "noImplicitReturns": true,
+    
+    // ======================================================================
+    // Interoperability
+    // Settings for working with different file types and modules
+    // ======================================================================
+    "allowJs": true,
+    "checkJs": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+
+    // ======================================================================
+    // Build & Performance
+    // Settings that affect compilation output and build performance
+    // ======================================================================
+    "skipLibCheck": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // ======================================================================
+    // Project Structure
+    // Configure import paths and module resolution
+    // ======================================================================
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/public/*": ["./public/*"]
+    },
+
+    // ======================================================================
+    // Next.js Project Configuration
+    // Controls settings specific to Next.js framework
+    // ======================================================================
     "jsx": "preserve",
     "incremental": true,
+    "noEmit": true,
     "plugins": [
       {
         "name": "next"
       }
     ],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "trigger.config.ts"
+    "trigger.config.ts",
+    ".storybook/*.ts",
+    "**/*.mts"
   ],
-  "exclude": ["node_modules","sst.config.ts"]
+  "exclude": [
+    "node_modules",
+    "sst.config.ts",
+    "**/*.spec.ts",
+    "**/*.e2e.ts"
+  ]
 }

@@ -1,6 +1,7 @@
-import { Question } from "@/types/question";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
+import { Question } from '@/types/question'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -16,21 +17,20 @@ export const updateQuestionInArray = (
   prevQuestions: Question[],
   updatedQuestion: Question
 ): Question[] => {
-  const findIndex = prevQuestions.findIndex((q) => q.id === updatedQuestion.id);
+  const findIndex = prevQuestions.findIndex(q => q.id === updatedQuestion.id)
 
   // If the question is found, update it
   if (findIndex >= 0) {
     return [
       ...prevQuestions.slice(0, findIndex),
       updatedQuestion,
-      ...prevQuestions.slice(findIndex + 1),
-    ];
+      ...prevQuestions.slice(findIndex + 1)
+    ]
   }
 
   // If the question is not found, return the original array
-  return prevQuestions;
-};
-
+  return prevQuestions
+}
 
 /**
  * Insert questions at the correct position based on their order
@@ -42,39 +42,39 @@ export const insertQuestionsAtCorrectPosition = (
   prevQuestions: Question[],
   newQuestions: Question[]
 ): Question[] => {
-  if (newQuestions.length === 0) return prevQuestions;
+  if (newQuestions.length === 0) return prevQuestions
 
   // Find the first question's order (which is the insertion point)
-  const firstNewQuestionOrder = newQuestions[0].order;
+  const firstNewQuestionOrder = newQuestions[0].order
 
   if (!firstNewQuestionOrder) {
     // If no order is defined, just append to the end (fallback)
-    return [...prevQuestions, ...newQuestions];
+    return [...prevQuestions, ...newQuestions]
   }
 
   // Find the index where we should insert the new questions
   // Order starts from 1, but array index starts from 0
   const insertIndex = prevQuestions.findIndex(
-    (q) => q.order && q.order >= firstNewQuestionOrder
-  );
+    q => q.order && q.order >= firstNewQuestionOrder
+  )
 
   // Create a new array with updated questions
-  let result;
+  let result
   if (insertIndex === -1) {
     // If no matching order found, append to the end
-    result = [...prevQuestions, ...newQuestions];
+    result = [...prevQuestions, ...newQuestions]
   } else {
     // Insert the new questions at the correct position
     result = [
       ...prevQuestions.slice(0, insertIndex),
       ...newQuestions,
-      ...prevQuestions.slice(insertIndex),
-    ];
+      ...prevQuestions.slice(insertIndex)
+    ]
   }
 
   // Update the order field to ensure it starts from 1 and is sequential
   return result.map((question, index) => ({
     ...question,
-    order: index + 1,
-  }));
-};
+    order: index + 1
+  }))
+}

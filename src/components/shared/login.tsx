@@ -1,103 +1,106 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth.client";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
-import LoadingScreen from "./loading/loading-screen";
+import { useSearchParams } from 'next/navigation'
+
+import { authClient } from '@/lib/auth.client'
+import { Loader2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+
+import { Button } from '@/components/ui/button'
+
+import { trpc } from '@/trpc/trpc.client'
+
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import { Link } from "./progress-bar";
-import { useTranslations } from "next-intl";
-import { useSearchParams } from "next/navigation";
-import { trpc } from "@/trpc/trpc.client";
+  DialogTitle
+} from '../ui/dialog'
+import { Input } from '../ui/input'
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '../ui/input-otp'
+import { Label } from '../ui/label'
+import LoadingScreen from './loading/loading-screen'
+import { Link } from './progress-bar'
 
 const LogIn = () => {
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('')
+  const [otp, setOtp] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
   const { data, isPending } = trpc.organization.profile.useQuery()
-  const t = useTranslations("Auth");
-  const tCommon = useTranslations("Common");
+  const t = useTranslations('Auth')
+  const tCommon = useTranslations('Common')
 
-  const searchParams = useSearchParams();
-  const callbackURL = searchParams.get("callbackURL")
+  const searchParams = useSearchParams()
+  const callbackURL = searchParams.get('callbackURL')
 
   useEffect(() => {
     if (data?.user) {
-      window.location.href = callbackURL || "/dashboard";
+      window.location.href = callbackURL || '/dashboard'
     }
-  }, [data, callbackURL]);
+  }, [data, callbackURL])
 
   if (isPending) {
-    return <LoadingScreen />;
+    return <LoadingScreen />
   }
 
   return (
     <>
-      <h1 className="text-3xl font-semibold">{t("welcomeMessage")}</h1>
-      <h2 className="mb-10 text-muted-foreground mt-4 text-center">
-        {t("welcomeMessageDescription")}
+      <h1 className="text-3xl font-semibold">{t('welcomeMessage')}</h1>
+      <h2 className="text-muted-foreground mt-4 mb-10 text-center">
+        {t('welcomeMessageDescription')}
       </h2>
 
-      <div className="max-w-sm w-full">
-        <div className="flex flex-wrap items-center gap-2 w-full mb-8 pb-8 border-b border-dashed">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 flex w-full flex-wrap items-center gap-2 border-b border-dashed pb-8">
           <Button
             variant="outline"
             type="button"
-            className="gap-2 flex-1 w-full py-4"
+            className="w-full flex-1 gap-2 py-4"
             onClick={async () => {
               await authClient.signIn.social({
-                provider: "google",
-                callbackURL:
-                  callbackURL || `${window.location.origin}/dashboard`,
-              });
+                provider: 'google',
+                callbackURL: callbackURL || `${window.location.origin}/dashboard`
+              })
             }}
           >
             <GoogleIcon />
-            {t("signInWithGoogle")}
+            {t('signInWithGoogle')}
           </Button>
         </div>
 
         <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            setLoading(true);
+          onSubmit={async e => {
+            e.preventDefault()
+            setLoading(true)
             const res = await authClient.emailOtp.sendVerificationOtp({
               email,
-              type: "sign-in",
-            });
-            setLoading(false);
+              type: 'sign-in'
+            })
+            setLoading(false)
 
             if (!res.data?.success) {
-              toast.error(res.error?.message || tCommon("genericError"));
-              return;
+              toast.error(res.error?.message || tCommon('genericError'))
+              return
             }
 
-            setOtp("");
-            toast.success(t("otpSentToEmail"));
+            setOtp('')
+            toast.success(t('otpSentToEmail'))
           }}
           className="grid gap-4"
         >
           <div className="grid gap-2">
-            <Label htmlFor="email">{tCommon("emailLabel")}</Label>
+            <Label htmlFor="email">{tCommon('emailLabel')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder={t("emailPlaceholder")}
+              placeholder={t('emailPlaceholder')}
               required
               disabled={loading}
-              onChange={(e) => {
-                setEmail(e.target.value);
+              onChange={e => {
+                setEmail(e.target.value)
               }}
               value={email}
             />
@@ -106,7 +109,7 @@ const LogIn = () => {
             {loading ? (
               <Loader2 size={16} className="animate-spin" />
             ) : (
-              t("continueWithEmail")
+              t('continueWithEmail')
             )}
           </Button>
         </form>
@@ -114,42 +117,42 @@ const LogIn = () => {
       <Dialog open={otp !== null}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t("verifyEmailTitle")}</DialogTitle>
-            <DialogDescription>{t("verifyEmailDescription")}</DialogDescription>
+            <DialogTitle>{t('verifyEmailTitle')}</DialogTitle>
+            <DialogDescription>{t('verifyEmailDescription')}</DialogDescription>
           </DialogHeader>
 
           <form
-            onSubmit={async (e) => {
-              if (!otp) return;
-              e.preventDefault();
+            onSubmit={async e => {
+              if (!otp) return
+              e.preventDefault()
 
-              setLoading(true);
+              setLoading(true)
               const res = await authClient.signIn.emailOtp({
                 email,
-                otp,
-              });
+                otp
+              })
 
               if (res.error) {
-                setLoading(false);
-                toast.error(res.error?.message || tCommon("genericError"));
-                setOtp("");
-                return;
+                setLoading(false)
+                toast.error(res.error?.message || tCommon('genericError'))
+                setOtp('')
+                return
               }
 
               if (res.data?.user) {
-                window.location.href = callbackURL || "/dashboard";
+                window.location.href = callbackURL || '/dashboard'
               }
             }}
             className="grid gap-4"
           >
             <div className="grid gap-2">
-              <Label htmlFor="otp">{t("verifyEmailLabel")}</Label>
+              <Label htmlFor="otp">{t('verifyEmailLabel')}</Label>
               <InputOTP
                 maxLength={6}
-                onChange={(e) => {
-                  setOtp(e);
+                onChange={e => {
+                  setOtp(e)
                 }}
-                value={otp || ""}
+                value={otp || ''}
               >
                 <InputOTPGroup>
                   <InputOTPSlot index={0} />
@@ -161,40 +164,40 @@ const LogIn = () => {
                 </InputOTPGroup>
               </InputOTP>
             </div>
-            <Button type="submit" className="w-full mt-4" disabled={loading}>
+            <Button type="submit" className="mt-4 w-full" disabled={loading}>
               {loading ? (
                 <Loader2 size={16} className="animate-spin" />
               ) : (
-                t("loginButton")
+                t('loginButton')
               )}
             </Button>
-            <span className="text-sm text-muted-foreground">
-              {t("didNotReceiveOTP")}{" "}
+            <span className="text-muted-foreground text-sm">
+              {t('didNotReceiveOTP')}{' '}
               <button
                 type="button"
-                className="text-sm w-max cursor-pointer text-blue-500"
+                className="w-max cursor-pointer text-sm text-blue-500"
                 onClick={() => setOtp(null)}
               >
-                {t("resendOTPButton")}
+                {t('resendOTPButton')}
               </button>
             </span>
           </form>
         </DialogContent>
       </Dialog>
-      <span className="container text-xs text-muted-foreground mt-4 max-w-md text-center fixed bottom-4">
-        {t("termsOfUseDescription")}{" "}
-        <Link href={"/terms-of-use"} className="underline">
-          {t("termsOfUse")}
-        </Link>{" "}
-        {t("and")}{" "}
-        <Link className="underline" href={"/privacy-policy"}>
-          {t("privacyPolicy")}
+      <span className="text-muted-foreground fixed bottom-4 container mt-4 max-w-md text-center text-xs">
+        {t('termsOfUseDescription')}{' '}
+        <Link href={'/terms-of-use'} className="underline">
+          {t('termsOfUse')}
+        </Link>{' '}
+        {t('and')}{' '}
+        <Link className="underline" href={'/privacy-policy'}>
+          {t('privacyPolicy')}
         </Link>
       </span>
     </>
-  );
-};
-export default LogIn;
+  )
+}
+export default LogIn
 
 const GoogleIcon = () => {
   return (
@@ -203,7 +206,7 @@ const GoogleIcon = () => {
       viewBox="0 0 24 24"
       width="24"
       height="24"
-      className="w-5 h-5"
+      className="h-5 w-5"
     >
       <path
         fill="#4285F4"
@@ -222,5 +225,5 @@ const GoogleIcon = () => {
         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
       />
     </svg>
-  );
-};
+  )
+}

@@ -1,7 +1,9 @@
-import db from "../../../lib/db";
-import { question } from "@/lib/db/schema";
-import { and, eq, gte, ne, sql } from "drizzle-orm";
-import { InsertQuestion } from "@/types/question";
+import { question } from '@/lib/db/schema'
+import { and, eq, gte, ne, sql } from 'drizzle-orm'
+
+import { InsertQuestion } from '@/types/question'
+
+import db from '../../../lib/db'
 
 export async function createQuestion(
   referenceId: string,
@@ -10,29 +12,29 @@ export async function createQuestion(
   const insertedQuestions = await db
     .insert(question)
     .values(
-      listQuestion.map((item) => ({
+      listQuestion.map(item => ({
         ...item,
-        referenceId,
+        referenceId
       }))
     )
-    .returning();
+    .returning()
 
-  const firstOrder = listQuestion.at(0)?.order || 1;
-  const totalInsertedQuestions = insertedQuestions.length;
+  const firstOrder = listQuestion.at(0)?.order || 1
+  const totalInsertedQuestions = insertedQuestions.length
 
   // Update order of other questions
   await db
     .update(question)
     .set({
-      order: sql`${question.order}+${totalInsertedQuestions.toString()}`,
+      order: sql`${question.order}+${totalInsertedQuestions.toString()}`
     })
     .where(
       and(
-        ...insertedQuestions.map((item) => ne(question.id, item.id)),
+        ...insertedQuestions.map(item => ne(question.id, item.id)),
         eq(question.referenceId, referenceId),
         gte(question.order, firstOrder)
       )
-    );
+    )
 
-  return insertedQuestions;
+  return insertedQuestions
 }

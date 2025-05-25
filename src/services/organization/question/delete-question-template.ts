@@ -1,6 +1,7 @@
-import { and, eq } from "drizzle-orm";
-import db from "../../../lib/db";
-import { questionTemplate } from "../../../lib/db/schema/question.template";
+import { and, eq } from 'drizzle-orm'
+
+import db from '../../../lib/db'
+import { questionTemplate } from '../../../lib/db/schema/question.template'
 
 export const deleteQuestionTemplate = async (
   templateId: string,
@@ -9,7 +10,7 @@ export const deleteQuestionTemplate = async (
   await db
     .update(questionTemplate)
     .set({
-      deletedAt: new Date().toISOString(),
+      deletedAt: new Date().toISOString()
     })
     .where(
       and(
@@ -17,10 +18,10 @@ export const deleteQuestionTemplate = async (
         eq(questionTemplate.organizationId, organizationId)
       )
     )
-    .returning();
+    .returning()
 
   return {
     success: true,
-    message: "Question template deleted successfully",
-  };
-};
+    message: 'Question template deleted successfully'
+  }
+}

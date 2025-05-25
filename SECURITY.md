@@ -31,4 +31,4 @@ We take the security of Evaly seriously. If you believe you've found a security 
 - Make a good faith effort to avoid privacy violations, destruction of data, or disruption of service during your research.
 - Do not access or modify data that does not belong to you.
 
-Thank you for helping keep Evaly and its users safe and secure. 
+Thank you for helping keep Evaly and its users safe and secure.

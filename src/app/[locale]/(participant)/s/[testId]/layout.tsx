@@ -1,20 +1,23 @@
-import React from "react";
-import { trpc } from "@/trpc/trpc.server";
-import Presence from "./presence";
-import { redirect } from "next/navigation";
+import { redirect } from 'next/navigation'
+
+import React from 'react'
+
+import { trpc } from '@/trpc/trpc.server'
+
+import Presence from './presence'
 
 const layout = async ({
   children,
-  params,
+  params
 }: {
-  children: React.ReactNode;
-  params: Promise<{ testId: string }>;
+  children: React.ReactNode
+  params: Promise<{ testId: string }>
 }) => {
-  const { testId } = await params;
-  const { user } = await trpc.participant.profile();
+  const { testId } = await params
+  const { user } = await trpc.participant.profile()
 
   if (!user) {
-    redirect(`/login?callbackURL=/s/${testId}`);
+    redirect(`/login?callbackURL=/s/${testId}`)
   }
 
   return (
@@ -22,7 +25,7 @@ const layout = async ({
       <Presence testId={testId} user={user} />
       {children}
     </>
-  );
-};
+  )
+}
 
-export default layout;
+export default layout

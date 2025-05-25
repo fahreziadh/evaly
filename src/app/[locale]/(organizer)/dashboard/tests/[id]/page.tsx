@@ -1,19 +1,20 @@
-"use client";
+'use client'
 
-import { Tabs, TabsContent } from "@/components/ui/tabs";
-import Header from "./_components/header";
-import { useTabsState } from "./_hooks/use-tabs-state";
-import Share from "./_components/share";
-import Setting from "./_components/setting/setting";
-import Questions from "./_components/questions/questions";
-import Submissions from "./_components/(deprecated) submissions";
+import { Tabs, TabsContent } from '@/components/ui/tabs'
+
+import Submissions from './_components/(deprecated) submissions'
+import Header from './_components/header'
+import Questions from './_components/questions/questions'
+import Setting from './_components/setting/setting'
+import Share from './_components/share'
+import { useTabsState } from './_hooks/use-tabs-state'
 
 const PageClient = () => {
-  const [tab, setTab] = useTabsState("questions");
+  const [tab, setTab] = useTabsState('questions')
 
   return (
     <Tabs
-      className="container min-h-dvh pb-10 dashboard-margin"
+      className="dashboard-margin container min-h-dvh pb-10"
       defaultValue="questions"
       value={tab}
       onValueChange={setTab}
@@ -32,7 +33,7 @@ const PageClient = () => {
         <Share />
       </TabsContent>
     </Tabs>
-  );
-};
+  )
+}
 
-export default PageClient;
+export default PageClient

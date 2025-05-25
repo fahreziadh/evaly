@@ -1,40 +1,43 @@
-import db from "../../../lib/db";
-import { question, testSection } from "../../../lib/db/schema";
-import { and, eq, gte, ne, sql } from "drizzle-orm";
+import { and, eq, gte, ne, sql } from 'drizzle-orm'
+
+import db from '../../../lib/db'
+import { question, testSection } from '../../../lib/db/schema'
 
 export async function deleteSectionById(sectionId: string) {
-  const sectionOrder = (await db.query.testSection.findFirst({
-    columns: {
-      order: true,
-    },
-    where(fields, operators) {
-      return operators.eq(fields.id, sectionId);
-    },
-  }))?.order;
+  const sectionOrder = (
+    await db.query.testSection.findFirst({
+      columns: {
+        order: true
+      },
+      where(fields, operators) {
+        return operators.eq(fields.id, sectionId)
+      }
+    })
+  )?.order
 
   const deleteSection = await db
     .update(testSection)
     .set({
       deletedAt: new Date().toISOString(),
-      order: null,
+      order: null
     })
     .where(eq(testSection.id, sectionId))
-    .returning();
+    .returning()
 
   const deleteQuestions = await db
     .update(question)
     .set({
-      deletedAt: new Date().toISOString(),
+      deletedAt: new Date().toISOString()
     })
     .where(eq(question.referenceId, sectionId))
-    .returning();
+    .returning()
 
   // Change the order of the sections
   if (deleteSection[0] && sectionOrder) {
     await db
       .update(testSection)
       .set({
-        order: sql`${testSection.order} - 1`,
+        order: sql`${testSection.order} - 1`
       })
       .where(
         and(
@@ -42,11 +45,11 @@ export async function deleteSectionById(sectionId: string) {
           ne(testSection.id, sectionId),
           gte(testSection.order, sectionOrder)
         )
-      );
+      )
   }
 
   return {
     sectionRowChanges: deleteSection.length,
-    questionRowChanges: deleteQuestions.length,
-  };
+    questionRowChanges: deleteQuestions.length
+  }
 }

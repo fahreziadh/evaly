@@ -1,50 +1,52 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
+import { Info, Loader2, PencilLine, Save } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Loader2, Save, Info, PencilLine } from "lucide-react";
+  CardTitle
+} from '@/components/ui/card'
+import { Image } from '@/components/ui/image'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Controller, useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { toast } from "sonner";
-import { OrganizerUserUpdate } from "@/types/user";
-import { Image } from "@/components/ui/image";
-import { trpc } from "@/trpc/trpc.client";
-import { Skeleton } from "@/components/ui/skeleton";
+  TooltipTrigger
+} from '@/components/ui/tooltip'
 
-export const dynamic = "force-static";
+import { trpc } from '@/trpc/trpc.client'
 
+import { OrganizerUserUpdate } from '@/types/user'
+
+export const dynamic = 'force-static'
 
 const Settings = () => {
   return (
-    <div className="container dashboard-margin">
+    <div className="dashboard-margin container">
       <div className="flex flex-col">
         <h1 className="dashboard-title">Settings</h1>
         <p className="dashboard-description">
           Manage your account settings and preferences.
         </p>
       </div>
-      <div className="flex flex-col gap-4 mt-10">
+      <div className="mt-10 flex flex-col gap-4">
         <Profile />
         <Organization />
       </div>
     </div>
-  );
-};
+  )
+}
 
 // const General = () => {
 //   const { theme, setTheme } = useTheme();
@@ -94,7 +96,7 @@ const Settings = () => {
 // };
 
 const Profile = () => {
-  const { data, refetch, isPending } = trpc.organization.profile.useQuery();
+  const { data, refetch, isPending } = trpc.organization.profile.useQuery()
 
   // Define form for profile
   const {
@@ -106,45 +108,43 @@ const Profile = () => {
     watch
   } = useForm<OrganizerUserUpdate & { imageFile?: File }>({
     defaultValues: {
-      name: "",
-      email: "",
-    },
-  });
+      name: '',
+      email: ''
+    }
+  })
 
-  const [previewURL, setPreviewURL] = useState<string | null>(null);
+  const [previewURL, setPreviewURL] = useState<string | null>(null)
 
   useEffect(() => {
     reset({
       name: data?.user?.name,
       email: data?.user?.email,
-      image: data?.user?.image,
-    });
-  }, [data, reset]);
+      image: data?.user?.image
+    })
+  }, [data, reset])
 
   const onImagePreviewChange = (e: File) => {
-    const objectUrl = URL.createObjectURL(e);
-    setPreviewURL(objectUrl);
-  };
+    const objectUrl = URL.createObjectURL(e)
+    setPreviewURL(objectUrl)
+  }
 
   const { mutate: mutateUpdateProfile, isPending: isPendingUpdateProfile } =
     trpc.organization.updateProfile.useMutation({
       onSuccess(data) {
         if (data) {
-          toast.success("Profile updated successfully");
+          toast.success('Profile updated successfully')
           reset({
             ...data,
             createdAt: new Date(data.createdAt),
-            updatedAt: new Date(data.updatedAt),
-          });
-          refetch();
+            updatedAt: new Date(data.updatedAt)
+          })
+          refetch()
         }
-      },
-    });
+      }
+    })
 
-  if (isPending || !watch("email")) {
-    return (
-      <Skeleton className="w-full h-80" />
-    );
+  if (isPending || !watch('email')) {
+    return <Skeleton className="h-80 w-full" />
   }
 
   return (
@@ -158,19 +158,19 @@ const Profile = () => {
       <CardContent className="pt-6">
         <form
           className="space-y-6"
-          onSubmit={handleSubmit((data) => {
-            const formData = new FormData();
-            formData.append("fullName", data.name ?? "");
-            formData.append("imageFile", data.imageFile ?? new File([], ""));
-            mutateUpdateProfile(formData);
+          onSubmit={handleSubmit(data => {
+            const formData = new FormData()
+            formData.append('fullName', data.name ?? '')
+            formData.append('imageFile', data.imageFile ?? new File([], ''))
+            mutateUpdateProfile(formData)
           })}
         >
-          <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex flex-col gap-6 md:flex-row">
             <Controller
               control={control}
               name="image"
               render={({ field }) => (
-                <div className="relative w-max h-max">
+                <div className="relative h-max w-max">
                   <Avatar className="size-24 rounded-full">
                     {previewURL ? (
                       <AvatarImage
@@ -182,7 +182,7 @@ const Profile = () => {
                       <AvatarImage
                         src={field.value}
                         alt="Profile"
-                        className="object-cover bg-foreground/5"
+                        className="bg-foreground/5 object-cover"
                         asChild
                       >
                         <Image
@@ -194,17 +194,17 @@ const Profile = () => {
                       </AvatarImage>
                     ) : (
                       <AvatarFallback className="text-4xl">
-                        {data?.user?.email?.charAt(0).toUpperCase() || "U"}
+                        {data?.user?.email?.charAt(0).toUpperCase() || 'U'}
                       </AvatarFallback>
                     )}
                   </Avatar>
-                  <div className="flex flex-row gap-2 absolute right-1 bottom-1">
+                  <div className="absolute right-1 bottom-1 flex flex-row gap-2">
                     <Button
                       variant="default"
                       size="icon"
                       type="button"
                       onClick={() => {
-                        document.getElementById("profile-image")?.click();
+                        document.getElementById('profile-image')?.click()
                       }}
                       rounded
                     >
@@ -214,14 +214,14 @@ const Profile = () => {
                       id="profile-image"
                       type="file"
                       accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
+                      onChange={e => {
+                        const file = e.target.files?.[0]
                         if (file) {
                           // Set the file in the form
-                          setValue("imageFile", file, {
-                            shouldDirty: true,
-                          });
-                          onImagePreviewChange(file);
+                          setValue('imageFile', file, {
+                            shouldDirty: true
+                          })
+                          onImagePreviewChange(file)
                         }
                       }}
                       className="hidden"
@@ -230,19 +230,19 @@ const Profile = () => {
                 </div>
               )}
             />
-            <div className="space-y-4 w-full">
+            <div className="w-full space-y-4">
               <Controller
                 control={control}
                 name="email"
-                rules={{ required: "Email is required" }}
+                rules={{ required: 'Email is required' }}
                 render={({ field }) => (
                   <div>
-                    <Label className="flex flex-row gap-2 mb-1">
+                    <Label className="mb-1 flex flex-row gap-2">
                       Email Address
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                            <Info className="text-muted-foreground h-4 w-4 cursor-help" />
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>Email address cannot be changed</p>
@@ -250,11 +250,7 @@ const Profile = () => {
                         </Tooltip>
                       </TooltipProvider>
                     </Label>
-                    <Input
-                      {...field}
-                      placeholder="Your email address"
-                      disabled
-                    />
+                    <Input {...field} placeholder="Your email address" disabled />
                   </div>
                 )}
               />
@@ -262,7 +258,7 @@ const Profile = () => {
               <Controller
                 control={control}
                 name="name"
-                rules={{ required: "Full name is required" }}
+                rules={{ required: 'Full name is required' }}
                 render={({ field }) => (
                   <div>
                     <Label>Full Name</Label>
@@ -277,17 +273,14 @@ const Profile = () => {
                     type="button"
                     variant="outline"
                     onClick={() => {
-                      reset();
-                      setPreviewURL(null);
+                      reset()
+                      setPreviewURL(null)
                     }}
                   >
                     Cancel
                   </Button>
                 ) : null}
-                <Button
-                  type="submit"
-                  disabled={isPendingUpdateProfile || !isDirty}
-                >
+                <Button type="submit" disabled={isPendingUpdateProfile || !isDirty}>
                   {isPendingUpdateProfile ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" /> Saving...
@@ -304,11 +297,11 @@ const Profile = () => {
         </form>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
 const Organization = () => {
-  const { data: organizationData } = trpc.organization.profile.useQuery();
+  const { data: organizationData } = trpc.organization.profile.useQuery()
 
   return (
     <Card>
@@ -324,13 +317,11 @@ const Organization = () => {
             Organization settings coming soon...
           </div>
         ) : (
-          <div className="text-muted-foreground">
-            No organization data available.
-          </div>
+          <div className="text-muted-foreground">No organization data available.</div>
         )}
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default Settings;
+export default Settings

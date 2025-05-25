@@ -1,6 +1,12 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+'use client'
+
+import { useParams } from 'next/navigation'
+
+import { env } from '@/lib/env.client'
+import supabase from '@/lib/supabase'
+import { cn } from '@/lib/utils'
+import NumberFlow from '@number-flow/react'
+import { PopoverClose } from '@radix-ui/react-popover'
 import {
   Check,
   LinkIcon,
@@ -8,162 +14,160 @@ import {
   PencilLine,
   RotateCcw,
   Save,
-  TimerOff,
-} from "lucide-react";
-import { useParams } from "next/navigation";
-import { toast } from "sonner";
-import { env } from "@/lib/env.client";
-import BackButton from "@/components/shared/back-button";
+  TimerOff
+} from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useEffect, useMemo, useState, useTransition } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+
+import BackButton from '@/components/shared/back-button'
+import DialogPublishTest from '@/components/shared/dialog/dialog-publish-test'
+import { useProgressRouter } from '@/components/shared/progress-bar'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
+  DialogClose,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
   DialogDescription,
   DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { useEffect, useMemo, useState, useTransition } from "react";
-import { trpc } from "@/trpc/trpc.client";
-import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
-import { UpdateTest } from "@/types/test";
-import DialogPublishTest from "@/components/shared/dialog/dialog-publish-test";
-import { useTabsState } from "../_hooks/use-tabs-state";
-import supabase from "@/lib/supabase";
-import { cn } from "@/lib/utils";
-import NumberFlow from "@number-flow/react";
-import { useProgressRouter } from "@/components/shared/progress-bar";
-import TestSections from "./questions/test-sections";
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverAnchor,
   PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-import { TextShimmer } from "@/components/ui/text-shimmer";
-import { PopoverClose } from "@radix-ui/react-popover";
-import { Skeleton } from "@/components/ui/skeleton";
+  PopoverTrigger
+} from '@/components/ui/popover'
+import { Skeleton } from '@/components/ui/skeleton'
+import { TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { TextShimmer } from '@/components/ui/text-shimmer'
+
+import { trpc } from '@/trpc/trpc.client'
+
+import { UpdateTest } from '@/types/test'
+
+import { useTabsState } from '../_hooks/use-tabs-state'
+import TestSections from './questions/test-sections'
 
 const Header = ({ className }: { className?: string }) => {
-  const [tabs, setTabs] = useTabsState("questions");
-  const { id } = useParams();
-  const router = useProgressRouter();
-  const [isRedirect, setIsRedirect] = useTransition();
-  const tCommon = useTranslations("Common");
-  const tOrganizer = useTranslations("Organizer");
-  const [participantOnline, setParticipantOnline] = useState<string[]>([]);
+  const [tabs, setTabs] = useTabsState('questions')
+  const { id } = useParams()
+  const router = useProgressRouter()
+  const [isRedirect, setIsRedirect] = useTransition()
+  const tCommon = useTranslations('Common')
+  const tOrganizer = useTranslations('Organizer')
+  const [participantOnline, setParticipantOnline] = useState<string[]>([])
 
   const {
     register,
     reset,
     formState: { isDirty },
     getValues,
-    watch,
-  } = useForm<UpdateTest>();
+    watch
+  } = useForm<UpdateTest>()
 
-  const { isPublished, finishedAt } = watch();
+  const { isPublished, finishedAt } = watch()
 
   const status = useMemo(() => {
-    if (isPublished && finishedAt) return "finished";
-    if (isPublished && !finishedAt) return "published";
-    return "draft";
-  }, [isPublished, finishedAt]);
+    if (isPublished && finishedAt) return 'finished'
+    if (isPublished && !finishedAt) return 'published'
+    return 'draft'
+  }, [isPublished, finishedAt])
 
   const {
     data: dataTest,
     isPending: isPendingTest,
     isRefetching: isRefetchingTest,
-    refetch: refetchTest,
-  } = trpc.organization.test.getById.useQuery({ id: id?.toString() || "" });
+    refetch: refetchTest
+  } = trpc.organization.test.getById.useQuery({ id: id?.toString() || '' })
 
   useEffect(() => {
     if (dataTest) {
-      reset(dataTest);
-      document.title = dataTest.title || "Untitled";
+      reset(dataTest)
+      document.title = dataTest.title || 'Untitled'
     }
-  }, [dataTest, reset]);
+  }, [dataTest, reset])
 
   useEffect(() => {
-    if (!id) return;
-    if (status !== "published") return;
-    const channel = supabase.channel(id?.toString() || "");
+    if (!id) return
+    if (status !== 'published') return
+    const channel = supabase.channel(id?.toString() || '')
 
     channel
-      .on("presence", { event: "sync" }, () => {
-        const users = Object.keys(channel.presenceState());
-        setParticipantOnline([...new Set(users)]);
+      .on('presence', { event: 'sync' }, () => {
+        const users = Object.keys(channel.presenceState())
+        setParticipantOnline([...new Set(users)])
       })
-      .on("presence", { event: "join" }, ({ key, newPresences }) => {
-        console.log("Join", key, newPresences);
+      .on('presence', { event: 'join' }, ({ key, newPresences }) => {
+        console.log('Join', key, newPresences)
       })
-      .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
-        console.log("Leave", key, leftPresences);
-      });
-    channel.subscribe(() => {});
+      .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
+        console.log('Leave', key, leftPresences)
+      })
+    channel.subscribe(() => {})
 
     return () => {
-      channel.unsubscribe();
-    };
-  }, [id, status]);
+      channel.unsubscribe()
+    }
+  }, [id, status])
 
   const { mutate: mutateUpdateTest, isPending: isUpdatingTest } =
     trpc.organization.test.update.useMutation({
       onSuccess() {
-        toast.success("Test updated successfully");
-        refetchTest();
-      },
-    });
+        toast.success('Test updated successfully')
+        refetchTest()
+      }
+    })
 
   const { mutate: mutateReopenTest, isPending: isReopeningTest } =
     trpc.organization.test.duplicateTest.useMutation({
       onSuccess(data) {
         setIsRedirect(() => {
-          router.push(`/dashboard/tests/${data.id}`);
-          router.push(`/dashboard/tests/${data.id}`);
-        });
+          router.push(`/dashboard/tests/${data.id}`)
+          router.push(`/dashboard/tests/${data.id}`)
+        })
       },
       onError(error) {
-        toast.error(error.message || tCommon("genericUpdateError"));
-      },
-    });
+        toast.error(error.message || tCommon('genericUpdateError'))
+      }
+    })
 
   const reopenTest = () => {
-    mutateReopenTest({ id: id?.toString() || "" });
-  };
+    mutateReopenTest({ id: id?.toString() || '' })
+  }
 
   const copyLinkToShare = () => {
-    navigator.clipboard.writeText(`${env.NEXT_PUBLIC_URL}/s/${dataTest?.id}`);
-    toast.success("Link copied to clipboard", { position: "top-right" });
-  };
+    navigator.clipboard.writeText(`${env.NEXT_PUBLIC_URL}/s/${dataTest?.id}`)
+    toast.success('Link copied to clipboard', { position: 'top-right' })
+  }
 
   if (!isPendingTest && !dataTest) {
-    return null;
+    return null
   }
 
   return (
     <div className={cn(className)}>
-      <div className="flex md:flex-row flex-col-reverse gap-2 justify-between items-start">
-        <div className="flex flex-row gap-2 items-center">
+      <div className="flex flex-col-reverse items-start justify-between gap-2 md:flex-row">
+        <div className="flex flex-row items-center gap-2">
           <BackButton href={`/dashboard/tests`} />
 
           {/* Title and save button */}
           {isPendingTest ? (
-            <TextShimmer className="animate-pulse  font-medium">
-              Loading...
-            </TextShimmer>
+            <TextShimmer className="animate-pulse font-medium">Loading...</TextShimmer>
           ) : (
             <Popover>
-              <PopoverTrigger className="flex flex-row items-center gap-2 cursor-pointer group">
-                <span className="font-medium text-start w-max max-w-xl truncate">
-                  {watch("title") || "Untitled"}
+              <PopoverTrigger className="group flex cursor-pointer flex-row items-center gap-2">
+                <span className="w-max max-w-xl truncate text-start font-medium">
+                  {watch('title') || 'Untitled'}
                 </span>
                 {isPendingTest || isUpdatingTest ? (
-                  <Loader2 className="animate-spin text-muted-foreground/50" />
+                  <Loader2 className="text-muted-foreground/50 animate-spin" />
                 ) : (
-                  <PencilLine className="size-4 text-muted-foreground/50 group-hover:text-muted-foreground " />
+                  <PencilLine className="text-muted-foreground/50 group-hover:text-muted-foreground size-4" />
                 )}
               </PopoverTrigger>
               <PopoverAnchor>
@@ -175,20 +179,20 @@ const Header = ({ className }: { className?: string }) => {
                 >
                   <Input
                     type="text"
-                    {...register("title")}
-                    className="outline-none font-medium"
-                    placeholder={isPendingTest ? "Loading..." : "Test title"}
+                    {...register('title')}
+                    className="font-medium outline-none"
+                    placeholder={isPendingTest ? 'Loading...' : 'Test title'}
                     disabled={isPendingTest || isUpdatingTest}
                   />
                   <PopoverClose asChild>
                     <Button
-                      variant={"default"}
+                      variant={'default'}
                       disabled={isUpdatingTest || isPendingTest || !isDirty}
-                      className="w-max mt-2"
+                      className="mt-2 w-max"
                       onClick={() =>
                         mutateUpdateTest({
-                          id: id?.toString() || "",
-                          title: getValues("title"),
+                          id: id?.toString() || '',
+                          title: getValues('title')
                         })
                       }
                     >
@@ -197,7 +201,7 @@ const Header = ({ className }: { className?: string }) => {
                       ) : (
                         <Save className="size-3.5" />
                       )}
-                      {tCommon("saveButton")}
+                      {tCommon('saveButton')}
                     </Button>
                   </PopoverClose>
                 </PopoverContent>
@@ -207,14 +211,14 @@ const Header = ({ className }: { className?: string }) => {
         </div>
 
         {/* Right side: Status and actions */}
-        <div className="flex flex-row justify-end w-full">
+        <div className="flex w-full flex-row justify-end">
           {/* Mobile Only Status */}
-          {status === "published" ? (
-            <Button variant={"ghost"} className="ml-4 flex md:hidden">
+          {status === 'published' ? (
+            <Button variant={'ghost'} className="ml-4 flex md:hidden">
               <div
                 className={cn(
-                  "size-2.5 bg-emerald-500 rounded-full transition-all",
-                  participantOnline.length === 0 ? "bg-foreground/15" : ""
+                  'size-2.5 rounded-full bg-emerald-500 transition-all',
+                  participantOnline.length === 0 ? 'bg-foreground/15' : ''
                 )}
               />
               <NumberFlow value={participantOnline.length} suffix=" Online" />
@@ -222,52 +226,46 @@ const Header = ({ className }: { className?: string }) => {
           ) : null}
           {/* Loading state */}
           {isPendingTest || isRefetchingTest ? (
-            <Button variant={"default"} disabled>
+            <Button variant={'default'} disabled>
               <Loader2 className="animate-spin" />
               Loading...
             </Button>
           ) : // Published state
-          status === "published" ? (
+          status === 'published' ? (
             <div className="flex flex-row items-center gap-2">
-              <Button variant={"ghost"} size={"icon"} onClick={copyLinkToShare}>
+              <Button variant={'ghost'} size={'icon'} onClick={copyLinkToShare}>
                 <LinkIcon />
               </Button>
-              <EndTestButton
-                refetchTest={refetchTest}
-                id={id?.toString() || ""}
-              />
+              <EndTestButton refetchTest={refetchTest} id={id?.toString() || ''} />
             </div>
           ) : // Finished state
-          status === "finished" ? (
+          status === 'finished' ? (
             <div className="flex flex-row items-center gap-2">
-              <Button variant={"success"}>
+              <Button variant={'success'}>
                 <Check />
                 Finished
               </Button>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant={"outline"}>
+                  <Button variant={'outline'}>
                     <RotateCcw />
                     Re-open test
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>
-                      You are about to re-open the test.
-                    </DialogTitle>
+                    <DialogTitle>You are about to re-open the test.</DialogTitle>
                     <DialogDescription>
-                      This action will re-create a completely new test with the
-                      same questions and settings, just like duplicating the
-                      test.
+                      This action will re-create a completely new test with the same
+                      questions and settings, just like duplicating the test.
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter>
                     <DialogClose asChild>
-                      <Button variant={"outline"}>Cancel</Button>
+                      <Button variant={'outline'}>Cancel</Button>
                     </DialogClose>
                     <Button
-                      variant={"default"}
+                      variant={'default'}
                       onClick={reopenTest}
                       disabled={isReopeningTest || isRedirect}
                     >
@@ -283,12 +281,12 @@ const Header = ({ className }: { className?: string }) => {
               </Dialog>
             </div>
           ) : // Draft state
-          status === "draft" ? (
+          status === 'draft' ? (
             <DialogPublishTest
-              testId={id?.toString() || ""}
-              onPublished={(newTest) => {
-                reset(newTest);
-                setTabs("submissions");
+              testId={id?.toString() || ''}
+              onPublished={newTest => {
+                reset(newTest)
+                setTabs('submissions')
               }}
             />
           ) : null}
@@ -296,40 +294,34 @@ const Header = ({ className }: { className?: string }) => {
       </div>
 
       {/* Tabs and Test Sections */}
-      <div className="flex md:flex-row flex-col gap-2 justify-between items-start mb-4 mt-4">
+      <div className="mt-4 mb-4 flex flex-col items-start justify-between gap-2 md:flex-row">
         {isPendingTest ? (
-          <div className="flex flex-row gap-2 items-center">
-            <Skeleton className="w-56 h-9 rounded-md" />
+          <div className="flex flex-row items-center gap-2">
+            <Skeleton className="h-9 w-56 rounded-md" />
           </div>
         ) : (
-          <div className="flex md:flex-row flex-col md:items-center">
+          <div className="flex flex-col md:flex-row md:items-center">
             <TabsList>
               {/* <TabsTrigger value="summary">Summary</TabsTrigger> */}
-              {status === "published" || status === "finished" ? (
+              {status === 'published' || status === 'finished' ? (
                 <TabsTrigger value="submissions">
-                  {tOrganizer("submissionsTab")}
+                  {tOrganizer('submissionsTab')}
                 </TabsTrigger>
               ) : null}
-              {status === "published" ? (
-                <TabsTrigger value="share">
-                  {tOrganizer("shareTab")}
-                </TabsTrigger>
+              {status === 'published' ? (
+                <TabsTrigger value="share">{tOrganizer('shareTab')}</TabsTrigger>
               ) : null}
-              <TabsTrigger value="questions">
-                {tOrganizer("questionsTab")}
-              </TabsTrigger>
-              <TabsTrigger value="settings">
-                {tOrganizer("settingsTab")}
-              </TabsTrigger>
+              <TabsTrigger value="questions">{tOrganizer('questionsTab')}</TabsTrigger>
+              <TabsTrigger value="settings">{tOrganizer('settingsTab')}</TabsTrigger>
             </TabsList>
 
             {/* Desktop Only Status */}
-            {status === "published" ? (
-              <Button variant={"ghost"} className="ml-4 hidden md:flex">
+            {status === 'published' ? (
+              <Button variant={'ghost'} className="ml-4 hidden md:flex">
                 <div
                   className={cn(
-                    "size-2.5 bg-emerald-500 rounded-full transition-all",
-                    participantOnline.length === 0 ? "bg-foreground/15" : ""
+                    'size-2.5 rounded-full bg-emerald-500 transition-all',
+                    participantOnline.length === 0 ? 'bg-foreground/15' : ''
                   )}
                 />
                 <NumberFlow value={participantOnline.length} suffix=" Online" />
@@ -337,38 +329,38 @@ const Header = ({ className }: { className?: string }) => {
             ) : null}
           </div>
         )}
-        {tabs === "questions" && <TestSections />}
+        {tabs === 'questions' && <TestSections />}
       </div>
     </div>
-  );
-};
+  )
+}
 
 const EndTestButton = ({
   refetchTest,
-  id,
+  id
 }: {
-  refetchTest: () => void;
-  id: string;
+  refetchTest: () => void
+  id: string
 }) => {
   const { mutate: mutateUpdateTest, isPending: isUpdatingTest } =
     trpc.organization.test.update.useMutation({
       onSuccess() {
-        toast.success("Test finished successfully");
-        refetchTest();
-      },
-    });
+        toast.success('Test finished successfully')
+        refetchTest()
+      }
+    })
 
   const finishTest = () => {
     mutateUpdateTest({
       id,
-      finishedAt: new Date().toISOString(),
-    });
-  };
+      finishedAt: new Date().toISOString()
+    })
+  }
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"default"} disabled={isUpdatingTest}>
+        <Button variant={'default'} disabled={isUpdatingTest}>
           {isUpdatingTest ? (
             <Loader2 className="animate-spin" />
           ) : (
@@ -385,28 +377,24 @@ const EndTestButton = ({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <div className="flex flex-row gap-2 justify-between w-full">
+          <div className="flex w-full flex-row justify-between gap-2">
             <DialogClose asChild>
-              <Button variant={"outline"}>Cancel</Button>
+              <Button variant={'outline'}>Cancel</Button>
             </DialogClose>
             <div className="flex flex-row gap-2">
               <Button
-                variant={"default"}
+                variant={'default'}
                 onClick={finishTest}
                 disabled={isUpdatingTest}
               >
-                {isUpdatingTest ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  <>End now</>
-                )}
+                {isUpdatingTest ? <Loader2 className="animate-spin" /> : <>End now</>}
               </Button>
             </div>
           </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

@@ -1,5 +1,5 @@
-import ComingSoonPage from "../_components/coming-soon";
+import ComingSoonPage from '../_components/coming-soon'
 
-export const dynamic = "force-static";
+export const dynamic = 'force-static'
 
-export default ComingSoonPage;
+export default ComingSoonPage

@@ -1,7 +1,7 @@
 ![Evaly_ Innovative assessment solution _ Design customized evaluations_ knowledge · 5 09am · 04-30](https://github.com/user-attachments/assets/9747ba46-b0e0-4b75-9224-eeed8b554d09)
 
-
 # Evaly
+
 Online examination platform that makes creating, distributing, and analyzing tests easy and secure.
 
 ## ✨ Features
@@ -20,7 +20,7 @@ Online examination platform that makes creating, distributing, and analyzing tes
 - **Database**: PostgreSQL (Supabase) with Drizzle ORM
 - **Storage**: R2
 - **Styling**: Tailwind CSS with Radix UI
-- **Deployment**: AWS, SST.dev with OpenNext (Full-stack), Coolify (Supabase)  
+- **Deployment**: AWS, SST.dev with OpenNext (Full-stack), Coolify (Supabase)
 - **Auth**: Better Auth
 - **AI**: Gemini, OpenAI
 
@@ -35,22 +35,26 @@ Online examination platform that makes creating, distributing, and analyzing tes
 ### Getting Started
 
 1. Clone the repository
+
    ```bash
    git clone https://github.com/yourusername/evaly.git
    cd evaly
    ```
 
 2. Install dependencies
+
    ```bash
    bun install
    ```
 
 3. Set up environment variables
+
    ```bash
    cp .env.example .env.local
    ```
 
 4. Start the development server
+
    ```bash
    bun dev
    ```

@@ -1,58 +1,61 @@
-import { Button } from "@/components/ui/button";
+import { Github, Menu } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
+import { BenefitsSection } from '@/components/landing/BenefitsSection'
+import { CTASection } from '@/components/landing/CTASection'
+import { FeatureTabs } from '@/components/landing/FeatureTabs'
+import { Footer } from '@/components/landing/Footer'
 // Import our components
-import { Hero } from "@/components/landing/Hero";
-import { FeatureTabs } from "@/components/landing/FeatureTabs";
-import { BenefitsSection } from "@/components/landing/BenefitsSection";
-import { CTASection } from "@/components/landing/CTASection";
-import { Footer } from "@/components/landing/Footer";
-import { LogoType } from "@/components/shared/logo";
-import { useTranslations } from "next-intl";
-import DialogSelectLanguage from "@/components/shared/dialog/dialog-select-language";
-import { Github, Menu } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { Link } from "@/components/shared/progress-bar";
+import { Hero } from '@/components/landing/Hero'
+import DialogSelectLanguage from '@/components/shared/dialog/dialog-select-language'
+import { LogoType } from '@/components/shared/logo'
+import { Link } from '@/components/shared/progress-bar'
+import { Button } from '@/components/ui/button'
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 
-export const dynamic = "force-static";
+export const dynamic = 'force-static'
 
 export default function HomePage() {
-  const t = useTranslations("HomePage");
-  const landing = useTranslations("LandingPage");
+  const t = useTranslations('HomePage')
+  const landing = useTranslations('LandingPage')
 
   return (
-    <div className="flex flex-col bg-background">
+    <div className="bg-background flex flex-col">
       {/* Navigation */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md">
-        <div className="flex items-center justify-between py-3 container">
+      <header className="bg-background/80 sticky top-0 z-50 backdrop-blur-md">
+        <div className="container flex items-center justify-between py-3">
           <LogoType href="/" />
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden items-center gap-2 md:flex">
             <Link href="/schools">
-              <Button variant="ghost" className="text-[15px] ">{landing("forSchools")}</Button>
+              <Button variant="ghost" className="text-[15px]">
+                {landing('forSchools')}
+              </Button>
             </Link>
             <Link href="/companies">
-              <Button variant="ghost" className="text-[15px] ">{landing("forCompanies")}</Button>
+              <Button variant="ghost" className="text-[15px]">
+                {landing('forCompanies')}
+              </Button>
             </Link>
             <Link href="/pricing" className="mr-4">
-              <Button variant="ghost" className="text-[15px] ">{landing("pricing")}</Button>
+              <Button variant="ghost" className="text-[15px]">
+                {landing('pricing')}
+              </Button>
             </Link>
             <DialogSelectLanguage />
             <Link href="/dashboard">
-              <Button variant="default" className="text-[15px] ">{t("dashboard")}</Button>
+              <Button variant="default" className="text-[15px]">
+                {t('dashboard')}
+              </Button>
             </Link>
           </div>
 
           {/* Mobile Navigation */}
-          <div className="flex md:hidden items-center gap-3">
+          <div className="flex items-center gap-3 md:hidden">
             <Link href="/dashboard" className="mr-1">
               <Button variant="default" size="sm">
-                {t("dashboard")}
+                {t('dashboard')}
               </Button>
             </Link>
             <DialogSelectLanguage />
@@ -63,35 +66,35 @@ export default function HomePage() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="p-4">
-                <div className="flex flex-col h-full">
-                  <div className="flex justify-between items-center">
+                <div className="flex h-full flex-col">
+                  <div className="flex items-center justify-between">
                     <LogoType href="/" />
                     <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                   </div>
 
-                  <nav className="flex flex-col gap-1 mt-6">
+                  <nav className="mt-6 flex flex-col gap-1">
                     <Link href="/schools">
                       <Button
                         variant="ghost"
-                        className="w-full justify-start h-12 text-base"
+                        className="h-12 w-full justify-start text-base"
                       >
-                        {landing("forSchools")}
+                        {landing('forSchools')}
                       </Button>
                     </Link>
                     <Link href="/companies">
                       <Button
                         variant="ghost"
-                        className="w-full justify-start h-12 text-base"
+                        className="h-12 w-full justify-start text-base"
                       >
-                        {landing("forCompanies")}
+                        {landing('forCompanies')}
                       </Button>
                     </Link>
                     <Link href="/pricing">
                       <Button
                         variant="ghost"
-                        className="w-full justify-start h-12 text-base"
+                        className="h-12 w-full justify-start text-base"
                       >
-                        {landing("pricing")}
+                        {landing('pricing')}
                       </Button>
                     </Link>
                     <div className="mt-2">
@@ -101,12 +104,9 @@ export default function HomePage() {
                         rel="noopener noreferrer"
                         className="w-full"
                       >
-                        <Button
-                          variant="outline"
-                          className="w-full justify-start mt-2"
-                        >
+                        <Button variant="outline" className="mt-2 w-full justify-start">
                           <Github className="mr-2 h-4 w-4" />
-                          {t("openSource")}
+                          {t('openSource')}
                         </Button>
                       </a>
                     </div>
@@ -128,5 +128,5 @@ export default function HomePage() {
       {/* Footer */}
       <Footer />
     </div>
-  );
+  )
 }

@@ -1,24 +1,25 @@
-import db from "../../../lib/db";
-import { question } from "../../../lib/db/schema/question";
-import { and, eq, gte, ne, sql } from "drizzle-orm";
+import { and, eq, gte, ne, sql } from 'drizzle-orm'
+
+import db from '../../../lib/db'
+import { question } from '../../../lib/db/schema/question'
 
 export async function deleteQuestion(questionId: string) {
   const currentQuestionOrder = (
     await db.query.question.findFirst({
       columns: {
-        order: true,
+        order: true
       },
       where(fields, operators) {
-        return operators.eq(fields.id, questionId);
-      },
+        return operators.eq(fields.id, questionId)
+      }
     })
-  )?.order;
+  )?.order
 
   const deleteQuestion = await db
     .update(question)
     .set({ deletedAt: new Date().toISOString() })
     .where(eq(question.id, questionId))
-    .returning();
+    .returning()
 
   // Change the order of the questions
   if (deleteQuestion[0] && currentQuestionOrder) {
@@ -31,6 +32,6 @@ export async function deleteQuestion(questionId: string) {
           ne(question.id, questionId),
           gte(question.order, currentQuestionOrder)
         )
-      );
+      )
   }
 }

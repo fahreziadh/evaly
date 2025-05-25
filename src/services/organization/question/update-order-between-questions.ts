@@ -1,6 +1,7 @@
-import db from "../../../lib/db";
-import { question } from "../../../lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq } from 'drizzle-orm'
+
+import db from '../../../lib/db'
+import { question } from '../../../lib/db/schema'
 
 /* 
     Important: Please validate the owner of the question before using this service
@@ -12,16 +13,16 @@ export async function updateOrderBetweenQuestions(
   questions: { questionId: string; order: number }[]
 ) {
   const isUpdated = await Promise.all(
-    questions.map(async (q) => {
+    questions.map(async q => {
       return await db
         .update(question)
         .set({
-          order: q.order,
+          order: q.order
         })
         .where(eq(question.id, q.questionId))
-        .returning();
+        .returning()
     })
-  );
+  )
 
-  return isUpdated.every((isUpdated) => isUpdated.length > 0);
+  return isUpdated.every(isUpdated => isUpdated.length > 0)
 }

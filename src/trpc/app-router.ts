@@ -1,13 +1,13 @@
-import { organizationRouter } from "./router/organization";
-import { publicProcedure, router } from ".";
-import { participantRouter } from "./router/participant";
+import { publicProcedure, router } from '.'
+import { organizationRouter } from './router/organization'
+import { participantRouter } from './router/participant'
 
 export const appRouter = router({
-    hello: publicProcedure.query(() => {
-        return new Date().toISOString()
-    }),
-    organization: organizationRouter,
-    participant: participantRouter,
-});
+  hello: publicProcedure.query(() => {
+    return new Date().toISOString()
+  }),
+  organization: organizationRouter,
+  participant: participantRouter
+})
 
-export type AppRouter = typeof appRouter;
+export type AppRouter = typeof appRouter

@@ -1,5 +1,5 @@
-import { useQueryState } from "nuqs";
+import { useQueryState } from 'nuqs'
 
 export function useSelectedSection() {
-  return useQueryState("selected-section");
+  return useQueryState('selected-section')
 }

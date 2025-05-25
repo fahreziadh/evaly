@@ -1,5 +1,4 @@
-import { AnimatePresence, motion } from "motion/react";
-import { TextLoop } from "../ui/text-loop";
+import { cn } from '@/lib/utils'
 import {
   ArrowRight,
   Brain,
@@ -15,36 +14,40 @@ import {
   SearchIcon,
   VideoIcon,
   Wand2Icon,
-  WandSparkles,
-} from "lucide-react";
-import { Textarea } from "../ui/textarea";
-import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
-import { ScrollArea } from "../ui/scroll-area";
-import { KeyboardEvent, useState, useTransition } from "react";
-import { toast } from "sonner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { useTranslations } from "next-intl";
-import { trpc } from "@/trpc/trpc.client";
-import { useProgressRouter } from "./progress-bar";
+  WandSparkles
+} from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useTranslations } from 'next-intl'
+import { KeyboardEvent, useState, useTransition } from 'react'
+import { toast } from 'sonner'
+
+import { trpc } from '@/trpc/trpc.client'
+
+import { Button } from '../ui/button'
+import { ScrollArea } from '../ui/scroll-area'
+import { TextLoop } from '../ui/text-loop'
+import { Textarea } from '../ui/textarea'
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
+import { useProgressRouter } from './progress-bar'
+
 interface Props {
-  className?: string;
-  order?: number;
-  referenceId?: string;
-  testId?: string;
+  className?: string
+  order?: number
+  referenceId?: string
+  testId?: string
 }
 
 const GenerateQuestionInputPrompt = ({
   className,
   order,
   referenceId,
-  testId,
+  testId
 }: Props) => {
-  const autoComplete: string[] = [];
-  const router = useProgressRouter();
-  const [isPending, startTransition] = useTransition();
-  const [inputValue, setInputValue] = useState("");
-  const t = useTranslations("Questions");
+  const autoComplete: string[] = []
+  const router = useProgressRouter()
+  const [isPending, startTransition] = useTransition()
+  const [inputValue, setInputValue] = useState('')
+  const t = useTranslations('Questions')
   // const searchParams = useSearchParams()
 
   // const referenceId = searchParams.get("templateId");
@@ -52,26 +55,26 @@ const GenerateQuestionInputPrompt = ({
 
   const { mutate: startGeneration, isPending: isGenerating } =
     trpc.organization.question.llmValidate.useMutation({
-      onSuccess: (data) => {
+      onSuccess: data => {
         if (!data) {
-          toast.error(t("failedToGenerateQuestions"), {
-            position: "top-center",
-          });
-          return;
+          toast.error(t('failedToGenerateQuestions'), {
+            position: 'top-center'
+          })
+          return
         }
 
         if (!data.isValid) {
           toast.error(data.suggestion, {
-            position: "top-center",
-          });
-          return;
+            position: 'top-center'
+          })
+          return
         }
 
         if (!data.templateCreated) {
-          toast.error(t("failedToCreateTemplate"), {
-            position: "top-center",
-          });
-          return;
+          toast.error(t('failedToCreateTemplate'), {
+            position: 'top-center'
+          })
+          return
         }
 
         startTransition(() => {
@@ -79,153 +82,148 @@ const GenerateQuestionInputPrompt = ({
             router.push(
               `/dashboard/question/generate/${data.templateCreated?.id}?order=${order}&referenceid=${referenceId}&testid=${testId}`,
               { scroll: true }
-            );
+            )
           } else {
-            router.push(
-              `/dashboard/question/generate/${data.templateCreated?.id}`,
-              { scroll: true }
-            );
+            router.push(`/dashboard/question/generate/${data.templateCreated?.id}`, {
+              scroll: true
+            })
           }
-        });
+        })
       },
-      onError: (error) => {
-        console.error(error);
-      },
-    });
+      onError: error => {
+        console.error(error)
+      }
+    })
 
   const { mutate: improvePrompt, isPending: isPendingImprovePrompt } =
     trpc.organization.question.improvePrompt.useMutation({
-      onSuccess: (data) => {
-        setInputValue(data);
+      onSuccess: data => {
+        setInputValue(data)
       },
-      onError: (error) => {
-        toast.error(error.message);
-      },
-    });
+      onError: error => {
+        toast.error(error.message)
+      }
+    })
 
   const handleSubmit = () => {
-    if (!inputValue.trim()) return;
-    startGeneration({ prompt: inputValue });
-  };
+    if (!inputValue.trim()) return
+    startGeneration({ prompt: inputValue })
+  }
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     // Submit on Enter without Shift key
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // Prevent default behavior (new line)
-      handleSubmit();
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault() // Prevent default behavior (new line)
+      handleSubmit()
     }
-  };
+  }
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className={cn("flex-col flex items-center", className)}
+      className={cn('flex flex-col items-center', className)}
     >
       <TextLoop
         interval={3}
         transition={{
-          type: "spring",
+          type: 'spring',
           stiffness: 900,
           damping: 80,
-          mass: 10,
+          mass: 10
         }}
         variants={{
           initial: {
             y: 20,
             rotateX: 90,
             opacity: 0,
-            filter: "blur(4px)",
+            filter: 'blur(4px)'
           },
           animate: {
             y: 0,
             rotateX: 0,
             opacity: 1,
-            filter: "blur(0px)",
+            filter: 'blur(0px)'
           },
           exit: {
             y: -20,
             rotateX: -90,
             opacity: 0,
-            filter: "blur(4px)",
-          },
+            filter: 'blur(4px)'
+          }
         }}
-        className="relative text-primary font-mono mb-4 w-full max-w-2xl text-sm"
+        className="text-primary relative mb-4 w-full max-w-2xl font-mono text-sm"
       >
         <span>
-          <WandSparkles className="size-3 inline" />{" "}
-          {t("letsCraftYourQuestion")}
+          <WandSparkles className="inline size-3" /> {t('letsCraftYourQuestion')}
         </span>
         <span>
-          <Lightbulb className="size-3 inline" /> {t("turnIdeasIntoInquiries")}
+          <Lightbulb className="inline size-3" /> {t('turnIdeasIntoInquiries')}
         </span>
         <span>
-          <Brain className="size-3 inline" />{" "}
-          {t("designThoughtProvokingQuestions")}
+          <Brain className="inline size-3" /> {t('designThoughtProvokingQuestions')}
         </span>
         <span>
-          <Rocket className="size-3 inline" /> {t("createEngagingChallenges")}
+          <Rocket className="inline size-3" /> {t('createEngagingChallenges')}
         </span>
         <span>
-          <Search className="size-3 inline" />{" "}
-          {t("sparkCuriosityWithQuestions")}
+          <Search className="inline size-3" /> {t('sparkCuriosityWithQuestions')}
         </span>
         <span>
-          <RefreshCw className="size-3 inline" />{" "}
-          {t("transformConceptsIntoQueries")}
+          <RefreshCw className="inline size-3" /> {t('transformConceptsIntoQueries')}
         </span>
       </TextLoop>
-      <div className="max-w-2xl w-full">
+      <div className="w-full max-w-2xl">
         <div className="relative">
           <Textarea
             autoFocus
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={e => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={t("promptPlaceholder")}
+            placeholder={t('promptPlaceholder')}
             className={cn(
-              "w-full min-h-[120px] border-border focus-visible:border-border overflow-clip text-sm md:text-base p-4 [&::placeholder]:whitespace-pre-rap resize-none focus-visible:ring-0 focus-visible:outline-0 focus-visible:ring-offset-0 transition-all duration-200",
+              'border-border focus-visible:border-border [&::placeholder]:whitespace-pre-rap min-h-[120px] w-full resize-none overflow-clip p-4 text-sm transition-all duration-200 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-0 md:text-base',
               autoComplete.length > 0
-                ? "focus-visible:border-b-transparent rounded-b-none"
-                : ""
+                ? 'rounded-b-none focus-visible:border-b-transparent'
+                : ''
             )}
           />
-          <div className="absolute bottom-0 left-0 p-2 flex flex-row gap-2 items-center justify-between w-full">
-            <div className="flex flex-row gap-2 items-center justify-center">
+          <div className="absolute bottom-0 left-0 flex w-full flex-row items-center justify-between gap-2 p-2">
+            <div className="flex flex-row items-center justify-center gap-2">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    size={"icon-sm"}
-                    variant={"ghost"}
+                    size={'icon-sm'}
+                    variant={'ghost'}
                     onClick={() => {
-                      improvePrompt(inputValue);
+                      improvePrompt(inputValue)
                     }}
                     disabled={inputValue.length < 5 || isPendingImprovePrompt}
                   >
                     <Wand2Icon />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>{t("improvePrompt")}</TooltipContent>
+                <TooltipContent>{t('improvePrompt')}</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button size={"icon-sm"} variant={"ghost"}>
+                  <Button size={'icon-sm'} variant={'ghost'}>
                     <Paperclip />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>{t("attachFiles")}</TooltipContent>
+                <TooltipContent>{t('attachFiles')}</TooltipContent>
               </Tooltip>
             </div>
             <div className="flex flex-row items-center justify-center gap-1">
               <Button
-                size={"icon-sm"}
-                variant={inputValue.trim() ? "default" : "secondary-outline"}
+                size={'icon-sm'}
+                variant={inputValue.trim() ? 'default' : 'secondary-outline'}
                 onClick={handleSubmit}
                 disabled={isPending || !inputValue.trim() || isGenerating}
               >
                 {isPending || isGenerating ? (
-                  <Loader2 className="size-4 stroke-3 text-muted-foreground animate-spin" />
+                  <Loader2 className="text-muted-foreground size-4 animate-spin stroke-3" />
                 ) : (
                   <ArrowRight className="size-4 stroke-3" />
                 )}
@@ -239,13 +237,13 @@ const GenerateQuestionInputPrompt = ({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="z-10 absolute top-[120px] bg-background w-full border border-foreground/20 border-t-border rounded-b-2xl p-2"
+                className="bg-background border-foreground/20 border-t-border absolute top-[120px] z-10 w-full rounded-b-2xl border p-2"
               >
-                <ScrollArea className="h-[200px] flex flex-col gap-2">
+                <ScrollArea className="flex h-[200px] flex-col gap-2">
                   {autoComplete.map((item, index) => (
                     <Button
                       key={index}
-                      variant={"ghost"}
+                      variant={'ghost'}
                       className="w-full justify-start gap-3"
                     >
                       <SearchIcon className="text-muted-foreground size-4" />
@@ -257,27 +255,27 @@ const GenerateQuestionInputPrompt = ({
             )}
           </AnimatePresence>
         </div>
-        <div className="flex-row gap-x-2 gap-y-4 flex-wrap justify-start mt-4 hidden">
-          <Button variant={"outline"} size={"sm"} rounded className="px-4">
+        <div className="mt-4 hidden flex-row flex-wrap justify-start gap-x-2 gap-y-4">
+          <Button variant={'outline'} size={'sm'} rounded className="px-4">
             <FileSpreadsheet />
-            <span>{t("spreadsheet")}</span>
+            <span>{t('spreadsheet')}</span>
           </Button>
-          <Button variant={"outline"} size={"sm"} rounded className="px-4">
+          <Button variant={'outline'} size={'sm'} rounded className="px-4">
             <FileText />
-            <span>{t("importDocument")}</span>
+            <span>{t('importDocument')}</span>
           </Button>
-          <Button variant={"outline"} size={"sm"} rounded className="px-4">
+          <Button variant={'outline'} size={'sm'} rounded className="px-4">
             <ImageIcon />
-            <span>{t("importImage")}</span>
+            <span>{t('importImage')}</span>
           </Button>
-          <Button variant={"outline"} size={"sm"} rounded className="px-4">
+          <Button variant={'outline'} size={'sm'} rounded className="px-4">
             <VideoIcon />
-            <span>{t("youtube")}</span>
+            <span>{t('youtube')}</span>
           </Button>
         </div>
       </div>
     </motion.div>
-  );
-};
+  )
+}
 
-export default GenerateQuestionInputPrompt;
+export default GenerateQuestionInputPrompt

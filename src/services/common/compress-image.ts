@@ -123,5 +123,5 @@
 // }
 
 export const compressImage = async (image: File) => {
-  return image;
-};
+  return image
+}

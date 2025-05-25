@@ -1,4 +1,8 @@
-import { Button, buttonVariants } from "@/components/ui/button";
+import { VariantProps } from 'class-variance-authority'
+import { SaveIcon } from 'lucide-react'
+import { toast } from 'sonner'
+
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Dialog,
   DialogClose,
@@ -7,77 +11,77 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { trpc } from "@/trpc/trpc.client";
-import { Question } from "@/types/question";
-import { VariantProps } from "class-variance-authority";
-import { SaveIcon } from "lucide-react";
-import { toast } from "sonner";
-import { useProgressRouter } from "../progress-bar";
+  DialogTrigger
+} from '@/components/ui/dialog'
+
+import { trpc } from '@/trpc/trpc.client'
+
+import { Question } from '@/types/question'
+
+import { useProgressRouter } from '../progress-bar'
 
 const DialogSaveQuestionsFromLLM = ({
   size,
   variant,
   questions,
-  title,
+  title
 }: VariantProps<typeof buttonVariants> & {
-  questions: Question[];
-  title: string;
+  questions: Question[]
+  title: string
 }) => {
   const {
     mutateAsync: createQuestionTemplate,
-    isPending: isPendingCreateQuestionTemplate,
+    isPending: isPendingCreateQuestionTemplate
   } = trpc.organization.questionTemplate.create.useMutation({
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+    onError: error => {
+      toast.error(error.message)
+    }
+  })
 
-  const router = useProgressRouter();
+  const router = useProgressRouter()
 
   const { mutateAsync: createQuestions, isPending: isPendingCreateQuestions } =
     trpc.organization.question.create.useMutation({
-      onError: (error) => {
-        toast.error(error.message);
+      onError: error => {
+        toast.error(error.message)
       },
-      onSuccess: (data) => {
+      onSuccess: data => {
         if (!data.length) {
-          toast.error("Failed to create questions");
-          return;
+          toast.error('Failed to create questions')
+          return
         }
 
-        toast.success("Questions saved successfully");
-      },
-    });
+        toast.success('Questions saved successfully')
+      }
+    })
 
   const handleSaveQuestions = async () => {
     const res = await createQuestionTemplate({
-      title,
-    });
+      title
+    })
     if (!res) {
-      return toast.error("Failed to create question template");
+      return toast.error('Failed to create question template')
     }
 
-    const { id } = res;
+    const { id } = res
 
     const createQuestionsRes = await createQuestions({
       questions: questions.map((question, index) => ({
         ...question,
         id: undefined,
         referenceId: id,
-        order: index + 1,
+        order: index + 1
       })),
-      referenceId: id,
-    });
+      referenceId: id
+    })
 
     if (!createQuestionsRes) {
-      return toast.error("Failed to create questions");
+      return toast.error('Failed to create questions')
     }
 
-    toast.success("Questions saved successfully");
-    router.push(`/dashboard/question/${id}`);
-  };
+    toast.success('Questions saved successfully')
+    router.push(`/dashboard/question/${id}`)
+  }
 
   return (
     <Dialog>
@@ -90,8 +94,8 @@ const DialogSaveQuestionsFromLLM = ({
         <DialogHeader>
           <DialogTitle>Save Questions</DialogTitle>
           <DialogDescription>
-            Save the questions from the LLM to your question bank, existing test
-            series or create a new test from it.
+            Save the questions from the LLM to your question bank, existing test series
+            or create a new test from it.
           </DialogDescription>
         </DialogHeader>
 
@@ -101,20 +105,18 @@ const DialogSaveQuestionsFromLLM = ({
           </DialogClose>
           <Button
             onClick={() => handleSaveQuestions()}
-            disabled={
-              isPendingCreateQuestionTemplate || isPendingCreateQuestions
-            }
+            disabled={isPendingCreateQuestionTemplate || isPendingCreateQuestions}
           >
             {isPendingCreateQuestionTemplate
-              ? "Creating template..."
+              ? 'Creating template...'
               : isPendingCreateQuestions
-                ? "Saving questions..."
-                : "Save"}
+                ? 'Saving questions...'
+                : 'Save'}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default DialogSaveQuestionsFromLLM;
+export default DialogSaveQuestionsFromLLM

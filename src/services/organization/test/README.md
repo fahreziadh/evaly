@@ -73,26 +73,26 @@ GET /api/organization/tests/:testId/submissions
 
 ```typescript
 type Submission = {
-    id: string;
-    name: string;
-    email: string;
-    totalQuestions: number;
-    answered: number;
-    correct: number;
-    wrong: number;
-    unanswered: number;
-    submittedAt: string;
-    score: number;
-    rank: number;
-    sectionAnswers: {
-        [key: string]: number; // sectionId: number of answers
-    };
-    sectionCorrect: {
-        [key: string]: number; // sectionId: number of correct answers
-    };
-    sectionWrong: {
-        [key: string]: number; // sectionId: number of wrong answers
-    };
+  id: string
+  name: string
+  email: string
+  totalQuestions: number
+  answered: number
+  correct: number
+  wrong: number
+  unanswered: number
+  submittedAt: string
+  score: number
+  rank: number
+  sectionAnswers: {
+    [key: string]: number // sectionId: number of answers
+  }
+  sectionCorrect: {
+    [key: string]: number // sectionId: number of correct answers
+  }
+  sectionWrong: {
+    [key: string]: number // sectionId: number of wrong answers
+  }
 }
 ```
 
@@ -100,9 +100,9 @@ type Submission = {
 
 ```typescript
 type Section = {
-    id: string;
-    name: string;
-    questionsCount: number;
+  id: string
+  name: string
+  questionsCount: number
 }
 ```
 
@@ -117,4 +117,4 @@ type Section = {
 
 - Real-time updates using Server-Sent Events (SSE) could be implemented in the future.
 - Pagination for large datasets.
-- Filtering and sorting options on the server side. 
+- Filtering and sorting options on the server side.

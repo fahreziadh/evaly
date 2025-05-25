@@ -1,6 +1,7 @@
-
 const ResultPage = () => {
-  return <div className="flex items-center justify-center h-screen">Working on it...</div>;
-};
+  return (
+    <div className="flex h-screen items-center justify-center">Working on it...</div>
+  )
+}
 
 export default ResultPage

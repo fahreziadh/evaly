@@ -8,7 +8,7 @@ Please take a moment to review this document to make the contribution process ea
 
 ## Code of Conduct
 
-Please follow our [CODE\_OF\_CONDUCT.md](./CODE_OF_CONDUCT.md) to ensure a welcoming and respectful environment.
+Please follow our [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) to ensure a welcoming and respectful environment.
 
 ---
 
@@ -20,6 +20,7 @@ Please follow our [CODE\_OF\_CONDUCT.md](./CODE_OF_CONDUCT.md) to ensure a welco
    ```bash
    git clone https://github.com/your-username/project-name.git
    ```
+
 3. **Install dependencies**
 
    Follow the setup instructions in the `README.md` file to get started locally.
@@ -36,19 +37,19 @@ Please follow this naming convention when creating a new branch:
 
 **Types**:
 
-* `feature` – for new features
-* `fix` – for bug fixes
-* `docs` – for documentation-only changes
-* `refactor` – for code refactoring that doesn’t add features or fix bugs
-* `test` – for adding or updating tests
-* `chore` – for maintenance work like updating dependencies
+- `feature` – for new features
+- `fix` – for bug fixes
+- `docs` – for documentation-only changes
+- `refactor` – for code refactoring that doesn’t add features or fix bugs
+- `test` – for adding or updating tests
+- `chore` – for maintenance work like updating dependencies
 
 **Examples**:
 
-* `feature/add-login-page`
-* `fix/handle-null-user`
-* `docs/update-readme`
-* `refactor/auth-middleware`
+- `feature/add-login-page`
+- `fix/handle-null-user`
+- `docs/update-readme`
+- `refactor/auth-middleware`
 
 ---
 
@@ -62,8 +63,8 @@ Follow this pattern for clear and meaningful commit messages:
 
 **Examples**:
 
-* `feat: add OAuth login`
-* `fix: handle null pointer on dashboard load`
+- `feat: add OAuth login`
+- `fix: handle null pointer on dashboard load`
 
 For more structured commit messages, consider using [Conventional Commits](https://www.conventionalcommits.org/).
 
@@ -71,11 +72,11 @@ For more structured commit messages, consider using [Conventional Commits](https
 
 ## Code Standards
 
-* Follow the coding style used in the repository.
-* Lint your code before committing (e.g., ESLint, Prettier, etc).
-* Include comments where necessary.
-* Keep pull requests focused and minimal.
-* Write or update tests if your code affects core functionality.
+- Follow the coding style used in the repository.
+- Lint your code before committing (e.g., ESLint, Prettier, etc).
+- Include comments where necessary.
+- Keep pull requests focused and minimal.
+- Write or update tests if your code affects core functionality.
 
 ---
 
@@ -83,11 +84,11 @@ For more structured commit messages, consider using [Conventional Commits](https
 
 Before submitting a pull request:
 
-* [ ] Ensure your branch is up-to-date with `main` or the target branch
-* [ ] Lint your code
-* [ ] Add/update documentation (if applicable)
-* [ ] Add/update tests (if applicable)
-* [ ] Ensure the CI pipeline (if any) passes
+- [ ] Ensure your branch is up-to-date with `main` or the target branch
+- [ ] Lint your code
+- [ ] Add/update documentation (if applicable)
+- [ ] Add/update tests (if applicable)
+- [ ] Ensure the CI pipeline (if any) passes
 
 ---
 
@@ -95,10 +96,10 @@ Before submitting a pull request:
 
 Please open an issue with the following details:
 
-* **Description** of the bug
-* **Steps to reproduce**
-* **Expected vs actual behavior**
-* **Screenshots or logs** (if available)
+- **Description** of the bug
+- **Steps to reproduce**
+- **Expected vs actual behavior**
+- **Screenshots or logs** (if available)
 
 Use the issue template if available.
 

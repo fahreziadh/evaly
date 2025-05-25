@@ -1,10 +1,10 @@
-import { parseAsString, useQueryState } from "nuqs";
+import { parseAsString, useQueryState } from 'nuqs'
 
 export function useTabsState(defaultValue: string) {
   return useQueryState(
-    "tabs",
+    'tabs',
     parseAsString.withDefault(defaultValue).withOptions({
-      scroll: false,
+      scroll: false
     })
-  );
+  )
 }

@@ -131,7 +131,7 @@ const FinishTestButton = () => {
   const isFinished = testAttempt?.finishedAt !== undefined;
 
   return (
-    <div className="container max-w-[1000px] mt-14 border-dashed flex flex-col gap-2">
+    <div className="container max-w-[1000px] mt-14 border-dashed flex flex-col gap-2 border border-primary/30 rounded-md bg-background shadow-xl shadow-primary/5 p-4">
       <p className="text-sm text-muted-foreground">
         {totalQuestions === answeredQuestions
           ? "You have answered all the questions"

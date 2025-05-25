@@ -40,16 +40,22 @@ const SectionStats = ({ className }: { className?: string }) => {
   }, [progress?.averageTime]);
 
   return (
-    <Card
-      className={cn("grid grid-cols-4 gap-3 divide-x divide-dashed", className)}
-    >
+    <Card className={cn("grid grid-cols-4 gap-3 divide-x", className)}>
       <div className="p-4 flex flex-row justify-between">
         <div>
           <h1 className="font-medium text-sm">Working in progress</h1>
-          <NumberFlow
-            value={presence?.length || 0}
-            className="text-3xl font-bold"
-          />
+          <div className="flex flex-row items-center gap-4">
+            <NumberFlow
+              value={progress?.workingInProgress || 0}
+              className="text-3xl font-bold"
+            />
+
+            <NumberFlow
+              value={presence?.length || 0}
+              suffix=" Online"
+              className="text-sm text-emerald-600 bg-emerald-500/10 px-2 rounded-full border border-emerald-500/20"
+            />
+          </div>
         </div>
         <CircleUserRoundIcon className="size-5 stroke-rose-400" />
       </div>

@@ -34,7 +34,9 @@ const Headers = () => {
 
 const FirstSection = () => {
   const navigate = useNavigate();
-  const { testId } = useSearch({ from: "/(organizer)/app/tests/details" });
+  const { testId, resultsTab } = useSearch({
+    from: "/(organizer)/app/tests/details",
+  });
   const dataTest = useQuery(api.organizer.test.getTestById, {
     testId: testId as Id<"test">,
   });
@@ -110,7 +112,7 @@ const FirstSection = () => {
               onReopened={(newTestId) => {
                 navigate({
                   from: "/app/tests/details",
-                  search: { testId: newTestId, tabs: "questions" },
+                  search: { testId: newTestId, tabs: "questions", resultsTab },
                 });
               }}
             />
@@ -123,7 +125,7 @@ const FirstSection = () => {
               onPublished={() => {
                 navigate({
                   from: "/app/tests/details",
-                  search: { testId: testId, tabs: "results" },
+                  search: { testId: testId, tabs: "results", resultsTab },
                 });
               }}
             />
@@ -136,7 +138,7 @@ const FirstSection = () => {
               onUnpublished={() => {
                 navigate({
                   to: "/app/tests/details",
-                  search: { testId: testId, tabs: "results" },
+                  search: { testId, tabs: "results", resultsTab },
                 });
               }}
             />

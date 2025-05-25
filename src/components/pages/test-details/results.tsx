@@ -1,9 +1,7 @@
 import SectionStats from "./results.section-stats";
-import SectionProgress from "./results.section-progress";
-import SectionLeaderboards from "./results.section-leaderboards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ResultSectionSubmission from "./results.section-submission";
-import ResultsSectionReport from "./results.section-report";
+import ResultsSectionSummary from "./results.section-summary";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 const Results = () => {
   const search = useSearch({ from: "/(organizer)/app/tests/details" });
@@ -12,8 +10,8 @@ const Results = () => {
   return (
     <div className="grid grid-cols-6 gap-4">
       <SectionStats className="col-span-6" />
-      <SectionProgress className="col-span-4" />
-      <SectionLeaderboards className="col-span-2" />
+      {/* <SectionProgress className="col-span-4" />
+      <SectionLeaderboards className="col-span-2" /> */}
       <Tabs
         className="col-span-6 mt-4"
         value={search.resultsTab}
@@ -21,30 +19,30 @@ const Results = () => {
           navigate({
             search: {
               ...search,
-              resultsTab: value as "submission" | "report",
+              resultsTab: value as "submission" | "summary",
             },
           });
         }}
       >
         <TabsList>
           <TabsTrigger
+            value="summary"
+            className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground"
+          >
+            Summary
+          </TabsTrigger>
+          <TabsTrigger
             value="submission"
             className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground"
           >
             Submission
-          </TabsTrigger>
-          <TabsTrigger
-            value="report"
-            className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground"
-          >
-            Report
           </TabsTrigger>
         </TabsList>
         <TabsContent value="submission">
           <ResultSectionSubmission />
         </TabsContent>
         <TabsContent value="report">
-          <ResultsSectionReport />
+          <ResultsSectionSummary />
         </TabsContent>
       </Tabs>
     </div>

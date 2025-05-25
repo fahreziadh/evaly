@@ -27,7 +27,7 @@ import { useSearch } from "@tanstack/react-router";
 
 const TestSections = ({ className }: { className?: string }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { selectedSection, tabs, testId } = useSearch({from: "/(organizer)/app/tests/details"});
+  const { selectedSection, tabs, testId, resultsTab } = useSearch({from: "/(organizer)/app/tests/details"});
   const navigate = useNavigate({from: "/app/tests/details"});
 
   const data = useQuery(api.organizer.testSection.getByTestId, {
@@ -60,6 +60,7 @@ const TestSections = ({ className }: { className?: string }) => {
               tabs,
               testId,
               selectedSection: undefined,
+              resultsTab
             },
             replace: true,
           });
@@ -87,6 +88,7 @@ const TestSections = ({ className }: { className?: string }) => {
                   tabs,
                   testId,
                   selectedSection: previousSection._id,
+                  resultsTab
                 },
                 replace: true,
               });
@@ -144,6 +146,7 @@ const TestSections = ({ className }: { className?: string }) => {
                   tabs,
                   testId,
                   selectedSection: nextSection._id,
+                  resultsTab
                 },
                 replace: true,
               });
@@ -162,7 +165,7 @@ const TestSections = ({ className }: { className?: string }) => {
 };
 
 const ListSession = ({ testId }: { testId: Id<"test"> }) => {
-  const { selectedSection, tabs } = useSearch({from: "/(organizer)/app/tests/details"});
+  const { selectedSection, tabs, resultsTab } = useSearch({from: "/(organizer)/app/tests/details"});
   const navigate = useNavigate({from: "/app/tests/details"});
 
   const data = useQuery(api.organizer.testSection.getByTestId, {
@@ -205,6 +208,7 @@ const ListSession = ({ testId }: { testId: Id<"test"> }) => {
                 tabs,
                 testId,
                 selectedSection: e._id,
+                resultsTab
               },
               replace: true,
             });
@@ -216,7 +220,7 @@ const ListSession = ({ testId }: { testId: Id<"test"> }) => {
 };
 
 const AddSession = ({ testId }: { testId: Id<"test"> }) => {
-  const { tabs } = useSearch({from: "/(organizer)/app/tests/details"});
+  const { tabs, resultsTab } = useSearch({from: "/(organizer)/app/tests/details"});
   const navigate = useNavigate({from: "/app/tests/details"});
   const testSections = useQuery(api.organizer.testSection.getByTestId, {
     testId: testId as Id<"test">,
@@ -234,6 +238,7 @@ const AddSession = ({ testId }: { testId: Id<"test"> }) => {
         tabs,
         testId,
         selectedSection: section,
+        resultsTab
       },
       replace: true,
     });

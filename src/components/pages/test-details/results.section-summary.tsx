@@ -9,7 +9,8 @@ import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
 import { useSearch } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
-import { Eye, EyeOff } from "lucide-react";
+import { CheckCircle2, Eye, EyeOff } from "lucide-react";
+import { motion } from "motion/react";
 import { useState } from "react";
 
 type TestSection = Awaited<
@@ -33,7 +34,7 @@ function ResultsSectionSummary() {
   }
 
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col gap-4">
       {testSections.map((e) => (
         <Section
           testSection={e}
@@ -53,15 +54,20 @@ function Section({
   showSectionDetail?: boolean;
 }) {
   const [show, setShow] = useState(true);
+  const summary = useQuery(api.organizer.testResult.getSummary, {
+    testId: testSection.testId,
+    testSectionId: testSection._id,
+  });
+
+  if (summary === undefined) {
+    return <TextShimmer>Loading summary...</TextShimmer>;
+  }
+
   return (
-    <div
-      className={cn(
-        showSectionDetail ? "border p-4 rounded-lg border-dashed" : ""
-      )}
-    >
+    <div className={cn(showSectionDetail ? "border py-2 px-4 rounded-xl" : "")}>
       {showSectionDetail ? (
-        <div className="flex flex-row items-start justify-between">
-          <Badge size={"lg"}>
+        <div className="flex flex-row items-center justify-between">
+          <Badge variant={"default"}>
             {testSection.title || `Section ${testSection.order}`}
           </Badge>
           <Button
@@ -74,43 +80,78 @@ function Section({
         </div>
       ) : null}
 
-      <div
-        className={cn(
-          "flex flex-col gap-12 mt-4",
-          show ? "" : "hidden"
-        )}
-      >
-        {testSection.questions.map((e) => (
-          <div key={e._id} className="w-full">
-            <div
-              className="custom-prose max-w-full line-clamp-3 max-w-2xl md:prose-lg"
-              dangerouslySetInnerHTML={{ __html: e.question }}
-            />
-            <Label>0 Response</Label>
-            {e.options?.length ? (
-              <div className="mt-4 space-y-2">
-                {e.options.map((e, i) => (
-                  <div
-                    key={e.id}
-                    className="flex flex-row items-center gap-4 w-full"
-                  >
-                    <div className="border py-1.5 px-2 flex-1 max-w-md flex flex-row items-center relative gap-2 rounded-md">
-                      <Badge variant={"outline"}>
-                        {String.fromCharCode(98 + i)}
-                      </Badge>
-
+      <div className={cn("flex flex-col gap-14 mt-4", show ? "" : "hidden")}>
+        {testSection.questions.map((q) => {
+          const totalResponses = Object.values(
+            summary?.[q._id].optionsAnswer ?? {}
+          ).reduce((a, b) => a + b, 0);
+          return (
+            <div key={q._id} className="w-full">
+              <div
+                className="custom-prose max-w-full line-clamp-3 max-w-2xl"
+                dangerouslySetInnerHTML={{ __html: q.question }}
+              />
+              <Label>{totalResponses} Response</Label>
+              {q.options?.length ? (
+                <div className="mt-4 space-y-2">
+                  {q.options.map((o, i) => {
+                    const totalResponse =
+                      summary?.[q._id].optionsAnswer[o.id] ?? 0;
+                    const totalPercentageResponse =
+                      totalResponses > 0
+                        ? Math.round((totalResponse / totalResponses) * 100)
+                        : 0;
+                    return (
                       <div
-                        className="custom-prose max-w-full line-clamp-1"
-                        dangerouslySetInnerHTML={{ __html: e.text }}
-                      />
-                    </div>
-                    <Label>0 Response</Label>
-                  </div>
-                ))}
-              </div>
-            ) : null}
-          </div>
-        ))}
+                        key={o.id}
+                        className="flex flex-row items-center gap-4 w-full"
+                      >
+                        <div
+                          className={cn(
+                            "border overflow-clip py-1 px-2 flex-1 max-w-md flex flex-row items-center relative gap-2 rounded-md"
+                          )}
+                        >
+                          <motion.div
+                            className={cn(
+                              "absolute left-0 h-full bg-secondary -z-10"
+                            )}
+                            initial={{
+                              width: 0,
+                            }}
+                            animate={{ width: `${totalPercentageResponse}%` }}
+                            transition={{
+                              duration: 0.1,
+                            }}
+                          />
+
+                          <Badge
+                            variant={"outline"}
+                            className="capitalize font-semibold"
+                          >
+                            {String.fromCharCode(98 + i)}
+                          </Badge>
+
+                          <div
+                            className={cn(
+                              "custom-prose max-w-full line-clamp-1 flex-1"
+                            )}
+                            dangerouslySetInnerHTML={{ __html: o.text }}
+                          />
+
+                          <Label>{totalPercentageResponse}%</Label>
+                        </div>
+                        <Label>{totalResponse} Response</Label>
+                        {o.isCorrect ? (
+                          <CheckCircle2 className="size-4 text-muted-foreground" />
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

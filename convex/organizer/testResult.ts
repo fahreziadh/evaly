@@ -63,7 +63,7 @@ export const getProgress = query({
         .map((e) => e.finishedAt !== undefined && e.finishedAt > 0)
         .filter((e) => e);
 
-      if (isCompleted.length && testSections.length) {
+      if (isCompleted.length === testSections.length) {
         progress.submissions += 1;
 
         const finishedTime = attempts
@@ -103,7 +103,7 @@ export const getSummary = query({
       return null;
     }
 
-    const { isOwner, test } = await checkTestOwnership(ctx, testId);
+    const { isOwner } = await checkTestOwnership(ctx, testId);
     if (!isOwner) {
       return null;
     }
@@ -126,6 +126,28 @@ export const getSummary = query({
       .filter((q) => q.lte(q.field("deletedAt"), 0))
       .collect();
 
-    return answers;
+    const summary: {
+      [questionId: Id<"question">]: {
+        optionsAnswer: { [optionId: string]: number };
+      };
+    } = {};
+
+    for (const question of questionsOrdered) {
+      // Initialize the question entry in summary first
+      summary[question._id] = {
+        optionsAnswer: {}
+      };
+
+      const answer = answers.filter((e) => e.questionId === question._id);
+      
+      if (question.options) {
+        for (const option of question.options) {
+          const total = answer.filter((f) => f.answerOptions?.includes(option.id)).length;
+          summary[question._id].optionsAnswer[option.id] = total;
+        }
+      }
+    }
+
+    return summary;
   },
 });

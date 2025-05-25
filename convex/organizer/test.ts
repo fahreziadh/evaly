@@ -96,7 +96,10 @@ export const getTestById = query({
     testId: v.id("test"),
   },
   handler: async (ctx, args) => {
-    const test = await ctx.db.get(args.testId);
+    const { isOwner, test } = await checkTestOwnership(ctx, args.testId);
+    if (!isOwner) {
+      return null;
+    }
 
     if (!test) {
       return null;

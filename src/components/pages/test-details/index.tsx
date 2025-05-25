@@ -8,13 +8,20 @@ import { TextShimmer } from "@/components/ui/text-shimmer";
 import Settings from "./settings";
 import Share from "./share";
 import { useNavigate, useSearch } from "@tanstack/react-router";
+import { NotFound } from "../not-found";
 const Questions = lazy(() => import("./questions"));
 const Results = lazy(() => import("./results"));
 
 export default function TestsDetails() {
+
   const { tabs, testId, selectedSection, resultsTab } = useSearch({
     from: "/(organizer)/app/tests/details",
   });
+
+  const dataTest = useQuery(api.organizer.test.getTestById, {
+    testId: testId as Id<"test">,
+  });
+
   const navigate = useNavigate({ from: "/app/tests/details" });
   const testSections = useQuery(api.organizer.testSection.getByTestId, {
     testId: testId as Id<"test">,
@@ -33,6 +40,10 @@ export default function TestsDetails() {
       });
     }
   }, [testSections, navigate, testId, selectedSection, tabs]);
+
+  if (dataTest === null) {
+    return <NotFound />
+  }
 
   return (
     <Tabs

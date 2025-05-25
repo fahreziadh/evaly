@@ -19,7 +19,8 @@ const badgeVariants = cva(
           "text-foreground bg-card [a&]:hover:bg-secondary [a&]:hover:text-secondary-foreground",
         ghost:
           "text-foreground [a&]:hover:bg-secondary [a&]:hover:text-secondary-foreground border-transparent",
-        "success": "bg-success text-success-foreground border-success-foreground/20"
+        "success": "bg-success text-success-foreground border-success-foreground/20",
+        "success-solid": "bg-success-foreground text-background"
         },
       size: {
         default: "px-2 py-0.5",

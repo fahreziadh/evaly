@@ -31,12 +31,12 @@ const Results = () => {
           >
             Summary
           </TabsTrigger>
-          <TabsTrigger
+          {/* <TabsTrigger
             value="submission"
             className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground"
           >
             Submission
-          </TabsTrigger>
+          </TabsTrigger> */}
         </TabsList>
         <TabsContent value="submission">
           <ResultSectionSubmission />

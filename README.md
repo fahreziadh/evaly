@@ -64,7 +64,7 @@ Online examination platform that makes creating, distributing, and analyzing tes
 
 ## 🤝 Contributing
 
-Contributions welcome! Fork the repo, create a feature branch, and submit a PR.
+Contributions welcome! Please read our [Contributing Guidelines](./CONTRIBUTING.md)
 
 ## 🙏 Acknowledgements
 

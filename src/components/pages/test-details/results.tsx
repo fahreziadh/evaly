@@ -24,7 +24,7 @@ const Results = () => {
           });
         }}
       >
-        <TabsList>
+        <TabsList className="mb-4">
           <TabsTrigger
             value="summary"
             className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground"
@@ -41,7 +41,7 @@ const Results = () => {
         <TabsContent value="submission">
           <ResultSectionSubmission />
         </TabsContent>
-        <TabsContent value="report">
+        <TabsContent value="summary">
           <ResultsSectionSummary />
         </TabsContent>
       </Tabs>

@@ -16,6 +16,7 @@ export const testAttempt = defineTable({
 export const testAttemptAnswer = defineTable({
   testAttemptId: v.id("testAttempt"),
   testId: v.id("test"),
+  testSectionId: v.id("testSection"),
   questionId: v.id("question"),
   answerText: v.optional(v.string()),
   answerOptions: v.optional(v.array(v.string())),
@@ -32,4 +33,5 @@ export const testAttemptAnswer = defineTable({
 })
   .index("by_attempt_and_question", ["testAttemptId", "questionId"])
   .index("by_attempt", ["testAttemptId"])
+  .index("by_section", ["testSectionId"])
   .index("by_test", ["testId"]);

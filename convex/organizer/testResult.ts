@@ -59,9 +59,9 @@ export const getProgress = query({
 
     // Get Progress
     for (const [participantId, attempts] of attemptByParticipant) {
-      const isCompleted = attempts.map(
-        (e) => e.finishedAt !== undefined && e.finishedAt > 0
-      ).filter((e)=> e)
+      const isCompleted = attempts
+        .map((e) => e.finishedAt !== undefined && e.finishedAt > 0)
+        .filter((e) => e);
 
       if (isCompleted.length && testSections.length) {
         progress.submissions += 1;
@@ -89,5 +89,43 @@ export const getProgress = query({
     }
 
     return progress;
+  },
+});
+
+export const getSummary = query({
+  args: {
+    testId: v.id("test"),
+    testSectionId: v.id("testSection"),
+  },
+  async handler(ctx, { testId, testSectionId }) {
+    const user = await getAuthUserId(ctx);
+    if (!user) {
+      return null;
+    }
+
+    const { isOwner, test } = await checkTestOwnership(ctx, testId);
+    if (!isOwner) {
+      return null;
+    }
+
+    const testSection = await ctx.db.get(testSectionId);
+    if (testSection?.testId !== testId) return null;
+
+    const questions = await ctx.db
+      .query("question")
+      .withIndex("by_reference_id", (q) => q.eq("referenceId", testSectionId))
+      .filter((q) => q.lte(q.field("deletedAt"), 0))
+      .collect();
+
+    const questionsOrdered = await questions.sort((a, b) => a.order - b.order);
+
+    // Get all answers
+    const answers = await ctx.db
+      .query("testAttemptAnswer")
+      .withIndex("by_section", (q) => q.eq("testSectionId", testSectionId))
+      .filter((q) => q.lte(q.field("deletedAt"), 0))
+      .collect();
+
+    return answers;
   },
 });

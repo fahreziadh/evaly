@@ -7,6 +7,7 @@ export const setAnswer = mutation({
     testAttemptId: v.id("testAttempt"),
     questionId: v.id("question"),
     testId: v.id("test"),
+    testSectionId: v.id("testSection"),
     answerOptions: v.optional(v.array(v.string())),
     answerText: v.optional(v.string()),
   },
@@ -40,6 +41,7 @@ export const setAnswer = mutation({
         testId: args.testId,
         testAttemptId: args.testAttemptId,
         questionId: args.questionId,
+        testSectionId: args.testSectionId,
         answerOptions: args.answerOptions,
         answerText: args.answerText,
       });

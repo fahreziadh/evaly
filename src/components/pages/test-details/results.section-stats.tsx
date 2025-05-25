@@ -5,12 +5,6 @@ import type { Id } from "@convex/_generated/dataModel";
 import NumberFlow, { NumberFlowGroup } from "@number-flow/react";
 import { useSearch } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
-import {
-  CircleUserRoundIcon,
-  ClockIcon,
-  FileInput,
-  FolderCheckIcon,
-} from "lucide-react";
 import { useMemo } from "react";
 
 const SectionStats = ({ className }: { className?: string }) => {
@@ -57,7 +51,6 @@ const SectionStats = ({ className }: { className?: string }) => {
             />
           </div>
         </div>
-        <CircleUserRoundIcon className="size-5 stroke-rose-400" />
       </div>
       <div className="p-4 flex flex-row justify-between">
         <div>
@@ -67,7 +60,6 @@ const SectionStats = ({ className }: { className?: string }) => {
             className="text-3xl font-bold"
           />
         </div>
-        <FileInput className="size-5 stroke-blue-500" />
       </div>
       <div className="p-4 flex flex-row justify-between">
         <div>
@@ -107,7 +99,6 @@ const SectionStats = ({ className }: { className?: string }) => {
             </div>
           </NumberFlowGroup>
         </div>
-        <ClockIcon className="size-5 stroke-emerald-500" />
       </div>
       <div className="p-4 flex flex-row justify-between">
         <div className="flex-1">
@@ -118,7 +109,6 @@ const SectionStats = ({ className }: { className?: string }) => {
             suffix="%"
           />
         </div>
-        <FolderCheckIcon className="size-5 stroke-indigo-500" />
       </div>
     </Card>
   );

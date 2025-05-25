@@ -49,6 +49,7 @@ const CardQuestion = ({
   }) => {
     setAnswer({
       testAttemptId: attemptId as Id<"testAttempt">,
+      testSectionId: question.referenceId as Id<"testSection">,
       questionId: question._id,
       answerOptions,
       answerText,

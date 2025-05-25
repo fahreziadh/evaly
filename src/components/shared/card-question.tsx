@@ -108,7 +108,7 @@ const CardQuestion = ({
       </div>
       <div className="mt-3">
         <div
-          className="custom-prose max-w-full max-h-[220px] h-max line-clamp-6"
+          className="custom-prose max-w-full max-h-[220px] h-max line-clamp-3"
           dangerouslySetInnerHTML={{
             __html:
               !data.question || data.question === "<p></p>"

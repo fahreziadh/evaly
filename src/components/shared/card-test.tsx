@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { testTypeColor, testTypeFormatter } from "@/lib/test-type-formatter";
+import { testTypeFormatter } from "@/lib/test-type-formatter";
 import type { DataModel } from "@convex/_generated/dataModel";
 import { Link } from "@tanstack/react-router";
 import dayjs from "dayjs";
@@ -12,6 +12,7 @@ import {
   PencilLine,
 } from "lucide-react";
 import DialogDeleteTest from "./dialog-delete-test";
+import { Label } from "../ui/label";
 
 const CardTest = ({ data }: { data: DataModel["test"]["document"] }) => {
   const redirectLink = data.isPublished
@@ -21,7 +22,7 @@ const CardTest = ({ data }: { data: DataModel["test"]["document"] }) => {
   return (
     <Link
       to={redirectLink}
-      className="border rounded-lg transition-all duration-100 bg-card w-full active:opacity-80 flex flex-col gap-2 p-4 hover:border-primary/30"
+      className="bg-card w-full active:opacity-80 flex flex-col gap-2 p-4 hover:opacity-70"
     >
       <div className="flex justify-between items-start">
         <h3 className="font-normal">{data.title || "Untitled Test"}</h3>
@@ -35,11 +36,11 @@ const CardTest = ({ data }: { data: DataModel["test"]["document"] }) => {
           ) : null}
 
           {!data.isPublished && !data.finishedAt ? (
-            <Badge variant={"secondary"}>Draft</Badge>
+            <Badge variant={"outline"}>Draft</Badge>
           ) : null}
 
           {data.isPublished && data.finishedAt ? (
-            <Badge variant={"success"}>
+            <Badge variant={"secondary"}>
               <CheckIcon />
               Finished
             </Badge>
@@ -49,9 +50,9 @@ const CardTest = ({ data }: { data: DataModel["test"]["document"] }) => {
 
       <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant={"secondary"} className={testTypeColor(data.type)}>
+          <Label>
             {testTypeFormatter(data.type)}
-          </Badge>
+          </Label>
           {/* {Number(data.duration || "0") > 0 ? (
               <Badge variant={"secondary"}>
                 <Clock size={14} />

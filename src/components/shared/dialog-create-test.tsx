@@ -1,10 +1,5 @@
 "use client";
-import {
-  ArrowRight,
-  CheckCircle,
-  Loader2,
-  LockIcon
-} from "lucide-react";
+import { ArrowRight, CheckCircle, Loader2, LockIcon, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -42,7 +37,7 @@ const DialogCreateTest = () => {
       setIsPending(false);
       navigate({
         to: "/app/tests/details",
-        search: { testId: test, tabs: "questions" },
+        search: { testId: test, tabs: "questions", resultsTab: "summary" },
       });
     } catch (error) {
       toast.error(
@@ -56,9 +51,7 @@ const DialogCreateTest = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={"default"}>
-          Create Test
-        </Button>
+        <Button variant={"default"} className="w-max"><PlusCircle /> Create Test</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

@@ -38,9 +38,9 @@ const DialogCreateTest = () => {
       }
       setIsPending(false)
       navigate({
-        to: '/app/tests/details',
-        search: { testId: test, tabs: 'questions' }
-      })
+        to: "/app/tests/details",
+        search: { testId: test, tabs: "questions", resultsTab: "summary" },
+      });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to create test')
     }
@@ -51,7 +51,7 @@ const DialogCreateTest = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={'default'}>Create Test</Button>
+        <Button variant={"default"} className="w-max"><PlusCircle /> Create Test</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

@@ -37,12 +37,30 @@ function RouteComponent() {
         </div>
         {data && data.length > 0 ? <DialogCreateTest /> : null}
       </div>
+      <Tabs className="dashboard-margin mb-2" defaultValue="all">
+        <TabsList>
+          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="active">Active</TabsTrigger>
+          <TabsTrigger value="draft">Draft</TabsTrigger>
+          <TabsTrigger value="finished">Finished</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       {data && data.length > 0 ? (
-        <div className="mt-10 flex min-h-dvh flex-col gap-4">
-          {data.map(e => (
+        <div className="flex flex-col border divide-y rounded-lg overflow-clip">
+          {data.map((e) => (
             <CardTest data={e} key={e._id} />
           ))}
+        </div>
+      ) : null}
+
+      {data?.length === 0 ? (
+        <div className="flex flex-col text-start justify-center border p-6 rounded-lg">
+          <h1 className="text-xl font-medium">No tests yet</h1>
+          <h2 className="max-w-md mt-2 text-muted-foreground mb-4">
+            Create a new test to get started
+          </h2>
+          <DialogCreateTest />
         </div>
       ) : null}
 

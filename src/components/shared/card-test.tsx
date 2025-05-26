@@ -26,18 +26,18 @@ const CardTest = ({ data }: { data: DataModel['test']['document'] }) => {
 
         <div>
           {data.isPublished && !data.finishedAt ? (
-            <Badge variant={'ghost'} className="text-muted-foreground">
+            <Badge variant={"ghost"} className="text-muted-foreground">
               <CircleIcon className="fill-success-foreground stroke-success-foreground size-3" />
               Active
             </Badge>
           ) : null}
 
           {!data.isPublished && !data.finishedAt ? (
-            <Badge variant={'secondary'}>Draft</Badge>
+            <Badge variant={"outline"}>Draft</Badge>
           ) : null}
 
           {data.isPublished && data.finishedAt ? (
-            <Badge variant={'success'}>
+            <Badge variant={"secondary"}>
               <CheckIcon />
               Finished
             </Badge>
@@ -47,9 +47,9 @@ const CardTest = ({ data }: { data: DataModel['test']['document'] }) => {
 
       <div className="text-muted-foreground flex flex-wrap items-center gap-6 text-sm">
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant={'secondary'} className={testTypeColor(data.type)}>
+          <Label>
             {testTypeFormatter(data.type)}
-          </Badge>
+          </Label>
           {/* {Number(data.duration || "0") > 0 ? (
               <Badge variant={"secondary"}>
                 <Clock size={14} />

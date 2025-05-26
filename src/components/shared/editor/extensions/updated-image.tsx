@@ -1,18 +1,18 @@
-import { Image } from "@tiptap/extension-image";
+import { Image } from '@tiptap/extension-image'
 
 const UpdatedImage = Image.extend({
-  name: "image",
+  name: 'image',
   addAttributes() {
     return {
       ...this.parent?.(),
       width: {
-        default: null,
+        default: null
       },
       height: {
-        default: null,
-      },
-    };
-  },
-});
+        default: null
+      }
+    }
+  }
+})
 
-export default UpdatedImage;
+export default UpdatedImage

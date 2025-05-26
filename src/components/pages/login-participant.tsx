@@ -1,40 +1,41 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
-import { useAuthActions } from "@convex-dev/auth/react";
-import { Link } from "@tanstack/react-router";
+import { useAuthActions } from '@convex-dev/auth/react'
+import { Link } from '@tanstack/react-router'
+import { Loader2 } from 'lucide-react'
+import { useState } from 'react'
+
+import { Button } from '@/components/ui/button'
 
 const LoginParticipantPage = () => {
   return (
     <div className="flex flex-row">
-      <div className="flex-1 min-h-screen flex flex-col items-center justify-center container">
+      <div className="container flex min-h-screen flex-1 flex-col items-center justify-center">
         <div className="w-full max-w-md">
-          <h1 className="text-3xl font-bold text-primary">Welcome to Evaly</h1>
-          <h2 className="mb-6 text-muted-foreground mt-2">
-          Login to your account to continue starting your exams
+          <h1 className="text-primary text-3xl font-bold">Welcome to Evaly</h1>
+          <h2 className="text-muted-foreground mt-2 mb-6">
+            Login to your account to continue starting your exams
           </h2>
 
-          <div className="max-w-sm w-full">
-            <div className="flex flex-wrap items-center gap-2 w-full">
+          <div className="w-full max-w-sm">
+            <div className="flex w-full flex-wrap items-center gap-2">
               <GoogleLogin />
             </div>
           </div>
 
-          <span className="text-xs text-muted-foreground mt-4 max-w-md  fixed bottom-4">
-            By continuing, you agree to our {" "}
-            <Link to={"/"} className="underline">
+          <span className="text-muted-foreground fixed bottom-4 mt-4 max-w-md text-xs">
+            By continuing, you agree to our{' '}
+            <Link to={'/'} className="underline">
               Terms of Use
-            </Link>{" "}
-            and{" "}
-            <Link to={"/"} className="underline">
+            </Link>{' '}
+            and{' '}
+            <Link to={'/'} className="underline">
               Privacy Policy
             </Link>
           </span>
         </div>
       </div>
-      <div className="flex-1 h-screen hidden lg:block bg-[url('/images/login-bg.webp')] bg-cover bg-center">
+      <div className="hidden h-screen flex-1 bg-[url('/images/login-bg.webp')] bg-cover bg-center lg:block">
         {/* <Image
           className="flex-1 w-full h-full object-cover"
           src={"/images/login-bg.png"}
@@ -45,9 +46,9 @@ const LoginParticipantPage = () => {
         /> */}
       </div>
     </div>
-  );
-};
-export default LoginParticipantPage;
+  )
+}
+export default LoginParticipantPage
 
 const GoogleIcon = () => {
   return (
@@ -56,7 +57,7 @@ const GoogleIcon = () => {
       viewBox="0 0 24 24"
       width="24"
       height="24"
-      className="w-5 h-5"
+      className="h-5 w-5"
     >
       <path
         fill="#4285F4"
@@ -75,27 +76,27 @@ const GoogleIcon = () => {
         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
       />
     </svg>
-  );
-};
+  )
+}
 
 const GoogleLogin = () => {
-  const { signIn } = useAuthActions();
-  const [isLoading, setIsLoading] = useState(false);
+  const { signIn } = useAuthActions()
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSignIn = async () => {
-    setIsLoading(true);
-    await signIn("google", {
-      redirectTo: location.toString(),
-    });
-    setIsLoading(false);
-  };
+    setIsLoading(true)
+    await signIn('google', {
+      redirectTo: location.toString()
+    })
+    setIsLoading(false)
+  }
 
   return (
     <Button
       variant="outline"
       type="button"
       size="lg"
-      className="gap-2 flex-1 w-full font-medium border-foreground/20"
+      className="border-foreground/20 w-full flex-1 gap-2 font-medium"
       onClick={handleSignIn}
       disabled={isLoading}
     >
@@ -108,5 +109,5 @@ const GoogleLogin = () => {
         </>
       )}
     </Button>
-  );
-};
+  )
+}

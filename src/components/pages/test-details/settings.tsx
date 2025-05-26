@@ -1,86 +1,83 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle2, LockIcon } from "lucide-react";
-import { useEffect, type ReactNode } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { TooltipInfo } from "@/components/ui/tooltip";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "@convex/_generated/api";
-import type { DataModel, Id } from "@convex/_generated/dataModel";
-import { useSearch } from "@tanstack/react-router";
-import { Editor } from "@/components/shared/editor/editor";
+import { api } from '@convex/_generated/api'
+import type { DataModel, Id } from '@convex/_generated/dataModel'
+import { useSearch } from '@tanstack/react-router'
+import { useMutation, useQuery } from 'convex/react'
+import { CheckCircle2, LockIcon } from 'lucide-react'
+import { type ReactNode, useEffect } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+
+import { Editor } from '@/components/shared/editor/editor'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { TooltipInfo } from '@/components/ui/tooltip'
 
 type SettingSectionProps = {
-  title: string;
-  description: string;
-  children: ReactNode;
-};
+  title: string
+  description: string
+  children: ReactNode
+}
 
-const SettingSection = ({
-  title,
-  description,
-  children,
-}: SettingSectionProps) => (
+const SettingSection = ({ title, description, children }: SettingSectionProps) => (
   <div className="py-4 first:pt-0 last:pb-0">
-    <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-20">
-      <div className="flex flex-row gap-2 flex-wrap items-start">
+    <div className="grid grid-cols-1 gap-20 md:grid-cols-[240px_1fr]">
+      <div className="flex flex-row flex-wrap items-start gap-2">
         <h2 className="text-sm font-semibold">{title}</h2>
         <TooltipInfo
-          size={"icon-xs"}
-          variant={"ghost"}
+          size={'icon-xs'}
+          variant={'ghost'}
           className="text-muted-foreground"
         >
           {description}
         </TooltipInfo>
       </div>
-      <div className="w-full flex flex-col gap-4">{children}</div>
+      <div className="flex w-full flex-col gap-4">{children}</div>
     </div>
   </div>
-);
+)
 
 const Setting = () => {
-  const { testId } = useSearch({ from: "/(organizer)/app/tests/details" });
+  const { testId } = useSearch({ from: '/(organizer)/app/tests/details' })
   const dataTest = useQuery(api.organizer.test.getTestById, {
-    testId: testId as Id<"test">,
-  });
+    testId: testId as Id<'test'>
+  })
 
-  const updateTest = useMutation(
-    api.organizer.test.updateTest
-  ).withOptimisticUpdate((localStore, args) => {
-    const currentValue = localStore.getQuery(api.organizer.test.getTestById, {
-      testId: args.testId,
-    });
-    if (!currentValue) return;
-    localStore.setQuery(
-      api.organizer.test.getTestById,
-      { testId: args.testId },
-      {
-        ...currentValue,
-        ...args.data,
-      }
-    );
-  });
+  const updateTest = useMutation(api.organizer.test.updateTest).withOptimisticUpdate(
+    (localStore, args) => {
+      const currentValue = localStore.getQuery(api.organizer.test.getTestById, {
+        testId: args.testId
+      })
+      if (!currentValue) return
+      localStore.setQuery(
+        api.organizer.test.getTestById,
+        { testId: args.testId },
+        {
+          ...currentValue,
+          ...args.data
+        }
+      )
+    }
+  )
 
   const {
     reset,
     control,
     formState: { isDirty },
-    handleSubmit,
-  } = useForm<DataModel["test"]["document"]>();
+    handleSubmit
+  } = useForm<DataModel['test']['document']>()
 
   useEffect(() => {
     if (dataTest) {
-      reset(dataTest);
+      reset(dataTest)
     }
-  }, [dataTest, reset]);
+  }, [dataTest, reset])
 
-  const onSubmit = (data: DataModel["test"]["document"]) => {
-    if (!dataTest?._id) return;
+  const onSubmit = (data: DataModel['test']['document']) => {
+    if (!dataTest?._id) return
     updateTest({
       testId: dataTest?._id,
       data: {
@@ -89,24 +86,24 @@ const Setting = () => {
         access: data.access,
         showResultImmediately: data.showResultImmediately,
         isPublished: data.isPublished,
-        description: data.description || "",
-      },
-    });
-  };
+        description: data.description || ''
+      }
+    })
+  }
 
   if (dataTest === undefined) {
-    return <Skeleton className="w-full h-[80dvh]" />;
+    return <Skeleton className="h-[80dvh] w-full" />
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Card className="flex flex-col divide-y divide-dashed mb-10">
+      <Card className="mb-10 flex flex-col divide-y divide-dashed">
         <CardHeader className="flex flex-row items-center justify-between gap-4">
           <h1 className="font-medium">Test Settings</h1>
           <Button
             disabled={!isDirty}
             type="submit"
-            variant={isDirty ? "default" : "outline"}
+            variant={isDirty ? 'default' : 'outline'}
           >
             Save Changes
           </Button>
@@ -114,28 +111,25 @@ const Setting = () => {
 
         <CardContent>
           <SettingSection
-            title={"Type"}
-            description={"Select the type of test you want to create"}
+            title={'Type'}
+            description={'Select the type of test you want to create'}
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Card className="w-full p-3 border-foreground  relative">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Card className="border-foreground relative w-full p-3">
                 <CheckCircle2 size={18} className="absolute top-2 right-2" />
-                <h3 className="font-medium mb-2">Self-Paced Test</h3>
+                <h3 className="mb-2 font-medium">Self-Paced Test</h3>
                 <Label className="font-normal">
-                  Self-paced tests allow candidates to take the test at their
-                  own pace, without any time constraints.
+                  Self-paced tests allow candidates to take the test at their own pace,
+                  without any time constraints.
                 </Label>
               </Card>
 
-              <Card className="w-full p-3 opacity-70 ring-offset-4 ring-foreground/50 transition-all relative">
-                <LockIcon
-                  size={18}
-                  className="absolute top-2 right-2 opacity-50"
-                />
-                <h3 className="font-medium mb-2">Live Test</h3>
+              <Card className="ring-foreground/50 relative w-full p-3 opacity-70 ring-offset-4 transition-all">
+                <LockIcon size={18} className="absolute top-2 right-2 opacity-50" />
+                <h3 className="mb-2 font-medium">Live Test</h3>
                 <Label className="font-normal">
-                  Live tests are timed and candidates must complete the test
-                  within a specific time limit.
+                  Live tests are timed and candidates must complete the test within a
+                  specific time limit.
                 </Label>
               </Card>
             </div>
@@ -183,9 +177,9 @@ const Setting = () => {
         </SettingSection> */}
 
           <SettingSection
-            title={"Show Result Immediately"}
+            title={'Show Result Immediately'}
             description={
-              "Select whether the test results should be shown immediately after the test is completed."
+              'Select whether the test results should be shown immediately after the test is completed.'
             }
           >
             <Controller
@@ -196,10 +190,10 @@ const Setting = () => {
                 <>
                   <Tabs
                     className="w-full"
-                    defaultValue={field.value ? "true" : "false"}
-                    value={field.value ? "true" : "false"}
-                    onValueChange={(value) => {
-                      field.onChange(value === "true");
+                    defaultValue={field.value ? 'true' : 'false'}
+                    value={field.value ? 'true' : 'false'}
+                    onValueChange={value => {
+                      field.onChange(value === 'true')
                     }}
                   >
                     <TabsList>
@@ -207,15 +201,14 @@ const Setting = () => {
                       <TabsTrigger value="false">No</TabsTrigger>
                     </TabsList>
                     <TabsContent value="true">
-                      <Label className="text-sm font-normal text-muted-foreground block">
-                        Results will be shown immediately after the test is
-                        completed.
+                      <Label className="text-muted-foreground block text-sm font-normal">
+                        Results will be shown immediately after the test is completed.
                       </Label>
                     </TabsContent>
                     <TabsContent value="false">
-                      <Label className="text-sm font-normal text-muted-foreground block">
-                        Results can only be viewed if organizer has published
-                        the results.
+                      <Label className="text-muted-foreground block text-sm font-normal">
+                        Results can only be viewed if organizer has published the
+                        results.
                       </Label>
                     </TabsContent>
                   </Tabs>
@@ -225,16 +218,16 @@ const Setting = () => {
           </SettingSection>
 
           <SettingSection
-            title={"Description"}
-            description={"Enter a description for the test"}
+            title={'Description'}
+            description={'Enter a description for the test'}
           >
             <Controller
               name="description"
               control={control}
               render={({ field }) => (
                 <Editor
-                  placeholder={"Enter a description for the test"}
-                  value={field.value || ""}
+                  placeholder={'Enter a description for the test'}
+                  value={field.value || ''}
                   onChange={field.onChange}
                 />
               )}
@@ -243,7 +236,7 @@ const Setting = () => {
         </CardContent>
       </Card>
     </form>
-  );
-};
+  )
+}
 
-export default Setting;
+export default Setting

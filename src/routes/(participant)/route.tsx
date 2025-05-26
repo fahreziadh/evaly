@@ -1,15 +1,12 @@
-import LoginParticipantPage from "@/components/pages/login-participant";
-import LoadingScreen from "@/components/shared/loading-screen";
-import { createFileRoute, Outlet } from "@tanstack/react-router";
-import {
-  Authenticated,
-  AuthLoading,
-  Unauthenticated
-} from "convex/react";
+import { Outlet, createFileRoute } from '@tanstack/react-router'
+import { AuthLoading, Authenticated, Unauthenticated } from 'convex/react'
 
-export const Route = createFileRoute("/(participant)")({
-  component: RouteComponent,
-});
+import LoginParticipantPage from '@/components/pages/login-participant'
+import LoadingScreen from '@/components/shared/loading-screen'
+
+export const Route = createFileRoute('/(participant)')({
+  component: RouteComponent
+})
 
 function RouteComponent() {
   return (
@@ -24,5 +21,5 @@ function RouteComponent() {
         <Outlet />
       </Authenticated>
     </>
-  );
+  )
 }

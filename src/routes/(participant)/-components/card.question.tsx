@@ -1,8 +1,10 @@
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
-import { api } from "@convex/_generated/api";
-import type { DataModel, Id } from "@convex/_generated/dataModel";
-import { useMutation } from "convex/react";
+import { api } from '@convex/_generated/api'
+import type { DataModel, Id } from '@convex/_generated/dataModel'
+import { useMutation } from 'convex/react'
+
+import { Textarea } from '@/components/ui/textarea'
+
+import { cn } from '@/lib/utils'
 
 const CardQuestion = ({
   question,
@@ -10,10 +12,10 @@ const CardQuestion = ({
   attemptId,
   testId
 }: {
-  question: DataModel["question"]["document"];
-  answers?: DataModel["testAttemptAnswer"]["document"];
-  attemptId: Id<"testAttempt">;
-  testId: Id<"test">
+  question: DataModel['question']['document']
+  answers?: DataModel['testAttemptAnswer']['document']
+  attemptId: Id<'testAttempt'>
+  testId: Id<'test'>
 }) => {
   const setAnswer = useMutation(
     api.participant.testAttemptAnswer.setAnswer
@@ -21,48 +23,48 @@ const CardQuestion = ({
     const existingAnswers = localStore.getQuery(
       api.participant.testAttemptAnswer.getByAttemptId,
       {
-        testAttemptId: attemptId as Id<"testAttempt">,
+        testAttemptId: attemptId as Id<'testAttempt'>
       }
-    );
+    )
 
     if (existingAnswers) {
       localStore.setQuery(
         api.participant.testAttemptAnswer.getByAttemptId,
         {
-          testAttemptId: attemptId as Id<"testAttempt">,
+          testAttemptId: attemptId as Id<'testAttempt'>
         },
-        existingAnswers.map((answer) => {
+        existingAnswers.map(answer => {
           if (answer.questionId === question._id) {
-            return { ...answer, ...args };
+            return { ...answer, ...args }
           }
-          return answer;
+          return answer
         })
-      );
+      )
     }
-  });
+  })
   const handleSubmitAnswer = ({
     answerOptions,
-    answerText,
+    answerText
   }: {
-    answerOptions?: string[];
-    answerText?: string;
+    answerOptions?: string[]
+    answerText?: string
   }) => {
     setAnswer({
-      testAttemptId: attemptId as Id<"testAttempt">,
-      testSectionId: question.referenceId as Id<"testSection">,
+      testAttemptId: attemptId as Id<'testAttempt'>,
+      testSectionId: question.referenceId as Id<'testSection'>,
       questionId: question._id,
       answerOptions,
       answerText,
       testId
-    });
-  };
+    })
+  }
   return (
     <div>
-      <div className="flex flex-row justify-between items-center">
-        <span className="text-sm text-muted-foreground mb-1">
+      <div className="flex flex-row items-center justify-between">
+        <span className="text-muted-foreground mb-1 text-sm">
           Question {question.order}
         </span>
-        <span className=" text-sm text-muted-foreground flex flex-row gap-2 items-center">
+        <span className="text-muted-foreground flex flex-row items-center gap-2 text-sm">
           {/* {isPendingAnswer ? (
           <>
             <Loader2 className="size-3 animate-spin" /> Saving...
@@ -71,24 +73,24 @@ const CardQuestion = ({
         </span>
       </div>
       <div
-        className="custom-prose max-w-none lg:prose-lg"
+        className="custom-prose lg:prose-lg max-w-none"
         dangerouslySetInnerHTML={{
-          __html: question.question ?? "No question found",
+          __html: question.question ?? 'No question found'
         }}
       />
 
       {/* Option-based question */}
-      {question.type === "multiple-choice" || question.type === "yes-or-no" ? (
-        <div className="flex flex-col mt-4 gap-3">
-          {question.options?.map((option) => (
+      {question.type === 'multiple-choice' || question.type === 'yes-or-no' ? (
+        <div className="mt-4 flex flex-col gap-3">
+          {question.options?.map(option => (
             <button
               key={option.id}
               onClick={() => handleSubmitAnswer({ answerOptions: [option.id] })}
               className={cn(
-                "max-w-full w-max h-auto border rounded-md py-1 px-3 text-start  transition-all",
+                'h-auto w-max max-w-full rounded-md border px-3 py-1 text-start transition-all',
                 answers?.answerOptions?.includes(option.id)
-                  ? "border-primary bg-secondary "
-                  : "border-border hover:border-primary/50 active:border-primary active:bg-primary/5"
+                  ? 'border-primary bg-secondary'
+                  : 'border-border hover:border-primary/50 active:border-primary active:bg-primary/5'
               )}
             >
               {/* {option.id === targetOptionId && isPendingAnswer ? (
@@ -97,12 +99,9 @@ const CardQuestion = ({
                 String.fromCharCode(65 + i)
               )} */}
               <div
-                className={cn(
-                  "custom-prose prose-sm max-w-full text-ellipsis",
-                 
-                )}
+                className={cn('custom-prose prose-sm max-w-full text-ellipsis')}
                 dangerouslySetInnerHTML={{
-                  __html: option.text ?? "No option found",
+                  __html: option.text ?? 'No option found'
                 }}
               />
             </button>
@@ -111,11 +110,11 @@ const CardQuestion = ({
       ) : null}
 
       {/* Text-based question */}
-      {question.type === "text-field" ? (
-        <div className="flex flex-col gap-3 mt-8">
+      {question.type === 'text-field' ? (
+        <div className="mt-8 flex flex-col gap-3">
           <Textarea
             // {...register("answerText")}
-            className="resize-none lg:text-base p-4"
+            className="resize-none p-4 lg:text-base"
             placeholder="Type your answer here..."
           />
           {/* {isDirty && answerText !== "" && (
@@ -131,7 +130,7 @@ const CardQuestion = ({
         </div>
       ) : null}
     </div>
-  );
-};
+  )
+}
 
-export default CardQuestion;
+export default CardQuestion

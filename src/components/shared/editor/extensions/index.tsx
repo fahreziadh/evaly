@@ -1,71 +1,72 @@
-import CharacterCount from "@tiptap/extension-character-count";
-import TextStyle from "@tiptap/extension-text-style";
-import Underline from "@tiptap/extension-underline";
-import StarterKit from "@tiptap/starter-kit";
-import Link from "@tiptap/extension-link";
-import TiptapImage from "@tiptap/extension-image";
-import { UploadImagesPlugin } from "../plugins/upload-images";
-import { cx } from "class-variance-authority";
-import UpdatedImage from "./updated-image";
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { ReactNodeViewRenderer } from "@tiptap/react";
-import CodeBlock from "./code-block";
-import { createLowlight, all } from "lowlight";
-import Placeholder from '@tiptap/extension-placeholder';
+import CharacterCount from '@tiptap/extension-character-count'
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+import TiptapImage from '@tiptap/extension-image'
+import Link from '@tiptap/extension-link'
+import Placeholder from '@tiptap/extension-placeholder'
+import TextStyle from '@tiptap/extension-text-style'
+import Underline from '@tiptap/extension-underline'
+import { ReactNodeViewRenderer } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import { cx } from 'class-variance-authority'
+import { all, createLowlight } from 'lowlight'
 
-const lowlight = createLowlight(all);
+import { UploadImagesPlugin } from '../plugins/upload-images'
+import CodeBlock from './code-block'
+import UpdatedImage from './updated-image'
 
-export const extensions = (params: { limit?: number, placeholder?: string }) => [
+const lowlight = createLowlight(all)
+
+export const extensions = (params: { limit?: number; placeholder?: string }) => [
   TextStyle.configure(),
   StarterKit.configure({
     bulletList: {
       keepMarks: true,
-      keepAttributes: true,
+      keepAttributes: true
     },
     orderedList: {
       keepMarks: true,
-      keepAttributes: true,
-    },
+      keepAttributes: true
+    }
   }),
   Underline.configure({
     HTMLAttributes: {
-      class: "underline",
-    },
+      class: 'underline'
+    }
   }),
   Link.configure({
-    openOnClick: true,
+    openOnClick: true
   }),
   CharacterCount.configure({
-    limit: params.limit,
+    limit: params.limit
   }),
   TiptapImage.extend({
     addProseMirrorPlugins() {
       return [
         UploadImagesPlugin({
-          imageClass: cx("opacity-40 rounded-lg border border-stone-200"),
-        }),
-      ];
-    },
+          imageClass: cx('opacity-40 rounded-lg border border-stone-200')
+        })
+      ]
+    }
   }).configure({
     allowBase64: true,
     HTMLAttributes: {
-      class: cx("rounded-lg border border-muted"),
-    },
+      class: cx('rounded-lg border border-muted')
+    }
   }),
   UpdatedImage.configure({
     HTMLAttributes: {
-      class: cx("rounded-lg border border-muted"),
-    },
+      class: cx('rounded-lg border border-muted')
+    }
   }),
   CodeBlockLowlight.extend({
     addNodeView() {
-      return ReactNodeViewRenderer(CodeBlock);
-    },
+      return ReactNodeViewRenderer(CodeBlock)
+    }
   }).configure({
     lowlight,
-    HTMLAttributes: { class: cx("rounded-lg border border-muted font-mono") },
+    HTMLAttributes: { class: cx('rounded-lg border border-muted font-mono') }
   }),
   Placeholder.configure({
-    placeholder: params.placeholder || "Write something...",
-  }),
-];
+    placeholder: params.placeholder || 'Write something...'
+  })
+]

@@ -1,16 +1,16 @@
 .tiptap {
-    .code-block {
-      position: relative;
-    
-      select {
-        position: absolute;
-        background-color: var(--background);
-        right: 0.5rem;
-        top: 0.5rem;
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.5rem;
-        color: var(--foreground);
-        user-select: none;
-      }
+  .code-block {
+    position: relative;
+
+    select {
+      position: absolute;
+      background-color: var(--background);
+      right: 0.5rem;
+      top: 0.5rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.5rem;
+      color: var(--foreground);
+      user-select: none;
     }
   }
+}

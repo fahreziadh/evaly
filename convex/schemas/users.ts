@@ -1,5 +1,5 @@
-import { defineTable } from "convex/server";
-import { v } from "convex/values";
+import { defineTable } from 'convex/server'
+import { v } from 'convex/values'
 
 export const users = defineTable({
   name: v.optional(v.string()),
@@ -9,6 +9,6 @@ export const users = defineTable({
   phone: v.optional(v.string()),
   phoneVerificationTime: v.optional(v.number()),
   isAnonymous: v.optional(v.boolean()),
-  selectedOrganizationId: v.optional(v.id("organization")),
-  selectedOrganizerId: v.optional(v.id("organizer")),
-}).index("email", ["email"]);
+  selectedOrganizationId: v.optional(v.id('organization')),
+  selectedOrganizerId: v.optional(v.id('organizer'))
+}).index('email', ['email'])

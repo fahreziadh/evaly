@@ -1,25 +1,27 @@
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { CheckIcon } from "lucide-react";
-import type { DataModel } from "@convex/_generated/dataModel";
+import type { DataModel } from '@convex/_generated/dataModel'
+import { CheckIcon } from 'lucide-react'
+
+import { Card } from '@/components/ui/card'
+
+import { cn } from '@/lib/utils'
 
 const CardSection = ({
   data,
   isSelected,
-  onClick,
+  onClick
 }: {
-  data?: DataModel["testSection"]["document"] & { numOfQuestions: number };
-  onClick?: () => void;
-  isSelected?: boolean;
+  data?: DataModel['testSection']['document'] & { numOfQuestions: number }
+  onClick?: () => void
+  isSelected?: boolean
 }) => {
-  if (!data) return null;
+  if (!data) return null
   return (
     <Card
       key={data._id}
       onClick={onClick}
       className={cn(
-        "flex flex-col group/section justify-start   p-3 relative select-none bg-card",
-        isSelected ? "border-primary border" : "hover:bg-secondary"
+        'group/section bg-card relative flex flex-col justify-start p-3 select-none',
+        isSelected ? 'border-primary border' : 'hover:bg-secondary'
       )}
     >
       {isSelected ? (
@@ -30,7 +32,7 @@ const CardSection = ({
       <span className="text-sm font-medium">
         {data.order}. {data.title || `Section ${data.order}`}
       </span>
-      <div className="text-xs mt-1 flex flex-row gap-3 flex-wrap">
+      <div className="mt-1 flex flex-row flex-wrap gap-3 text-xs">
         {/* {data.duration ? (
           <span className="flex flex-row gap-1 items-center">
             <ClockIcon size={14} />{" "}
@@ -45,12 +47,12 @@ const CardSection = ({
             0m
           </span>
         )} */}
-        <span className="border px-2 py-0.5 rounded-full">
+        <span className="rounded-full border px-2 py-0.5">
           {JSON.stringify(data.numOfQuestions)} Questions
         </span>
       </div>
     </Card>
-  );
-};
+  )
+}
 
-export default CardSection;
+export default CardSection

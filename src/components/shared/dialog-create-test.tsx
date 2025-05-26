@@ -1,11 +1,15 @@
-"use client";
-import {
-  ArrowRight,
-  CheckCircle,
-  Loader2,
-  LockIcon
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+'use client'
+
+import { api } from '@convex/_generated/api'
+import { useNavigate } from '@tanstack/react-router'
+import { useMutation } from 'convex/react'
+import { ArrowRight, CheckCircle, Loader2, LockIcon } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -13,52 +17,41 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
-import { useMutation } from "convex/react";
-import { api } from "@convex/_generated/api";
-import { useNavigate } from "@tanstack/react-router";
+  DialogTrigger
+} from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
 
 const DialogCreateTest = () => {
-  const [open, setOpen] = useState(false);
-  const [isPending, setIsPending] = useState(false);
-  const navigate = useNavigate();
+  const [open, setOpen] = useState(false)
+  const [isPending, setIsPending] = useState(false)
+  const navigate = useNavigate()
 
-  const createTest = useMutation(api.organizer.test.createTest);
+  const createTest = useMutation(api.organizer.test.createTest)
 
   const onCreateNewTest = async () => {
     try {
-      setIsPending(true);
-      const test = await createTest({ type: "self-paced" });
+      setIsPending(true)
+      const test = await createTest({ type: 'self-paced' })
       if (!test) {
-        toast.error("Failed to create test");
-        return;
+        toast.error('Failed to create test')
+        return
       }
-      setIsPending(false);
+      setIsPending(false)
       navigate({
-        to: "/app/tests/details",
-        search: { testId: test, tabs: "questions" },
-      });
+        to: '/app/tests/details',
+        search: { testId: test, tabs: 'questions' }
+      })
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to create test"
-      );
+      toast.error(error instanceof Error ? error.message : 'Failed to create test')
     }
-  };
+  }
 
-  const onBack = () => setOpen(false);
+  const onBack = () => setOpen(false)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={"default"}>
-          Create Test
-        </Button>
+        <Button variant={'default'}>Create Test</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -67,7 +60,7 @@ const DialogCreateTest = () => {
             Choose the type of test you want to create
           </DialogDescription>
         </DialogHeader>
-        <Card className="p-4  ring-2 ring-offset-2">
+        <Card className="p-4 ring-2 ring-offset-2">
           <div className="flex flex-row items-start justify-between">
             <h1>Self-Paced Test</h1>
             <CheckCircle size={20} />
@@ -79,7 +72,7 @@ const DialogCreateTest = () => {
         <Card className="p-4 opacity-80">
           <div className="flex flex-row items-start justify-between">
             <h1>Live Test</h1>
-            <Badge variant={"secondary"}>
+            <Badge variant={'secondary'}>
               <LockIcon /> Coming Soon
             </Badge>
           </div>
@@ -88,14 +81,10 @@ const DialogCreateTest = () => {
           </Label>
         </Card>
         <DialogFooter>
-          <Button variant={"secondary"} onClick={onBack}>
+          <Button variant={'secondary'} onClick={onBack}>
             Back
           </Button>
-          <Button
-            variant={"default"}
-            onClick={onCreateNewTest}
-            disabled={isPending}
-          >
+          <Button variant={'default'} onClick={onCreateNewTest} disabled={isPending}>
             {isPending ? <Loader2 size={16} className="animate-spin" /> : null}
             Continue
             {!isPending ? <ArrowRight size={16} /> : null}
@@ -103,7 +92,7 @@ const DialogCreateTest = () => {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default DialogCreateTest;
+export default DialogCreateTest

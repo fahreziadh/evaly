@@ -1,67 +1,68 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronLeft, Check } from 'lucide-react';
-import NameStep from './steps/name-step';
-import OrganizationNameStep from './steps/organization-name-step';
-import OrganizationTypeStep from './steps/organization-type-step';
-import SuccessStep from './steps/success-step';
+import { AnimatePresence, motion } from 'framer-motion'
+import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useState } from 'react'
+
+import NameStep from './steps/name-step'
+import OrganizationNameStep from './steps/organization-name-step'
+import OrganizationTypeStep from './steps/organization-type-step'
+import SuccessStep from './steps/success-step'
 
 export interface FormData {
-  fullName: string;
-  organizationName: string;
-  organizationType: string;
+  fullName: string
+  organizationName: string
+  organizationType: string
 }
 
-const OrganizerOnboarding = ({defaultFullname}:{defaultFullname?: string}) => {
-  const [step, setStep] = useState(1);
+const OrganizerOnboarding = ({ defaultFullname }: { defaultFullname?: string }) => {
+  const [step, setStep] = useState(1)
   const [formData, setFormData] = useState<FormData>({
     fullName: defaultFullname || '',
     organizationName: '',
-    organizationType: '',
-  });
+    organizationType: ''
+  })
 
   const updateFormData = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
 
   const nextStep = () => {
-    setStep((prev) => prev + 1);
-  };
+    setStep(prev => prev + 1)
+  }
 
   const prevStep = () => {
-    setStep((prev) => prev - 1);
-  };
+    setStep(prev => prev - 1)
+  }
 
   const isStepValid = () => {
     switch (step) {
       case 1:
-        return formData.fullName.trim().length >= 3;
+        return formData.fullName.trim().length >= 3
       case 2:
-        return formData.organizationName.trim().length >= 2;
+        return formData.organizationName.trim().length >= 2
       case 3:
-        return !!formData.organizationType;
+        return !!formData.organizationType
       default:
-        return true;
+        return true
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen  flex items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md border border-foreground/10 rounded-lg shadow-2xl shadow-black/10 overflow-hidden"
+        className="border-foreground/10 w-full max-w-md overflow-hidden rounded-lg border shadow-2xl shadow-black/10"
       >
         {step <= 3 && (
           <div className="p-6 pb-0">
-            <div className="flex justify-between items-center mb-6">
+            <div className="mb-6 flex items-center justify-between">
               <h1 className="text-2xl font-semibold text-gray-800">
-                {step === 1 && "Welcome"}
-                {step === 2 && "Your Organization"}
-                {step === 3 && "Organization Type"}
+                {step === 1 && 'Welcome'}
+                {step === 2 && 'Your Organization'}
+                {step === 3 && 'Organization Type'}
               </h1>
               <div className="flex space-x-1">
-                {[1, 2, 3].map((i) => (
+                {[1, 2, 3].map(i => (
                   <motion.div
                     key={i}
                     className={`h-2 rounded-full ${
@@ -74,10 +75,10 @@ const OrganizerOnboarding = ({defaultFullname}:{defaultFullname?: string}) => {
                 ))}
               </div>
             </div>
-            <p className="text-gray-500 mb-8">
+            <p className="mb-8 text-gray-500">
               {step === 1 && "Let's get to know you better."}
-              {step === 2 && "Tell us about your organization."}
-              {step === 3 && "What best describes your organization?"}
+              {step === 2 && 'Tell us about your organization.'}
+              {step === 3 && 'What best describes your organization?'}
             </p>
           </div>
         )}
@@ -94,19 +95,19 @@ const OrganizerOnboarding = ({defaultFullname}:{defaultFullname?: string}) => {
             {step === 1 && (
               <NameStep
                 value={formData.fullName}
-                onChange={(value) => updateFormData('fullName', value)}
+                onChange={value => updateFormData('fullName', value)}
               />
             )}
             {step === 2 && (
               <OrganizationNameStep
                 value={formData.organizationName}
-                onChange={(value) => updateFormData('organizationName', value)}
+                onChange={value => updateFormData('organizationName', value)}
               />
             )}
             {step === 3 && (
               <OrganizationTypeStep
                 value={formData.organizationType}
-                onChange={(value) => updateFormData('organizationType', value)}
+                onChange={value => updateFormData('organizationType', value)}
               />
             )}
             {step === 4 && <SuccessStep formData={formData} />}
@@ -114,11 +115,11 @@ const OrganizerOnboarding = ({defaultFullname}:{defaultFullname?: string}) => {
         </AnimatePresence>
 
         {step < 4 && (
-          <div className="p-6 border-t border-gray-100 flex justify-between">
+          <div className="flex justify-between border-t border-gray-100 p-6">
             {step > 1 ? (
               <button
                 onClick={prevStep}
-                className="flex items-center text-gray-500 hover:text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                className="flex items-center rounded-lg px-4 py-2 text-gray-500 transition-colors hover:text-gray-700"
               >
                 <ChevronLeft size={18} className="mr-1" />
                 Back
@@ -134,8 +135,8 @@ const OrganizerOnboarding = ({defaultFullname}:{defaultFullname?: string}) => {
               className={`flex items-center ${
                 isStepValid()
                   ? 'bg-primary hover:bg-primary/90 text-white'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-              } px-6 py-2 rounded-lg font-medium transition-colors`}
+                  : 'cursor-not-allowed bg-gray-200 text-gray-400'
+              } rounded-lg px-6 py-2 font-medium transition-colors`}
             >
               {step === 3 ? (
                 <>
@@ -151,7 +152,7 @@ const OrganizerOnboarding = ({defaultFullname}:{defaultFullname?: string}) => {
         )}
       </motion.div>
     </div>
-  );
-};
+  )
+}
 
-export default OrganizerOnboarding;
+export default OrganizerOnboarding

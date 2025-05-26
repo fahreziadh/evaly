@@ -1,25 +1,25 @@
-import React from 'react';
-import { motion } from 'motion/react';
 import {
-  GraduationCap,
-  Briefcase,
-  Rocket,
   BookOpen,
+  Briefcase,
+  Check,
+  GraduationCap,
   PenLine,
-  Store,
-  Check
-} from 'lucide-react';
+  Rocket,
+  Store
+} from 'lucide-react'
+import { motion } from 'motion/react'
+import React from 'react'
 
 interface OrganizationTypeStepProps {
-  value: string;
-  onChange: (value: string) => void;
+  value: string
+  onChange: (value: string) => void
 }
 
 interface OrgTypeOption {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-  description: string;
+  id: string
+  label: string
+  icon: React.ReactNode
+  description: string
 }
 
 const orgTypes: OrgTypeOption[] = [
@@ -59,18 +59,21 @@ const orgTypes: OrgTypeOption[] = [
     icon: <Store size={24} />,
     description: 'Not listed above'
   }
-];
+]
 
-const OrganizationTypeStep: React.FC<OrganizationTypeStepProps> = ({ value, onChange }) => {
+const OrganizationTypeStep: React.FC<OrganizationTypeStepProps> = ({
+  value,
+  onChange
+}) => {
   return (
     <div className="grid grid-cols-2 gap-3">
-      {orgTypes.map((type) => (
+      {orgTypes.map(type => (
         <motion.div
           key={type.id}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => onChange(type.id)}
-          className={`relative  p-4 rounded-xl border-2 ${
+          className={`relative rounded-xl border-2 p-4 ${
             value === type.id
               ? 'border-primary bg-primary/10'
               : 'border-gray-200 hover:border-gray-300'
@@ -80,20 +83,22 @@ const OrganizationTypeStep: React.FC<OrganizationTypeStepProps> = ({ value, onCh
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="absolute top-2 right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center"
+              className="bg-primary absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full"
             >
               <Check size={12} className="text-white" />
             </motion.div>
           )}
-          <div className={`mb-2 ${value === type.id ? 'text-primary' : 'text-gray-500'}`}>
+          <div
+            className={`mb-2 ${value === type.id ? 'text-primary' : 'text-gray-500'}`}
+          >
             {type.icon}
           </div>
           <h3 className="font-medium text-gray-900">{type.label}</h3>
-          <p className="text-xs text-gray-500 mt-1">{type.description}</p>
+          <p className="mt-1 text-xs text-gray-500">{type.description}</p>
         </motion.div>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default OrganizationTypeStep;
+export default OrganizationTypeStep

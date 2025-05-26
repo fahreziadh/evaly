@@ -1,43 +1,45 @@
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { api } from "@convex/_generated/api";
-import type { Id } from "@convex/_generated/dataModel";
-import NumberFlow, { NumberFlowGroup } from "@number-flow/react";
-import { useSearch } from "@tanstack/react-router";
-import { useQuery } from "convex/react";
-import { useMemo } from "react";
+import { api } from '@convex/_generated/api'
+import type { Id } from '@convex/_generated/dataModel'
+import NumberFlow, { NumberFlowGroup } from '@number-flow/react'
+import { useSearch } from '@tanstack/react-router'
+import { useQuery } from 'convex/react'
+import { useMemo } from 'react'
+
+import { Card } from '@/components/ui/card'
+
+import { cn } from '@/lib/utils'
 
 const SectionStats = ({ className }: { className?: string }) => {
   const { testId } = useSearch({
-    from: "/(organizer)/app/tests/details",
-  });
+    from: '/(organizer)/app/tests/details'
+  })
 
   const presence = useQuery(api.participant.testPresence.list, {
-    testId: testId as Id<"test">,
-  });
+    testId: testId as Id<'test'>
+  })
 
   const progress = useQuery(api.organizer.testResult.getProgress, {
-    testId: testId as Id<"test">,
-  });
+    testId: testId as Id<'test'>
+  })
 
   const averageFinished = useMemo(() => {
-    const totalSeconds = progress?.averageTime || 0;
-    const h = Math.floor(totalSeconds / 3600);
-    const m = Math.floor((totalSeconds % 3600) / 60);
-    const s = Math.floor(totalSeconds % 60);
+    const totalSeconds = progress?.averageTime || 0
+    const h = Math.floor(totalSeconds / 3600)
+    const m = Math.floor((totalSeconds % 3600) / 60)
+    const s = Math.floor(totalSeconds % 60)
 
     return {
       h,
       m,
-      s,
-    };
-  }, [progress?.averageTime]);
+      s
+    }
+  }, [progress?.averageTime])
 
   return (
-    <Card className={cn("grid grid-cols-4 gap-3 divide-x", className)}>
-      <div className="p-4 flex flex-row justify-between">
+    <Card className={cn('grid grid-cols-4 gap-3 divide-x', className)}>
+      <div className="flex flex-row justify-between p-4">
         <div>
-          <h1 className="font-medium text-sm">Working in progress</h1>
+          <h1 className="text-sm font-medium">Working in progress</h1>
           <div className="flex flex-row items-center gap-4">
             <NumberFlow
               value={progress?.workingInProgress || 0}
@@ -47,29 +49,29 @@ const SectionStats = ({ className }: { className?: string }) => {
             <NumberFlow
               value={presence?.length || 0}
               suffix=" Online"
-              className="text-sm text-emerald-600 bg-emerald-500/10 px-2 rounded-full border border-emerald-500/20"
+              className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 text-sm text-emerald-600"
             />
           </div>
         </div>
       </div>
-      <div className="p-4 flex flex-row justify-between">
+      <div className="flex flex-row justify-between p-4">
         <div>
-          <h1 className="font-medium text-sm">Submission</h1>
+          <h1 className="text-sm font-medium">Submission</h1>
           <NumberFlow
             value={progress?.submissions || 0}
             className="text-3xl font-bold"
           />
         </div>
       </div>
-      <div className="p-4 flex flex-row justify-between">
+      <div className="flex flex-row justify-between p-4">
         <div>
-          <h1 className="font-medium text-sm">Average Time</h1>
+          <h1 className="text-sm font-medium">Average Time</h1>
           <NumberFlowGroup>
             <div
               style={{
-                fontVariantNumeric: "tabular-nums",
+                fontVariantNumeric: 'tabular-nums'
               }}
-              className="text-3xl font-bold flex item-baseline gap-2"
+              className="item-baseline flex gap-2 text-3xl font-bold"
             >
               {averageFinished.h > 0 ? (
                 <NumberFlow
@@ -100,9 +102,9 @@ const SectionStats = ({ className }: { className?: string }) => {
           </NumberFlowGroup>
         </div>
       </div>
-      <div className="p-4 flex flex-row justify-between">
+      <div className="flex flex-row justify-between p-4">
         <div className="flex-1">
-          <h1 className="font-medium text-sm">Completetion Rate</h1>
+          <h1 className="text-sm font-medium">Completetion Rate</h1>
           <NumberFlow
             value={progress?.completitionRate || 0}
             className="text-3xl font-bold"
@@ -111,7 +113,7 @@ const SectionStats = ({ className }: { className?: string }) => {
         </div>
       </div>
     </Card>
-  );
-};
+  )
+}
 
-export default SectionStats;
+export default SectionStats

@@ -1,13 +1,14 @@
-import Whistlist from "@/components/pages/whistlist";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute("/")({
+import Whistlist from '@/components/pages/whistlist'
+
+export const Route = createFileRoute('/')({
   component: Whistlist,
   head: () => ({
     meta: [
       {
-        title: "Evaly",
-      },
-    ],
-  }),
-});
+        title: 'Evaly'
+      }
+    ]
+  })
+})

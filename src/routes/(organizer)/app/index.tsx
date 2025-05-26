@@ -1,29 +1,30 @@
-import CardTest from "@/components/shared/card-test";
-import DialogCreateTest from "@/components/shared/dialog-create-test";
-import { Skeleton } from "@/components/ui/skeleton";
-import { api } from "@convex/_generated/api";
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "convex/react";
-import { FileSpreadsheet } from "lucide-react";
+import { api } from '@convex/_generated/api'
+import { createFileRoute } from '@tanstack/react-router'
+import { useQuery } from 'convex/react'
+import { FileSpreadsheet } from 'lucide-react'
 
-export const Route = createFileRoute("/(organizer)/app/")({
-  component: RouteComponent,
-});
+import CardTest from '@/components/shared/card-test'
+import DialogCreateTest from '@/components/shared/dialog-create-test'
+import { Skeleton } from '@/components/ui/skeleton'
+
+export const Route = createFileRoute('/(organizer)/app/')({
+  component: RouteComponent
+})
 
 function RouteComponent() {
-  const data = useQuery(api.organizer.test.getTests);
+  const data = useQuery(api.organizer.test.getTests)
 
   if (data?.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center mt-[30vh] text-center">
-        <FileSpreadsheet className="size-16 text-muted-foreground mb-6" />
+      <div className="mt-[30vh] flex flex-col items-center justify-center text-center">
+        <FileSpreadsheet className="text-muted-foreground mb-6 size-16" />
         <h1 className="text-xl font-medium">No tests yet</h1>
-        <h2 className="max-w-md mt-2 text-muted-foreground mb-4">
+        <h2 className="text-muted-foreground mt-2 mb-4 max-w-md">
           Create a new test to get started
         </h2>
         <DialogCreateTest />
       </div>
-    );
+    )
   }
   return (
     <div>
@@ -38,8 +39,8 @@ function RouteComponent() {
       </div>
 
       {data && data.length > 0 ? (
-        <div className="flex flex-col mt-10 min-h-dvh gap-4">
-          {data.map((e) => (
+        <div className="mt-10 flex min-h-dvh flex-col gap-4">
+          {data.map(e => (
             <CardTest data={e} key={e._id} />
           ))}
         </div>
@@ -47,14 +48,14 @@ function RouteComponent() {
 
       {/* Loading */}
       {data === undefined ? (
-        <div className="flex flex-col mt-10 min-h-dvh gap-4">
+        <div className="mt-10 flex min-h-dvh flex-col gap-4">
           <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full " />
+          <Skeleton className="h-20 w-full" />
           <Skeleton className="h-20 w-full" />
           <Skeleton className="h-20 w-full" />
           <Skeleton className="h-20 w-full" />
         </div>
       ) : null}
     </div>
-  );
+  )
 }

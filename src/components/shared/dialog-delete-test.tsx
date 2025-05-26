@@ -1,5 +1,14 @@
-"use client";
-import { Button, buttonVariants } from "@/components/ui/button";
+'use client'
+
+import { api } from '@convex/_generated/api'
+import type { Id } from '@convex/_generated/dataModel'
+import type { VariantProps } from 'class-variance-authority'
+import { useMutation } from 'convex/react'
+import { Trash2Icon } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Dialog,
   DialogClose,
@@ -8,45 +17,37 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
-import { Trash2Icon } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { useMutation } from "convex/react";
-import { api } from "@convex/_generated/api";
-import type { Id } from "@convex/_generated/dataModel";
-import type { VariantProps } from "class-variance-authority";
+  DialogTrigger
+} from '@/components/ui/dialog'
+
+import { cn } from '@/lib/utils'
 
 const DialogDeleteTest = ({
   className,
   testId,
   onDelete,
-  size = "icon-xs",
-  variant = "ghost",
+  size = 'icon-xs',
+  variant = 'ghost'
 }: {
-  className?: string;
-  testId: Id<"test">;
-  onDelete?: () => void;
-  size?: VariantProps<typeof buttonVariants>["size"];
-  variant?: VariantProps<typeof buttonVariants>["variant"];
+  className?: string
+  testId: Id<'test'>
+  onDelete?: () => void
+  size?: VariantProps<typeof buttonVariants>['size']
+  variant?: VariantProps<typeof buttonVariants>['variant']
 }) => {
-  const [open, setOpen] = useState(false);
-  const deleteTest = useMutation(api.organizer.test.deleteTest);
+  const [open, setOpen] = useState(false)
+  const deleteTest = useMutation(api.organizer.test.deleteTest)
 
   const onDeleteTest = async () => {
     try {
-      deleteTest({ testId });
-      toast.success("Test deleted successfully");
-      onDelete?.();
-      setOpen(false);
+      deleteTest({ testId })
+      toast.success('Test deleted successfully')
+      onDelete?.()
+      setOpen(false)
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to delete test"
-      );
+      toast.error(error instanceof Error ? error.message : 'Failed to delete test')
     }
-  };
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -56,19 +57,19 @@ const DialogDeleteTest = ({
           variant={variant}
           className={cn(className)}
           rounded={false}
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            setOpen(true);
+          onClick={e => {
+            e.stopPropagation()
+            e.preventDefault()
+            setOpen(true)
           }}
         >
           <Trash2Icon />
         </Button>
       </DialogTrigger>
       <DialogContent
-        onClick={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
+        onClick={e => {
+          e.stopPropagation()
+          e.preventDefault()
         }}
       >
         <DialogHeader>
@@ -80,15 +81,15 @@ const DialogDeleteTest = ({
         {/* <CardSession data={} /> */}
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant={"secondary"}>Back</Button>
+            <Button variant={'secondary'}>Back</Button>
           </DialogClose>
-          <Button variant={"destructive"} onClick={onDeleteTest}>
+          <Button variant={'destructive'} onClick={onDeleteTest}>
             Delete
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default DialogDeleteTest;
+export default DialogDeleteTest

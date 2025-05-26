@@ -1,6 +1,12 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
+import { api } from '@convex/_generated/api'
+import type { DataModel, Id } from '@convex/_generated/dataModel'
+import { question } from '@convex/schemas/question'
+import { useNavigate, useSearch } from '@tanstack/react-router'
+import { useMutation, useQuery } from 'convex/react'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import {
   ArrowLeft,
   CheckCircle2,
@@ -8,72 +14,65 @@ import {
   ChevronRight,
   GripVertical,
   Loader2,
-  PlusIcon, Trash2,
+  PlusIcon,
+  Trash2,
   XIcon
-} from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { Separator } from "@/components/ui/separator";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { Reorder, useDragControls } from "motion/react";
-import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-import { nanoid } from "nanoid";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import type { DataModel, Id } from "@convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "@convex/_generated/api";
-import { TextShimmer } from "@/components/ui/text-shimmer";
-import { Editor } from "@/components/shared/editor/editor";
-import { question } from "@convex/schemas/question";
-import QuestionTypeSelection from "@/components/shared/question-type-selection";
-import { getDefaultOptions } from "@/lib/get-default-options";
-import { useNavigate, useSearch } from "@tanstack/react-router";
+} from 'lucide-react'
+import { Reorder, useDragControls } from 'motion/react'
+import { nanoid } from 'nanoid'
+import { useEffect, useMemo, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 
-dayjs.extend(relativeTime);
+import { Editor } from '@/components/shared/editor/editor'
+import QuestionTypeSelection from '@/components/shared/question-type-selection'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+import { Switch } from '@/components/ui/switch'
+import { TextShimmer } from '@/components/ui/text-shimmer'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
-const MAX_QUESTION_LENGTH = 3000;
-const MIN_QUESTION_LENGTH = 10;
+import { getDefaultOptions } from '@/lib/get-default-options'
+import { cn } from '@/lib/utils'
+
+dayjs.extend(relativeTime)
+
+const MAX_QUESTION_LENGTH = 3000
+const MIN_QUESTION_LENGTH = 10
 
 const EditQuestion = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const { questionId, selectedSectionId, testId } = useSearch({
-    from: "/(organizer)/app/questions/details",
-  });
-  const [questionTextLength, setQuestionTextLength] = useState(0);
+    from: '/(organizer)/app/questions/details'
+  })
+  const [questionTextLength, setQuestionTextLength] = useState(0)
   const updateQuestion = useMutation(
     api.organizer.question.update
   ).withOptimisticUpdate((localStore, args) => {
     const question = localStore.getQuery(api.organizer.question.getById, {
-      id: args.id,
-    });
+      id: args.id
+    })
 
-    if (!question) return;
+    if (!question) return
 
     localStore.setQuery(
       api.organizer.question.getById,
       {
-        id: args.id,
+        id: args.id
       },
       {
         ...question,
-        ...args.data,
+        ...args.data
       }
-    );
-  });
+    )
+  })
 
   const question = useQuery(api.organizer.question.getById, {
-    id: questionId as Id<"question">,
-  });
+    id: questionId as Id<'question'>
+  })
 
-  const isLoading = question === undefined;
+  const isLoading = question === undefined
 
   const {
     control,
@@ -82,107 +81,98 @@ const EditQuestion = () => {
     watch,
     setValue,
     clearErrors,
-    formState: { isDirty, errors },
-  } = useForm<DataModel["question"]["document"]>({
-    reValidateMode: "onChange",
-  });
+    formState: { isDirty, errors }
+  } = useForm<DataModel['question']['document']>({
+    reValidateMode: 'onChange'
+  })
 
-  const { allowMultipleAnswers, options } = watch();
+  const { allowMultipleAnswers, options } = watch()
   const isOptionsType =
-    question?.type === "multiple-choice" || question?.type === "yes-or-no";
+    question?.type === 'multiple-choice' || question?.type === 'yes-or-no'
 
   // Validate options
   const validateOptions = () => {
-    if (!isOptionsType || !options) return true;
+    if (!isOptionsType || !options) return true
 
     // Check if there are at least 2 options for multiple-choice questions
     if (options.length < 2) {
-      return "At least 2 options are required";
+      return 'At least 2 options are required'
     }
 
     // Check if at least one option is marked as correct
-    const correctOptions = options.filter((option) => option.isCorrect);
+    const correctOptions = options.filter(option => option.isCorrect)
     if (correctOptions.length === 0) {
-      return "At least one option must be marked as correct";
+      return 'At least one option must be marked as correct'
     }
 
     // For multiple-choice with allowMultipleAnswers, not all options should be correct
     if (allowMultipleAnswers && correctOptions.length === options.length) {
-      return "Not all options can be marked as correct in multiple-choice questions";
+      return 'Not all options can be marked as correct in multiple-choice questions'
     }
 
     // Check if all options have text content
     const emptyOptions = options.filter(
-      (option) => !option.text || option.text.trim() === ""
-    );
+      option => !option.text || option.text.trim() === ''
+    )
     if (emptyOptions.length > 0) {
-      return "All options must have text content";
+      return 'All options must have text content'
     }
 
     // Check for duplicate option values
-    const optionTexts = options.map((option) =>
-      option.text?.trim().toLowerCase()
-    );
-    const uniqueOptionTexts = new Set(optionTexts.filter((text) => text)); // Filter out empty strings
-    if (uniqueOptionTexts.size < optionTexts.filter((text) => text).length) {
-      return "All options must have unique values";
+    const optionTexts = options.map(option => option.text?.trim().toLowerCase())
+    const uniqueOptionTexts = new Set(optionTexts.filter(text => text)) // Filter out empty strings
+    if (uniqueOptionTexts.size < optionTexts.filter(text => text).length) {
+      return 'All options must have unique values'
     }
 
-    return true;
-  };
+    return true
+  }
 
   useEffect(() => {
     if (question) {
-      reset(question);
+      reset(question)
     }
-  }, [question, reset]);
+  }, [question, reset])
 
-  const onSubmit = async (data: DataModel["question"]["document"]) => {
-    if (!question?._id) return;
+  const onSubmit = async (data: DataModel['question']['document']) => {
+    if (!question?._id) return
 
     // Validate options
     if (isOptionsType && data.options) {
       // Check if there are at least 2 options for multiple-choice questions
       if (data.options.length < 2) {
-        alert("At least 2 options are required");
-        return;
+        alert('At least 2 options are required')
+        return
       }
 
       // Check if at least one option is marked as correct
-      const correctOptions = data.options.filter((option) => option.isCorrect);
+      const correctOptions = data.options.filter(option => option.isCorrect)
       if (correctOptions.length === 0) {
-        alert("At least one option must be marked as correct");
-        return;
+        alert('At least one option must be marked as correct')
+        return
       }
 
       // For multiple-choice with allowMultipleAnswers, not all options should be correct
-      if (
-        data.allowMultipleAnswers &&
-        correctOptions.length === data.options.length
-      ) {
-        alert(
-          "Not all options can be marked as correct in multiple-choice questions"
-        );
-        return;
+      if (data.allowMultipleAnswers && correctOptions.length === data.options.length) {
+        alert('Not all options can be marked as correct in multiple-choice questions')
+        return
       }
 
       // Check if all options have text content
       const emptyOptions = data.options.filter(
-        (option) => !option.text || option.text.trim() === ""
-      );
+        option => !option.text || option.text.trim() === ''
+      )
       if (emptyOptions.length > 0) {
-        alert("All options must have text content");
-        return;
+        alert('All options must have text content')
+        return
       }
 
       // Check for duplicate option values
-      const optionTexts = data.options.map((option) =>
-        option.text?.trim().toLowerCase()
-      );
-      const uniqueOptionTexts = new Set(optionTexts.filter((text) => text)); // Filter out empty strings
-      if (uniqueOptionTexts.size < optionTexts.filter((text) => text).length) {
-        alert("All options must have unique values");
-        return;
+      const optionTexts = data.options.map(option => option.text?.trim().toLowerCase())
+      const uniqueOptionTexts = new Set(optionTexts.filter(text => text)) // Filter out empty strings
+      if (uniqueOptionTexts.size < optionTexts.filter(text => text).length) {
+        alert('All options must have unique values')
+        return
       }
     }
 
@@ -190,33 +180,33 @@ const EditQuestion = () => {
       id: question._id,
       data: {
         question: data.question,
-        options: data.options,
-      },
-    });
-  };
+        options: data.options
+      }
+    })
+  }
 
   const onBack = () => {
     if (testId) {
       navigate({
-        to: "/app/tests/details",
+        to: '/app/tests/details',
         search: {
-          tabs: "questions",
+          tabs: 'questions',
           testId,
-          selectedSection: selectedSectionId,
-        },
-      });
+          selectedSection: selectedSectionId
+        }
+      })
     } else {
       navigate({
-        to: "/app/questions",
-      });
+        to: '/app/questions'
+      })
     }
-  };
+  }
 
   return (
     <div>
-      <div className="flex flex-row w-full justify-between items-center">
-        <div className="flex flex-row gap-3 items-center">
-          <Button variant={"secondary"} size={"icon-sm"} onClick={onBack}>
+      <div className="flex w-full flex-row items-center justify-between">
+        <div className="flex flex-row items-center gap-3">
+          <Button variant={'secondary'} size={'icon-sm'} onClick={onBack}>
             <ArrowLeft />
           </Button>
           <h1 className="">Question {question?.order}</h1>
@@ -225,9 +215,9 @@ const EditQuestion = () => {
           {isDirty && (
             <Button
               disabled={!isDirty}
-              variant={"outline"}
+              variant={'outline'}
               onClick={() => {
-                reset();
+                reset()
               }}
             >
               Reset
@@ -236,11 +226,11 @@ const EditQuestion = () => {
           {isDirty && testId && selectedSectionId ? (
             <Button
               disabled={!isDirty}
-              variant={isDirty ? "outline-solid" : "secondary"}
-              onClick={handleSubmit((data) => {
+              variant={isDirty ? 'outline-solid' : 'secondary'}
+              onClick={handleSubmit(data => {
                 onSubmit(data).then(() => {
                   onBack()
-                });
+                })
               })}
             >
               Save & Back
@@ -248,9 +238,9 @@ const EditQuestion = () => {
           ) : null}
           <Button
             disabled={!isDirty}
-            variant={isDirty ? "default" : "secondary"}
-            onClick={handleSubmit((data) => {
-              onSubmit(data);
+            variant={isDirty ? 'default' : 'secondary'}
+            onClick={handleSubmit(data => {
+              onSubmit(data)
             })}
           >
             Save
@@ -258,23 +248,23 @@ const EditQuestion = () => {
         </div>
       </div>
 
-      <div className="flex flex-row gap-2 justify-between items-center mt-8">
-        <div className="flex flex-row gap-2 items-center mb-3">
+      <div className="mt-8 flex flex-row items-center justify-between gap-2">
+        <div className="mb-3 flex flex-row items-center gap-2">
           <Controller
             control={control}
             name="type"
             render={({ field }) => (
               <QuestionTypeSelection
                 value={field.value || undefined}
-                onValueChange={(value) => {
-                  field.onChange(value);
+                onValueChange={value => {
+                  field.onChange(value)
 
                   // if the question type is changed, then reset the options with the default options of the new question type
-                  const defaultOptions = getDefaultOptions(value);
+                  const defaultOptions = getDefaultOptions(value)
                   if (defaultOptions) {
-                    setValue("options", defaultOptions);
-                    setValue("allowMultipleAnswers", false);
-                    clearErrors();
+                    setValue('options', defaultOptions)
+                    setValue('allowMultipleAnswers', false)
+                    clearErrors()
                   }
                 }}
               />
@@ -284,43 +274,42 @@ const EditQuestion = () => {
             control={control}
             name="pointValue"
             rules={{
-              validate: (value) => {
-                if (typeof value === "number" && (value == 0 || value > 100)) {
-                  return "Point value must be between 0 and 100";
+              validate: value => {
+                if (typeof value === 'number' && (value == 0 || value > 100)) {
+                  return 'Point value must be between 0 and 100'
                 }
-                return true;
-              },
+                return true
+              }
             }}
             render={({ field }) =>
-              typeof field.value === "number" ? (
-                <div className="flex flex-row gap-2 items-center relative">
-                  <Label className="absolute left-2.5 text-xs text-muted-foreground/80 pt-0.5">
+              typeof field.value === 'number' ? (
+                <div className="relative flex flex-row items-center gap-2">
+                  <Label className="text-muted-foreground/80 absolute left-2.5 pt-0.5 text-xs">
                     Point Value
                   </Label>
                   <Input
                     type="number"
                     className={cn(
-                      "w-28 pl-12 h-7",
-                      errors.pointValue ? "border-destructive" : ""
+                      'h-7 w-28 pl-12',
+                      errors.pointValue ? 'border-destructive' : ''
                     )}
                     min={0}
                     max={100}
                     placeholder="0"
-                    value={field.value === 0 && !field.value ? "" : field.value}
-                    onChange={(e) => {
-                      const value =
-                        e.target.value === "" ? 0 : Number(e.target.value);
-                      field.onChange(value);
+                    value={field.value === 0 && !field.value ? '' : field.value}
+                    onChange={e => {
+                      const value = e.target.value === '' ? 0 : Number(e.target.value)
+                      field.onChange(value)
                     }}
                   />
                   <Button
-                    variant={"ghost"}
-                    size={"icon-xs"}
+                    variant={'ghost'}
+                    size={'icon-xs'}
                     className="absolute right-1"
                     onClick={() => {
-                      setValue("pointValue", undefined, {
-                        shouldDirty: true,
-                      });
+                      setValue('pointValue', undefined, {
+                        shouldDirty: true
+                      })
                     }}
                   >
                     <XIcon className="size-3" />
@@ -329,9 +318,9 @@ const EditQuestion = () => {
               ) : (
                 <Button
                   onClick={() => {
-                    field.onChange(5);
+                    field.onChange(5)
                   }}
-                  variant={"secondary"}
+                  variant={'secondary'}
                   className="hidden"
                 >
                   <PlusIcon />
@@ -341,13 +330,13 @@ const EditQuestion = () => {
             }
           />
           {errors.pointValue && (
-            <span className="text-xs text-destructive">
+            <span className="text-destructive text-xs">
               {errors.pointValue.message}
             </span>
           )}
         </div>
         {question ? (
-          <Pagination referenceId={question?.referenceId as Id<"test">} />
+          <Pagination referenceId={question?.referenceId as Id<'test'>} />
         ) : (
           <TextShimmer>Loading...</TextShimmer>
         )}
@@ -360,37 +349,35 @@ const EditQuestion = () => {
           rules={{
             validate: () => {
               if (questionTextLength < MIN_QUESTION_LENGTH) {
-                return `Question text must be at least ${MIN_QUESTION_LENGTH} characters`;
+                return `Question text must be at least ${MIN_QUESTION_LENGTH} characters`
               }
               if (questionTextLength > MAX_QUESTION_LENGTH) {
-                return `Question text must be less than ${MAX_QUESTION_LENGTH} characters`;
+                return `Question text must be less than ${MAX_QUESTION_LENGTH} characters`
               }
-              return true;
-            },
+              return true
+            }
           }}
           render={({ field }) => (
             <div className="relative">
               <Editor
                 disabled={question === undefined}
                 onContentLengthChange={setQuestionTextLength}
-                value={field.value || ""}
+                value={field.value || ''}
                 onChange={field.onChange}
                 placeholder="Type your question here..."
-                editorClassName={cn(
-                  errors.question ? "border-destructive" : ""
-                )}
+                editorClassName={cn(errors.question ? 'border-destructive' : '')}
                 toolbarClassName={cn(
-                  "sticky top-0",
-                  errors.question ? "border-destructive" : ""
+                  'sticky top-0',
+                  errors.question ? 'border-destructive' : ''
                 )}
               />
-              <p className="absolute bottom-3 right-3 text-xs text-muted-foreground">
+              <p className="text-muted-foreground absolute right-3 bottom-3 text-xs">
                 {questionTextLength} / {MAX_QUESTION_LENGTH}
               </p>
               <span
                 className={cn(
-                  "text-xs text-muted-foreground mt-2",
-                  errors.question ? "text-destructive" : ""
+                  'text-muted-foreground mt-2 text-xs',
+                  errors.question ? 'text-destructive' : ''
                 )}
               >
                 {errors.question ? (
@@ -403,33 +390,32 @@ const EditQuestion = () => {
 
         {isOptionsType && !isLoading ? (
           <div className="mt-8 mb-6 flex flex-row items-center gap-2">
-            <Label className="text-sm text-muted-foreground">
+            <Label className="text-muted-foreground text-sm">
               Select Correct Answer
             </Label>
             <Separator className="flex-1" />
             {options && options?.length > 2 ? (
               <div className="flex flex-row items-center gap-2">
-                <Label className="text-sm text-muted-foreground">
+                <Label className="text-muted-foreground text-sm">
                   Allow Multiple Answers
                 </Label>
                 <Switch
                   checked={allowMultipleAnswers === true}
-                  onCheckedChange={(value) => {
+                  onCheckedChange={value => {
                     if (
                       value === false &&
-                      (options?.filter((option) => option.isCorrect).length ||
-                        0) > 1
+                      (options?.filter(option => option.isCorrect).length || 0) > 1
                     ) {
                       setValue(
-                        "options",
-                        options?.map((option) => ({
+                        'options',
+                        options?.map(option => ({
                           ...option,
-                          isCorrect: false,
+                          isCorrect: false
                         })),
                         { shouldDirty: true }
-                      );
+                      )
                     }
-                    setValue("allowMultipleAnswers", value);
+                    setValue('allowMultipleAnswers', value)
                   }}
                 />
               </div>
@@ -442,20 +428,20 @@ const EditQuestion = () => {
             control={control}
             name="options"
             rules={{
-              validate: validateOptions,
+              validate: validateOptions
             }}
             render={({ field }) => (
               <>
                 <Options
                   value={field.value || []}
-                  onChange={(value) => {
-                    field.onChange(value);
+                  onChange={value => {
+                    field.onChange(value)
                   }}
                   type={question?.type}
                   allowMultipleAnswers={allowMultipleAnswers === true}
                 />
                 {errors.options && (
-                  <span className="text-xs text-destructive mt-2">
+                  <span className="text-destructive mt-2 text-xs">
                     {errors.options.message}
                   </span>
                 )}
@@ -465,59 +451,57 @@ const EditQuestion = () => {
         ) : null}
       </div>
     </div>
-  );
-};
+  )
+}
 
 const Options = ({
   value,
   onChange,
   allowMultipleAnswers,
-  type,
+  type
 }: {
-  value: DataModel["question"]["document"]["options"];
-  onChange: (options: DataModel["question"]["document"]["options"]) => void;
-  allowMultipleAnswers: boolean;
-  type: DataModel["question"]["document"]["type"];
+  value: DataModel['question']['document']['options']
+  onChange: (options: DataModel['question']['document']['options']) => void
+  allowMultipleAnswers: boolean
+  type: DataModel['question']['document']['type']
 }) => {
   const onChangeOption = (
-    option: NonNullable<DataModel["question"]["document"]["options"]>[number]
+    option: NonNullable<DataModel['question']['document']['options']>[number]
   ) => {
-    if (!value) return;
-    onChange(value.map((item) => (item.id === option.id ? option : item)));
-  };
+    if (!value) return
+    onChange(value.map(item => (item.id === option.id ? option : item)))
+  }
 
   // Calculate validation states
-  const correctOptionsCount =
-    value?.filter((option) => option.isCorrect)?.length || 0;
-  const hasNoCorrectOption = correctOptionsCount === 0;
+  const correctOptionsCount = value?.filter(option => option.isCorrect)?.length || 0
+  const hasNoCorrectOption = correctOptionsCount === 0
   const allOptionsCorrect =
-    value && value.length > 0 && correctOptionsCount === value.length;
+    value && value.length > 0 && correctOptionsCount === value.length
   const hasEmptyOptions = value?.some(
-    (option) => !option.text || option.text.trim() === ""
-  );
-  const hasTooFewOptions = value && value.length < 2;
+    option => !option.text || option.text.trim() === ''
+  )
+  const hasTooFewOptions = value && value.length < 2
 
   // Check for duplicate options
   const hasDuplicateOptions = (() => {
-    if (!value) return false;
+    if (!value) return false
     const optionTexts = value
-      .map((option) => option.text?.trim().toLowerCase())
-      .filter((text) => text);
-    const uniqueOptionTexts = new Set(optionTexts);
-    return uniqueOptionTexts.size < optionTexts.length;
-  })();
+      .map(option => option.text?.trim().toLowerCase())
+      .filter(text => text)
+    const uniqueOptionTexts = new Set(optionTexts)
+    return uniqueOptionTexts.size < optionTexts.length
+  })()
 
-  const maxOptions =
-    type === "multiple-choice" ? 5 : type === "yes-or-no" ? 2 : 0;
+  const maxOptions = type === 'multiple-choice' ? 5 : type === 'yes-or-no' ? 2 : 0
 
-  if (!value) return null;
+  if (!value) return null
 
   return (
     <div className="flex flex-col gap-2">
       <Reorder.Group
-        className="flex flex-col gap-2 mt-2 text-sm"
-        onReorder={(newOrder) => {
-          onChange(newOrder);
+        className="mt-2 flex flex-col gap-2 text-sm"
+        onReorder={newOrder => {
+          onChange(newOrder)
         }}
         values={value}
       >
@@ -525,55 +509,54 @@ const Options = ({
           // Check if this option is a duplicate
           const isDuplicate = !!(
             option.text &&
-            option.text.trim() !== "" &&
+            option.text.trim() !== '' &&
             value.some(
-              (o) =>
+              o =>
                 o.id !== option.id &&
                 o.text &&
                 o.text.trim().toLowerCase() === option.text.trim().toLowerCase()
             )
-          );
+          )
 
           return (
             <OptionItem
               option={option}
               index={i}
-              onChange={(option) => {
-                onChangeOption(option);
+              onChange={option => {
+                onChangeOption(option)
               }}
               onClickCorrect={() => {
                 if (!allowMultipleAnswers) {
                   onChange(
-                    value.map((item) => ({
+                    value.map(item => ({
                       ...item,
-                      isCorrect:
-                        item.id === option.id ? !option.isCorrect : false,
+                      isCorrect: item.id === option.id ? !option.isCorrect : false
                     }))
-                  );
+                  )
                 } else {
                   // For multiple-choice, toggle the current option's correctness without affecting others
                   onChange(
-                    value.map((item) =>
+                    value.map(item =>
                       item.id === option.id
                         ? { ...item, isCorrect: !item.isCorrect }
                         : item
                     )
-                  );
+                  )
                 }
               }}
               key={option.id}
               onDelete={() => {
-                onChange(value.filter((item) => item.id !== option.id));
+                onChange(value.filter(item => item.id !== option.id))
               }}
               isDuplicate={isDuplicate}
             />
-          );
+          )
         })}
       </Reorder.Group>
 
       {/* Add Option Button */}
       {value && value.length < maxOptions && (
-        <div className="mt-4 mx-auto">
+        <div className="mx-auto mt-4">
           <Button
             variant="outline"
             className="w-max border-dashed"
@@ -584,10 +567,10 @@ const Options = ({
               if (value.length < maxOptions) {
                 const newOption = {
                   id: nanoid(5),
-                  text: "",
-                  isCorrect: false,
-                };
-                onChange([...value, newOption]);
+                  text: '',
+                  isCorrect: false
+                }
+                onChange([...value, newOption])
               }
             }}
           >
@@ -598,34 +581,33 @@ const Options = ({
 
       {/* Validation warnings */}
       {hasNoCorrectOption && (
-        <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
+        <div className="text-warning-foreground bg-warning mb-2 rounded-md p-2 text-sm">
           At least one option must be marked as correct
         </div>
       )}
       {allowMultipleAnswers && allOptionsCorrect && (
-        <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
-          Not all options should be marked as correct in multiple-choice
-          questions
+        <div className="text-warning-foreground bg-warning mb-2 rounded-md p-2 text-sm">
+          Not all options should be marked as correct in multiple-choice questions
         </div>
       )}
       {hasEmptyOptions && (
-        <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
+        <div className="text-warning-foreground bg-warning mb-2 rounded-md p-2 text-sm">
           All options must have text content
         </div>
       )}
       {hasTooFewOptions && (
-        <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
+        <div className="text-warning-foreground bg-warning mb-2 rounded-md p-2 text-sm">
           At least two options are required
         </div>
       )}
       {hasDuplicateOptions && (
-        <div className="text-sm text-warning-foreground bg-warning p-2 rounded-md mb-2">
+        <div className="text-warning-foreground bg-warning mb-2 rounded-md p-2 text-sm">
           All options must have unique values
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
 const OptionItem = ({
   option,
@@ -633,19 +615,19 @@ const OptionItem = ({
   onChange,
   onClickCorrect,
   onDelete,
-  isDuplicate,
+  isDuplicate
 }: {
-  option: NonNullable<DataModel["question"]["document"]["options"]>[number];
-  index: number;
+  option: NonNullable<DataModel['question']['document']['options']>[number]
+  index: number
   onChange: (
-    options: NonNullable<DataModel["question"]["document"]["options"]>[number]
-  ) => void;
-  onClickCorrect?: () => void;
-  onDelete: () => void;
-  isDuplicate?: boolean;
+    options: NonNullable<DataModel['question']['document']['options']>[number]
+  ) => void
+  onClickCorrect?: () => void
+  onDelete: () => void
+  isDuplicate?: boolean
 }) => {
-  const control = useDragControls();
-  const isEmptyOption = !option.text || option.text.trim() === "";
+  const control = useDragControls()
+  const isEmptyOption = !option.text || option.text.trim() === ''
 
   return (
     <Reorder.Item
@@ -657,9 +639,9 @@ const OptionItem = ({
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
-            size={"icon"}
-            className="select-none mr-2"
-            variant={option.isCorrect ? "success" : "secondary"}
+            size={'icon'}
+            className="mr-2 select-none"
+            variant={option.isCorrect ? 'success' : 'secondary'}
             onClick={onClickCorrect}
           >
             {option.isCorrect ? (
@@ -671,21 +653,21 @@ const OptionItem = ({
         </TooltipTrigger>
         <TooltipContent>
           {option.isCorrect
-            ? "This is the correct answer"
-            : "Click to mark as correct answer"}
+            ? 'This is the correct answer'
+            : 'Click to mark as correct answer'}
         </TooltipContent>
       </Tooltip>
-      <div className="flex-1 flex flex-row items-center">
+      <div className="flex flex-1 flex-row items-center">
         <Input
           placeholder={`Option ${index + 1}`}
           className={cn(
-            "bg-card h-9",
-            isEmptyOption ? "border-destructive" : "",
-            isDuplicate ? "border-amber-500 bg-warning" : ""
+            'bg-card h-9',
+            isEmptyOption ? 'border-destructive' : '',
+            isDuplicate ? 'bg-warning border-amber-500' : ''
           )}
           value={option.text}
-          onChange={(e) => {
-            onChange({ ...option, text: e.target.value });
+          onChange={e => {
+            onChange({ ...option, text: e.target.value })
           }}
         />
       </div>
@@ -693,9 +675,9 @@ const OptionItem = ({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
-              onPointerDown={(e) => control.start(e)}
-              variant={"ghost"}
-              size={"icon"}
+              onPointerDown={e => control.start(e)}
+              variant={'ghost'}
+              size={'icon'}
             >
               <GripVertical className="text-muted-foreground" />
             </Button>
@@ -704,7 +686,7 @@ const OptionItem = ({
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant={"ghost"} size={"icon"} onClick={onDelete}>
+            <Button variant={'ghost'} size={'icon'} onClick={onDelete}>
               <Trash2 className="text-muted-foreground" />
             </Button>
           </TooltipTrigger>
@@ -712,49 +694,49 @@ const OptionItem = ({
         </Tooltip>
       </div>
     </Reorder.Item>
-  );
-};
+  )
+}
 
-export default EditQuestion;
+export default EditQuestion
 
 const Pagination = ({ referenceId }: { referenceId: string }) => {
   const { questionId, selectedSectionId, testId } = useSearch({
-    from: "/(organizer)/app/questions/details",
-  });
-  const navigate = useNavigate();
+    from: '/(organizer)/app/questions/details'
+  })
+  const navigate = useNavigate()
 
   const questions = useQuery(api.organizer.question.getAllByReferenceId, {
-    referenceId,
-  });
+    referenceId
+  })
   const currentQuestion = useMemo(() => {
-    return questions?.find((question) => question._id === questionId);
-  }, [questions, questionId]);
+    return questions?.find(question => question._id === questionId)
+  }, [questions, questionId])
 
   return (
     <div className="flex flex-row items-center gap-2">
       <Button
-        variant={"outline"}
-        size={"icon"}
+        variant={'outline'}
+        size={'icon'}
         disabled={currentQuestion?.order === 1}
         onClick={() => {
-          if (!currentQuestion) return;
-          const previousQuestion = questions?.[currentQuestion?.order - 2];
+          if (!currentQuestion) return
+          const previousQuestion = questions?.[currentQuestion?.order - 2]
           if (previousQuestion) {
             navigate({
-              to: "/app/questions/details",
+              to: '/app/questions/details',
               search: {
                 questionId: previousQuestion._id,
                 selectedSectionId,
-                testId,
-              },
-            });
+                testId
+              }
+            })
           }
         }}
       >
         <ChevronLeft />
       </Button>
       {question && currentQuestion ? (
-        <div className="gap-0.5 flex flex-row items-center text-base select-none">
+        <div className="flex flex-row items-center gap-0.5 text-base select-none">
           {currentQuestion?.order}
           <span className="text-sm">/</span>
           {questions?.length}
@@ -763,26 +745,26 @@ const Pagination = ({ referenceId }: { referenceId: string }) => {
         <Loader2 className="size-4 animate-spin" />
       )}
       <Button
-        variant={"outline"}
-        size={"icon"}
+        variant={'outline'}
+        size={'icon'}
         disabled={currentQuestion?.order === questions?.length}
         onClick={() => {
-          if (!currentQuestion) return;
-          const nextQuestion = questions?.[currentQuestion?.order];
+          if (!currentQuestion) return
+          const nextQuestion = questions?.[currentQuestion?.order]
           if (nextQuestion) {
             navigate({
-              to: "/app/questions/details",
+              to: '/app/questions/details',
               search: {
                 questionId: nextQuestion._id,
                 selectedSectionId,
-                testId,
-              },
-            });
+                testId
+              }
+            })
           }
         }}
       >
         <ChevronRight />
       </Button>
     </div>
-  );
-};
+  )
+}

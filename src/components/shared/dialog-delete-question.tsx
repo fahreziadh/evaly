@@ -1,4 +1,11 @@
-import { Button } from "@/components/ui/button";
+import { api } from '@convex/_generated/api'
+import type { Id } from '@convex/_generated/dataModel'
+import { useMutation } from 'convex/react'
+import { Trash2Icon } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -6,61 +13,55 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
-import { useMutation } from "convex/react";
-import { api } from "@convex/_generated/api";
-import { Trash2Icon } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import type { Id } from "@convex/_generated/dataModel";
+  DialogTrigger
+} from '@/components/ui/dialog'
+
+import { cn } from '@/lib/utils'
 
 const DialogDeleteQuestion = ({
   className,
   disabled = false,
   questionId,
-  onSuccess,
+  onSuccess
 }: {
-  className?: string;
-  disabled?: boolean;
-  questionId: string;
-  onSuccess: () => void;
+  className?: string
+  disabled?: boolean
+  questionId: string
+  onSuccess: () => void
 }) => {
-  const [open, setOpen] = useState(false);
-  const deleteQuestion = useMutation(api.organizer.question.deleteById);
-
+  const [open, setOpen] = useState(false)
+  const deleteQuestion = useMutation(api.organizer.question.deleteById)
 
   const onDeleteQuestion = async () => {
-    toast.promise(deleteQuestion({ id: questionId as Id<"question"> }), {
-      loading: "Deleting question...",
-      success: "Question deleted successfully",
-      error: "Failed to delete question",
-    });
-    onSuccess();
-    setOpen(false);
-  };
+    toast.promise(deleteQuestion({ id: questionId as Id<'question'> }), {
+      loading: 'Deleting question...',
+      success: 'Question deleted successfully',
+      error: 'Failed to delete question'
+    })
+    onSuccess()
+    setOpen(false)
+  }
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           disabled={disabled}
-          size={"icon-xs"}
-          variant={"secondary"}
-          className={cn("text-muted-foreground", className)}
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            setOpen(true);
+          size={'icon-xs'}
+          variant={'secondary'}
+          className={cn('text-muted-foreground', className)}
+          onClick={e => {
+            e.stopPropagation()
+            e.preventDefault()
+            setOpen(true)
           }}
         >
           <Trash2Icon />
         </Button>
       </DialogTrigger>
       <DialogContent
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
+        onClick={e => {
+          e.preventDefault()
+          e.stopPropagation()
         }}
       >
         <DialogHeader>
@@ -71,19 +72,19 @@ const DialogDeleteQuestion = ({
         </DialogHeader>
         <DialogFooter>
           <Button
-            variant={"secondary"}
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpen(false);
+            variant={'secondary'}
+            onClick={e => {
+              e.stopPropagation()
+              setOpen(false)
             }}
           >
             Back
           </Button>
           <Button
-            variant={"destructive"}
-            onClick={(e) => {
-              e.stopPropagation();
-              onDeleteQuestion();
+            variant={'destructive'}
+            onClick={e => {
+              e.stopPropagation()
+              onDeleteQuestion()
             }}
           >
             Delete
@@ -91,7 +92,7 @@ const DialogDeleteQuestion = ({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default DialogDeleteQuestion;
+export default DialogDeleteQuestion

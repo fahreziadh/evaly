@@ -1,14 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Loader2,
-  LockIcon,
-  PencilIcon,
-  Plus,
-  SparklesIcon,
-} from "lucide-react";
-import { useMemo, useState } from "react";
+import { api } from '@convex/_generated/api'
+import type { Id } from '@convex/_generated/dataModel'
+import { useMutation } from 'convex/react'
+import { Loader2, LockIcon, PencilIcon, Plus, SparklesIcon } from 'lucide-react'
+import { useMemo, useState } from 'react'
+
+import { Button } from '@/components/ui/button'
 import {
   Drawer,
   DrawerClose,
@@ -17,63 +13,63 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import { useMutation } from "convex/react";
-import { api } from "@convex/_generated/api";
-import { questionTypes, type QuestionType } from "@/lib/question-type";
-import type { Id } from "@convex/_generated/dataModel";
+  DrawerTrigger
+} from '@/components/ui/drawer'
+import { Label } from '@/components/ui/label'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
+import { type QuestionType, questionTypes } from '@/lib/question-type'
 
 const DialogAddQuestion = ({
   order = 1,
   referenceId,
   triggerButton,
   showTabsOption = true,
-  onSuccessCreateQuestion,
+  onSuccessCreateQuestion
 }: {
-  testId?: string;
-  order?: number;
-  referenceId: string;
-  triggerButton?: React.ReactNode;
-  showTabsOption?: boolean;
-  onSuccessCreateQuestion?: (questionId: Id<"question">) => void;
+  testId?: string
+  order?: number
+  referenceId: string
+  triggerButton?: React.ReactNode
+  showTabsOption?: boolean
+  onSuccessCreateQuestion?: (questionId: Id<'question'>) => void
 }) => {
-  const [selectedType, setSelectedType] = useState<QuestionType>();
-  const [isOpen, setIsOpen] = useState(false);
-  const createTest = useMutation(api.organizer.question.createInitialQuestions);
+  const [selectedType, setSelectedType] = useState<QuestionType>()
+  const [isOpen, setIsOpen] = useState(false)
+  const createTest = useMutation(api.organizer.question.createInitialQuestions)
 
   const handleCreateQuestion = async (type: QuestionType) => {
-    if (!order) return;
-    setSelectedType(type);
+    if (!order) return
+    setSelectedType(type)
     createTest({
       referenceId,
       type,
-      order,
+      order
     })
-      .then((questionId) => {
+      .then(questionId => {
         if (questionId) {
-          onSuccessCreateQuestion?.(questionId);
+          onSuccessCreateQuestion?.(questionId)
         }
       })
       .finally(() => {
-        setSelectedType(undefined);
-        setIsOpen(false);
-      });
-  };
+        setSelectedType(undefined)
+        setIsOpen(false)
+      })
+  }
 
   const groupedQuestionTypes = useMemo(() => {
     return Object.values(questionTypes).reduce(
       (acc, type) => {
-        const group = type.group || "Other"; // Default group if missing
+        const group = type.group || 'Other' // Default group if missing
         if (!acc[group]) {
-          acc[group] = [];
+          acc[group] = []
         }
-        acc[group].push(type);
-        return acc;
+        acc[group].push(type)
+        return acc
       },
       {} as Record<string, (typeof questionTypes)[keyof typeof questionTypes][]>
-    );
-  }, []);
+    )
+  }, [])
 
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
@@ -81,22 +77,20 @@ const DialogAddQuestion = ({
         {triggerButton ? (
           triggerButton
         ) : (
-          <Button variant={"outline"} type="button" className="w-max">
+          <Button variant={'outline'} type="button" className="w-max">
             <Plus /> Add question
           </Button>
         )}
       </DrawerTrigger>
-      <DrawerContent className="sm:max-w-none h-dvh flex flex-col p-0">
+      <DrawerContent className="flex h-dvh flex-col p-0 sm:max-w-none">
         <div className="container max-w-2xl overflow-y-auto pt-[10vh] pb-20">
           <DrawerHeader className="p-0">
             <DrawerTitle>Add Question</DrawerTitle>
-            <DrawerDescription>
-              Select a type of question to add
-            </DrawerDescription>
+            <DrawerDescription>Select a type of question to add</DrawerDescription>
           </DrawerHeader>
           <Tabs defaultValue="manual" className="mt-4 space-y-6">
             {showTabsOption ? (
-              <TabsList className="divide-x gap-0 divide-dashed divide-foreground/5">
+              <TabsList className="divide-foreground/5 gap-0 divide-x divide-dashed">
                 <TabsTrigger value="manual">
                   <PencilIcon className="size-4" /> Manual
                 </TabsTrigger>
@@ -117,15 +111,13 @@ const DialogAddQuestion = ({
                 {Object.entries(groupedQuestionTypes).map(([group, types]) => (
                   <div key={group} className="">
                     <Label className="capitalize">{group}</Label>
-                    <div className="flex flex-wrap gap-3 w-full mt-2">
-                      {types.map((type) => (
+                    <div className="mt-2 flex w-full flex-wrap gap-3">
+                      {types.map(type => (
                         <Button
                           key={type.value}
-                          variant={"outline"}
+                          variant={'outline'}
                           className="group justify-start"
-                          disabled={
-                            type.isHidden || selectedType === type.value
-                          }
+                          disabled={type.isHidden || selectedType === type.value}
                           onClick={() =>
                             handleCreateQuestion(type.value as QuestionType)
                           }
@@ -146,9 +138,7 @@ const DialogAddQuestion = ({
               </div>
             </TabsContent>
 
-            <TabsContent value="import">
-              {/* <ImportQuestions /> */}
-            </TabsContent>
+            <TabsContent value="import">{/* <ImportQuestions /> */}</TabsContent>
 
             <TabsContent value="template">{/* <UseTemplate /> */}</TabsContent>
 
@@ -161,10 +151,10 @@ const DialogAddQuestion = ({
             </TabsContent>
           </Tabs>
         </div>
-        <div className="fixed bottom-0 left-0 right-0 border-t border-dashed bg-background">
-          <DrawerFooter className="sm:justify-start mt-0 py-4 container max-w-2xl">
+        <div className="bg-background fixed right-0 bottom-0 left-0 border-t border-dashed">
+          <DrawerFooter className="container mt-0 max-w-2xl py-4 sm:justify-start">
             <DrawerClose asChild>
-              <Button variant={"outline"} className="w-max">
+              <Button variant={'outline'} className="w-max">
                 Back
               </Button>
             </DrawerClose>
@@ -172,7 +162,7 @@ const DialogAddQuestion = ({
         </div>
       </DrawerContent>
     </Drawer>
-  );
-};
+  )
+}
 
-export default DialogAddQuestion;
+export default DialogAddQuestion

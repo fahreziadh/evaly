@@ -1,54 +1,49 @@
-import { toast } from "sonner";
-import { type EditorState } from "@tiptap/pm/state";
-import { DecorationSet, type EditorView } from "@tiptap/pm/view";
-import { uploadImagePluginKey } from "./plugins/upload-images";
+import { type EditorState } from '@tiptap/pm/state'
+import { DecorationSet, type EditorView } from '@tiptap/pm/view'
+import { toast } from 'sonner'
+
+import { uploadImagePluginKey } from './plugins/upload-images'
 
 const findPlaceholder = (state: EditorState, id: string) => {
-  const decos = uploadImagePluginKey.getState(state) as DecorationSet;
-  const found = decos.find(undefined, undefined, (spec) => spec.id == id);
-  return found.length ? found[0]?.from : null;
-};
+  const decos = uploadImagePluginKey.getState(state) as DecorationSet
+  const found = decos.find(undefined, undefined, spec => spec.id == id)
+  return found.length ? found[0]?.from : null
+}
 
-type UploadFn = (
-  file: File,
-  view: EditorView,
-  pos: number,
-) => Promise<void>;
+type UploadFn = (file: File, view: EditorView, pos: number) => Promise<void>
 
 export const handleImagePaste = (
   view: EditorView,
   event: ClipboardEvent,
-  uploadFn: UploadFn,
+  uploadFn: UploadFn
 ) => {
   if (event.clipboardData?.files.length) {
-    event.preventDefault();
-    const [file] = Array.from(event.clipboardData.files);
-    if (file)
-      uploadFn(file, view, view.state.selection.from);
-    return true;
+    event.preventDefault()
+    const [file] = Array.from(event.clipboardData.files)
+    if (file) uploadFn(file, view, view.state.selection.from)
+    return true
   }
-  return false;
-};
+  return false
+}
 
 export const handleImageDrop = (
   view: EditorView,
   event: DragEvent,
   moved: boolean,
-  uploadFn: UploadFn,
+  uploadFn: UploadFn
 ) => {
   if (!moved && event.dataTransfer?.files.length) {
-    event.preventDefault();
-    const [file] = Array.from(event.dataTransfer.files);
+    event.preventDefault()
+    const [file] = Array.from(event.dataTransfer.files)
     const coordinates = view.posAtCoords({
       left: event.clientX,
-      top: event.clientY,
-    });
-    if (file)
-      uploadFn(file, view, (coordinates?.pos ?? 1) - 1);
-    return true;
+      top: event.clientY
+    })
+    if (file) uploadFn(file, view, (coordinates?.pos ?? 1) - 1)
+    return true
   }
-  return false;
-};
+  return false
+}
 
 // const onUpload = async (defaultFile: File) => {
 
@@ -64,7 +59,6 @@ export const handleImageDrop = (
 //   // );
 
 //   try {
-   
 
 //     // 1. get presigned Upload url
 //     // 2. use upload url using put method
@@ -123,41 +117,39 @@ export const uploadFn = async (
   pos: number,
   onUpload?: (file: File) => Promise<string>
 ): Promise<void> => {
-  if (!file.type.includes("image/") || file.size > 10 * 1024 * 1024) {
-    toast.error("Invalid file. Only images up to 10MB are supported.");
-    return;
+  if (!file.type.includes('image/') || file.size > 10 * 1024 * 1024) {
+    toast.error('Invalid file. Only images up to 10MB are supported.')
+    return
   }
 
-  const id = crypto.randomUUID();
-  const tr = view.state.tr;
-  if (!tr.selection.empty) tr.deleteSelection();
+  const id = crypto.randomUUID()
+  const tr = view.state.tr
+  if (!tr.selection.empty) tr.deleteSelection()
 
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
+  const reader = new FileReader()
+  reader.readAsDataURL(file)
   reader.onload = () => {
-    tr.setMeta(uploadImagePluginKey, { add: { id, pos, src: reader.result } });
-    view.dispatch(tr);
-  };
+    tr.setMeta(uploadImagePluginKey, { add: { id, pos, src: reader.result } })
+    view.dispatch(tr)
+  }
 
   try {
-    const src = await onUpload?.(file);
-    const imagePos = findPlaceholder(view.state, id);
-    if (imagePos == null) return;
+    const src = await onUpload?.(file)
+    const imagePos = findPlaceholder(view.state, id)
+    if (imagePos == null) return
 
-    const node = view.state.schema.nodes.image?.create({ src });
-    if (!node) return;
+    const node = view.state.schema.nodes.image?.create({ src })
+    if (!node) return
 
     view.dispatch(
       view.state.tr
         .replaceWith(imagePos, imagePos, node)
         .setMeta(uploadImagePluginKey, { remove: { id } })
-    );
+    )
   } catch (e) {
-    console.log(e);
+    console.log(e)
     view.dispatch(
-      view.state.tr
-        .delete(pos, pos)
-        .setMeta(uploadImagePluginKey, { remove: { id } })
-    );
+      view.state.tr.delete(pos, pos).setMeta(uploadImagePluginKey, { remove: { id } })
+    )
   }
-};
+}

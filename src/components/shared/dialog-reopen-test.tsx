@@ -1,4 +1,10 @@
-import type { DataModel, Id } from "@convex/_generated/dataModel";
+import { api } from '@convex/_generated/api'
+import type { DataModel, Id } from '@convex/_generated/dataModel'
+import { useMutation } from 'convex/react'
+import { Copy, Loader2 } from 'lucide-react'
+import { useState } from 'react'
+
+import { Button } from '../ui/button'
 import {
   Dialog,
   DialogClose,
@@ -6,29 +12,24 @@ import {
   DialogDescription,
   DialogFooter,
   DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-import { DialogHeader } from "../ui/dialog";
-import { Button } from "../ui/button";
-import { Copy, Loader2 } from "lucide-react";
-import { useMutation } from "convex/react";
-import { api } from "@convex/_generated/api";
-import { useState } from "react";
+  DialogTrigger
+} from '../ui/dialog'
+import { DialogHeader } from '../ui/dialog'
 
 export const DialogReopenTest = ({
   dataTest,
-  onReopened,
+  onReopened
 }: {
-  dataTest?: DataModel["test"]["document"];
-  onReopened: (newTestId: Id<"test">) => void;
+  dataTest?: DataModel['test']['document']
+  onReopened: (newTestId: Id<'test'>) => void
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const duplicateTest = useMutation(api.organizer.test.duplicateTest);
+  const [isLoading, setIsLoading] = useState(false)
+  const duplicateTest = useMutation(api.organizer.test.duplicateTest)
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"secondary"}>
+        <Button variant={'secondary'}>
           <Copy />
           Duplicate test
         </Button>
@@ -37,23 +38,23 @@ export const DialogReopenTest = ({
         <DialogHeader>
           <DialogTitle>You are about to duplicate the test.</DialogTitle>
           <DialogDescription>
-            This action will create a completely new test with the same
-            questions and settings.
+            This action will create a completely new test with the same questions and
+            settings.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant={"outline"}>Cancel</Button>
+            <Button variant={'outline'}>Cancel</Button>
           </DialogClose>
           <Button
-            variant={"default"}
+            variant={'default'}
             onClick={() => {
-              if (dataTest === undefined) return;
-              setIsLoading(true);
-              duplicateTest({ testId: dataTest._id }).then((newTestId) => {
-                onReopened(newTestId);
-                setIsLoading(false);
-              });
+              if (dataTest === undefined) return
+              setIsLoading(true)
+              duplicateTest({ testId: dataTest._id }).then(newTestId => {
+                onReopened(newTestId)
+                setIsLoading(false)
+              })
             }}
             disabled={dataTest === undefined || isLoading}
           >
@@ -65,5 +66,5 @@ export const DialogReopenTest = ({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}

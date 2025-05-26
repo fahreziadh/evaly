@@ -1,8 +1,9 @@
-"use client";
+'use client'
 
-import { cn } from "@/lib/utils";
-import { motion } from "motion/react";
-import React, { useEffect, useId, useRef, useState } from "react";
+import { motion } from 'motion/react'
+import React, { useEffect, useId, useRef, useState } from 'react'
+
+import { cn } from '@/lib/utils'
 
 /**
  *  DotPattern Component Props
@@ -18,16 +19,16 @@ import React, { useEffect, useId, useRef, useState } from "react";
  * @param {boolean} [glow=false] - Whether dots should have a glowing animation effect
  */
 interface DotPatternProps extends React.SVGProps<SVGSVGElement> {
-  width?: number;
-  height?: number;
-  x?: number;
-  y?: number;
-  cx?: number;
-  cy?: number;
-  cr?: number;
-  className?: string;
-  glow?: boolean;
-  [key: string]: unknown;
+  width?: number
+  height?: number
+  x?: number
+  y?: number
+  cx?: number
+  cy?: number
+  cr?: number
+  className?: string
+  glow?: boolean
+  [key: string]: unknown
 }
 
 /**
@@ -72,49 +73,45 @@ export function DotPattern({
   glow = false,
   ...props
 }: DotPatternProps) {
-  const id = useId();
-  const containerRef = useRef<SVGSVGElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const id = useId()
+  const containerRef = useRef<SVGSVGElement>(null)
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
 
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
-        const { width, height } = containerRef.current.getBoundingClientRect();
-        setDimensions({ width, height });
+        const { width, height } = containerRef.current.getBoundingClientRect()
+        setDimensions({ width, height })
       }
-    };
+    }
 
-    updateDimensions();
-    window.addEventListener("resize", updateDimensions);
-    return () => window.removeEventListener("resize", updateDimensions);
-  }, []);
+    updateDimensions()
+    window.addEventListener('resize', updateDimensions)
+    return () => window.removeEventListener('resize', updateDimensions)
+  }, [])
 
   const dots = Array.from(
     {
       length:
-        Math.ceil(dimensions.width / width) *
-        Math.ceil(dimensions.height / height),
+        Math.ceil(dimensions.width / width) * Math.ceil(dimensions.height / height)
     },
     (_, i) => {
-      const col = i % Math.ceil(dimensions.width / width);
-      const row = Math.floor(i / Math.ceil(dimensions.width / width));
+      const col = i % Math.ceil(dimensions.width / width)
+      const row = Math.floor(i / Math.ceil(dimensions.width / width))
       return {
         x: col * width + cx,
         y: row * height + cy,
         delay: Math.random() * 5,
-        duration: Math.random() * 3 + 2,
-      };
-    },
-  );
+        duration: Math.random() * 3 + 2
+      }
+    }
+  )
 
   return (
     <svg
       ref={containerRef}
       aria-hidden="true"
-      className={cn(
-        "pointer-events-none absolute inset-0 h-full w-full",
-        className,
-      )}
+      className={cn('pointer-events-none absolute inset-0 h-full w-full', className)}
       {...props}
     >
       <defs>
@@ -123,20 +120,20 @@ export function DotPattern({
           <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
         </radialGradient>
       </defs>
-      {dots.map((dot) => (
+      {dots.map(dot => (
         <motion.circle
           key={`${dot.x}-${dot.y}`}
           cx={dot.x}
           cy={dot.y}
           r={cr}
-          fill={glow ? `url(#${id}-gradient)` : "currentColor"}
+          fill={glow ? `url(#${id}-gradient)` : 'currentColor'}
           className="text-neutral-400/80"
           initial={glow ? { opacity: 0.4, scale: 1 } : {}}
           animate={
             glow
               ? {
                   opacity: [0.4, 1, 0.4],
-                  scale: [1, 1.5, 1],
+                  scale: [1, 1.5, 1]
                 }
               : {}
           }
@@ -145,14 +142,14 @@ export function DotPattern({
               ? {
                   duration: dot.duration,
                   repeat: Infinity,
-                  repeatType: "reverse",
+                  repeatType: 'reverse',
                   delay: dot.delay,
-                  ease: "easeInOut",
+                  ease: 'easeInOut'
                 }
               : {}
           }
         />
       ))}
     </svg>
-  );
+  )
 }

@@ -1,33 +1,29 @@
-import LoginOrganizerPage from "@/components/pages/login-organizer";
-import OrganizerOnboarding from "@/components/pages/organizer-onboarding";
-import DashboardSidebar from "@/components/shared/dashboard-sidebar/dashboard-sidebar";
-import LoadingScreen from "@/components/shared/loading-screen";
-import { api } from "@convex/_generated/api";
-import { createFileRoute, Outlet } from "@tanstack/react-router";
-import {
-  Unauthenticated,
-  AuthLoading,
-  Authenticated,
-  useQuery,
-} from "convex/react";
+import { api } from '@convex/_generated/api'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
+import { AuthLoading, Authenticated, Unauthenticated, useQuery } from 'convex/react'
 
-export const Route = createFileRoute("/(organizer)/app")({
+import LoginOrganizerPage from '@/components/pages/login-organizer'
+import OrganizerOnboarding from '@/components/pages/organizer-onboarding'
+import DashboardSidebar from '@/components/shared/dashboard-sidebar/dashboard-sidebar'
+import LoadingScreen from '@/components/shared/loading-screen'
+
+export const Route = createFileRoute('/(organizer)/app')({
   component: App,
   head: () => ({
     meta: [
       {
-        title: "Evaly Dashboard",
+        title: 'Evaly Dashboard'
       },
       {
-        name: "description",
-        content: "Evaly - Create and manage your tests",
-      },
-    ],
-  }),
-});
+        name: 'description',
+        content: 'Evaly - Create and manage your tests'
+      }
+    ]
+  })
+})
 
 function App() {
-  const user = useQuery(api.organizer.profile.getProfile);
+  const user = useQuery(api.organizer.profile.getProfile)
   return (
     <>
       <AuthLoading>
@@ -42,7 +38,7 @@ function App() {
         ) : (
           <div className="container flex flex-row gap-10">
             {/* <DashboardNavbar /> */}
-            <DashboardSidebar className="w-[240px] sticky top-0 h-dvh pt-10 pb-5"/>
+            <DashboardSidebar className="sticky top-0 h-dvh w-[240px] pt-10 pb-5" />
             <main className="flex-1 pt-10 pb-5">
               <Outlet />
             </main>
@@ -50,5 +46,5 @@ function App() {
         )}
       </Authenticated>
     </>
-  );
+  )
 }

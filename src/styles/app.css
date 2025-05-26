@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @plugin "tailwindcss-animate";
 @plugin "@tailwindcss/typography";
@@ -98,8 +98,7 @@
 }
 
 @theme inline {
-  
-  --font-sans: "Inter", sans-serif; 
+  --font-sans: 'Inter', sans-serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -150,7 +149,7 @@
 
 @utility container {
   @apply mx-auto px-4;
-  @apply 2xl:max-w-[1400px] max-w-[1300px];
+  @apply max-w-[1300px] 2xl:max-w-[1400px];
 }
 
 a {
@@ -161,8 +160,7 @@ a {
   * {
     @apply border-border outline-ring/50;
     scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--primary) 15%, transparent)
-      transparent;
+    scrollbar-color: color-mix(in srgb, var(--primary) 15%, transparent) transparent;
   }
   body {
     @apply bg-background text-foreground;
@@ -191,15 +189,7 @@ a {
     @apply mt-4 md:mt-6 lg:mt-8;
   }
   .custom-prose {
-    @apply prose prose-base dark:prose-invert prose-neutral
-       prose-li:leading-normal prose-li:m-0  
-       prose-headings:mb-3 prose-headings:mt-0 
-       prose-h1:text-xl prose-h1:mt-8 prose-h1:mb-5
-       prose-h2:text-lg prose-h2:mt-6 prose-h2:mb-3 
-       prose-h3:text-base prose-h3:mt-5 prose-h3:mb-2
-       prose-p:my-6 prose-p:leading-normal prose-p:text-foreground
-       prose-a:text-foreground prose-a:underline-offset-4 prose-a:decoration-1 prose-a:decoration-foreground/30 prose-a:font-medium
-       prose-img:my-2;
+    @apply prose prose-base dark:prose-invert prose-neutral prose-li:leading-normal prose-li:m-0 prose-headings:mb-3 prose-headings:mt-0 prose-h1:text-xl prose-h1:mt-8 prose-h1:mb-5 prose-h2:text-lg prose-h2:mt-6 prose-h2:mb-3 prose-h3:text-base prose-h3:mt-5 prose-h3:mb-2 prose-p:my-6 prose-p:leading-normal prose-p:text-foreground prose-a:text-foreground prose-a:underline-offset-4 prose-a:decoration-1 prose-a:decoration-foreground/30 prose-a:font-medium prose-img:my-2;
   }
 
   .custom-prose :where(h1, h2, h3) {
@@ -246,7 +236,7 @@ a {
       background: var(--code-background);
       border-radius: 0.5rem;
       color: var(--code-foreground);
-      font-family: "Geist_Mono", monospace;
+      font-family: 'Geist_Mono', monospace;
       margin: 1.5rem 0;
       padding: 0.75rem 1rem;
 
@@ -314,8 +304,8 @@ a {
 }
 
 @layer base {
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button {
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }

@@ -7,12 +7,13 @@
  * - Use Convex `auth` to authenticate users rather than passing up a "user"
  * - Check that the user is allowed to be in a given room.
  */
-import { v } from "convex/values";
-import { internalMutation, mutation, query } from "../_generated/server";
-import { internal } from "../_generated/api";
+import { v } from 'convex/values'
 
-const LIST_LIMIT = 200;
-const MARK_AS_GONE_MS = 6_000;
+import { internal } from '../_generated/api'
+import { internalMutation, mutation, query } from '../_generated/server'
+
+const LIST_LIMIT = 200
+const MARK_AS_GONE_MS = 6_000
 
 /**
  * Overwrites the presence data for a given user in a test.
@@ -24,31 +25,31 @@ const MARK_AS_GONE_MS = 6_000;
  * @param participantId - The participant associated with the presence data.
  */
 export const update = mutation({
-  args: { testId: v.id("test"), participantId: v.string(), data: v.any() },
+  args: { testId: v.id('test'), participantId: v.string(), data: v.any() },
   handler: async (ctx, { testId, participantId, data }) => {
     const existing = await ctx.db
-      .query("testPresence")
-      .withIndex("by_test_id_present_particiapnt", (q) =>
-        q.eq("testId", testId).eq("participantId", participantId)
+      .query('testPresence')
+      .withIndex('by_test_id_present_particiapnt', q =>
+        q.eq('testId', testId).eq('participantId', participantId)
       )
-      .unique();
+      .unique()
     if (existing) {
       await ctx.db.patch(existing._id, {
         data,
         present: true,
-        latestJoinedAt: Date.now(),
-      });
+        latestJoinedAt: Date.now()
+      })
     } else {
-      await ctx.db.insert("testPresence", {
+      await ctx.db.insert('testPresence', {
         participantId,
         testId,
         data,
         present: true,
-        latestJoinedAt: Date.now(),
-      });
+        latestJoinedAt: Date.now()
+      })
     }
-  },
-});
+  }
+})
 
 /**
  * Updates the "updated" timestamp for a given user's presence in a room.
@@ -57,67 +58,67 @@ export const update = mutation({
  * @param participantId - The participant associated with the presence data.
  */
 export const heartbeat = mutation({
-  args: { testId: v.id("test"), participantId: v.string() },
+  args: { testId: v.id('test'), participantId: v.string() },
   handler: async (ctx, { testId, participantId }) => {
     const existing = await ctx.db
-      .query("testPresenceHeartbeats")
-      .withIndex("by_participant_test", (q) =>
-        q.eq("participantId", participantId).eq("testId", testId)
+      .query('testPresenceHeartbeats')
+      .withIndex('by_participant_test', q =>
+        q.eq('participantId', participantId).eq('testId', testId)
       )
-      .unique();
+      .unique()
     const existingPresence = await ctx.db
-      .query("testPresence")
-      .withIndex("by_test_id_present_particiapnt", (q) =>
-        q.eq("testId", testId).eq("participantId", participantId)
+      .query('testPresence')
+      .withIndex('by_test_id_present_particiapnt', q =>
+        q.eq('testId', testId).eq('participantId', participantId)
       )
-      .unique();
+      .unique()
 
     const markAsGone = await ctx.scheduler.runAfter(
       MARK_AS_GONE_MS,
       internal.participant.testPresence.markAsGone,
       { testId, participantId }
-    );
+    )
 
     if (existing) {
-      const watchdog = await ctx.db.system.get(existing.markAsGone);
-      if (watchdog && watchdog.state.kind === "pending") {
-        await ctx.scheduler.cancel(watchdog._id);
+      const watchdog = await ctx.db.system.get(existing.markAsGone)
+      if (watchdog && watchdog.state.kind === 'pending') {
+        await ctx.scheduler.cancel(watchdog._id)
       }
       await ctx.db.patch(existing._id, {
-        markAsGone,
-      });
+        markAsGone
+      })
       if (existingPresence?.present === false) {
         await ctx.db.patch(existingPresence._id, {
-          present: true,
-        });
+          present: true
+        })
       }
     } else {
-      await ctx.db.insert("testPresenceHeartbeats", {
+      await ctx.db.insert('testPresenceHeartbeats', {
         participantId,
         testId,
-        markAsGone,
-      });
+        markAsGone
+      })
     }
-  },
-});
+  }
+})
 
 export const markAsGone = internalMutation({
-  args: { testId: v.id("test"), participantId: v.string() },
+  args: { testId: v.id('test'), participantId: v.string() },
   handler: async (ctx, args) => {
     const presence = await ctx.db
-      .query("testPresence")
-      .withIndex("by_test_id_present_particiapnt", (q) =>
-        q.eq("testId", args.testId).eq("participantId", args.participantId)
+      .query('testPresence')
+      .withIndex('by_test_id_present_particiapnt', q =>
+        q.eq('testId', args.testId).eq('participantId', args.participantId)
       )
-      .unique();
+      .unique()
 
     if (!presence || presence.present === false) {
-      return;
+      return
     }
 
-    await ctx.db.patch(presence._id, { present: false });
-  },
-});
+    await ctx.db.patch(presence._id, { present: false })
+  }
+})
 
 /**
  * Lists the presence data for N users in a room, ordered by recent update.
@@ -127,22 +128,22 @@ export const markAsGone = internalMutation({
  * the most recent N.
  */
 export const list = query({
-  args: { testId: v.id("test") },
+  args: { testId: v.id('test') },
   handler: async (ctx, { testId }) => {
     const presence = await ctx.db
-      .query("testPresence")
-      .withIndex("by_test_id_present_join", (q) =>
-        q.eq("testId", testId).eq("present", true)
+      .query('testPresence')
+      .withIndex('by_test_id_present_join', q =>
+        q.eq('testId', testId).eq('present', true)
       )
-      .take(LIST_LIMIT);
+      .take(LIST_LIMIT)
     return presence.map(
       ({ _creationTime, latestJoinedAt, participantId, data, present }) => ({
         created: _creationTime,
         latestJoinedAt,
         participantId,
         data,
-        present,
+        present
       })
-    );
-  },
-});
+    )
+  }
+})

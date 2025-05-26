@@ -1,13 +1,12 @@
-import LoadingScreen from "@/components/shared/loading-screen";
-import { api } from "@convex/_generated/api";
-import type { Id } from "@convex/_generated/dataModel";
-import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
-import { useMutation, useQuery } from "convex/react";
-import NavbarAttempt from "./-components/navbar.attempt";
-import CardQuestion from "./-components/card.question";
-import { Button } from "@/components/ui/button";
-import { ArrowLeftIcon } from "lucide-react";
-import { NotFound } from "@/components/pages/not-found";
+import { api } from '@convex/_generated/api'
+import type { Id } from '@convex/_generated/dataModel'
+import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router'
+import { useMutation, useQuery } from 'convex/react'
+import { ArrowLeftIcon } from 'lucide-react'
+
+import { NotFound } from '@/components/pages/not-found'
+import LoadingScreen from '@/components/shared/loading-screen'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogClose,
@@ -16,23 +15,26 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  DialogTrigger
+} from '@/components/ui/dialog'
 
-export const Route = createFileRoute("/(participant)/s/$testId/$attemptId")({
+import CardQuestion from './-components/card.question'
+import NavbarAttempt from './-components/navbar.attempt'
+
+export const Route = createFileRoute('/(participant)/s/$testId/$attemptId')({
   component: RouteComponent,
-  pendingComponent: LoadingScreen,
-});
+  pendingComponent: LoadingScreen
+})
 
 function RouteComponent() {
-  const user = useQuery(api.participant.profile.getProfile);
+  const user = useQuery(api.participant.profile.getProfile)
 
   if (user === undefined) {
-    return <LoadingScreen />;
+    return <LoadingScreen />
   }
 
   if (user === null) {
-    return notFound();
+    return notFound()
   }
 
   return (
@@ -41,113 +43,111 @@ function RouteComponent() {
       <ListQuestions />
       <FinishTestButton />
     </div>
-  );
+  )
 }
 
 const ListQuestions = () => {
-  const { attemptId, testId } = Route.useParams();
+  const { attemptId, testId } = Route.useParams()
   const testAttempt = useQuery(api.participant.testAttempt.getById, {
-    id: attemptId as Id<"testAttempt">,
-  });
+    id: attemptId as Id<'testAttempt'>
+  })
 
   const answers = useQuery(api.participant.testAttemptAnswer.getByAttemptId, {
-    testAttemptId: attemptId as Id<"testAttempt">,
-  });
+    testAttemptId: attemptId as Id<'testAttempt'>
+  })
 
   if (testAttempt === undefined) {
-    return <LoadingScreen />;
+    return <LoadingScreen />
   }
 
   if (testAttempt === null) {
-    return <NotFound />;
+    return <NotFound />
   }
 
   if (testAttempt.questions.length === 0) {
     return (
-      <div className="container mt-12 flex flex-col gap-12 max-w-[1000px] font-medium text-lg">
+      <div className="container mt-12 flex max-w-[1000px] flex-col gap-12 text-lg font-medium">
         No questions found
       </div>
-    );
+    )
   }
 
   return (
-    <div className="container mt-12 flex flex-col gap-12 max-w-[1000px]">
-      {testAttempt.questions.map((question) => {
+    <div className="container mt-12 flex max-w-[1000px] flex-col gap-12">
+      {testAttempt.questions.map(question => {
         return (
           <CardQuestion
             key={question._id}
             question={question}
-            attemptId={attemptId as Id<"testAttempt">}
-            answers={answers?.find(
-              (answer) => answer.questionId === question._id
-            )}
-            testId={testId as Id<"test">}
+            attemptId={attemptId as Id<'testAttempt'>}
+            answers={answers?.find(answer => answer.questionId === question._id)}
+            testId={testId as Id<'test'>}
           />
-        );
+        )
       })}
     </div>
-  );
-};
+  )
+}
 
 const FinishTestButton = () => {
-  const { attemptId } = Route.useParams();
-  const navigate = useNavigate();
+  const { attemptId } = Route.useParams()
+  const navigate = useNavigate()
   const testAttempt = useQuery(api.participant.testAttempt.getById, {
-    id: attemptId as Id<"testAttempt">,
-  });
+    id: attemptId as Id<'testAttempt'>
+  })
 
   const answers = useQuery(api.participant.testAttemptAnswer.getByAttemptId, {
-    testAttemptId: attemptId as Id<"testAttempt">,
-  });
+    testAttemptId: attemptId as Id<'testAttempt'>
+  })
 
   const finishTest = useMutation(
     api.participant.testAttempt.finish
-  ).withOptimisticUpdate((localStore) => {
+  ).withOptimisticUpdate(localStore => {
     const existingTestAttempt = localStore.getQuery(
       api.participant.testAttempt.getById,
       {
-        id: attemptId as Id<"testAttempt">,
+        id: attemptId as Id<'testAttempt'>
       }
-    );
+    )
 
     if (!existingTestAttempt) {
-      return;
+      return
     }
 
     localStore.setQuery(
       api.participant.testAttempt.getById,
       {
-        id: attemptId as Id<"testAttempt">,
+        id: attemptId as Id<'testAttempt'>
       },
       {
         ...existingTestAttempt,
-        finishedAt: Date.now(),
+        finishedAt: Date.now()
       }
-    );
-  });
+    )
+  })
 
-  const totalQuestions = testAttempt?.questions.length;
-  const answeredQuestions = answers?.length;
-  const isFinished = testAttempt?.finishedAt !== undefined;
+  const totalQuestions = testAttempt?.questions.length
+  const answeredQuestions = answers?.length
+  const isFinished = testAttempt?.finishedAt !== undefined
 
   return (
-    <div className="container max-w-[1000px] mt-14 border-dashed flex flex-col gap-2 border border-primary/30 rounded-md bg-background shadow-xl shadow-primary/5 p-4">
-      <p className="text-sm text-muted-foreground">
+    <div className="border-primary/30 bg-background shadow-primary/5 container mt-14 flex max-w-[1000px] flex-col gap-2 rounded-md border border-dashed p-4 shadow-xl">
+      <p className="text-muted-foreground text-sm">
         {totalQuestions === answeredQuestions
-          ? "You have answered all the questions"
-          : "You have answered " +
+          ? 'You have answered all the questions'
+          : 'You have answered ' +
             answeredQuestions +
-            " out of " +
+            ' out of ' +
             totalQuestions +
-            " questions"}
+            ' questions'}
       </p>
       {isFinished ? (
         <Button
-          variant={"outline"}
+          variant={'outline'}
           onClick={() =>
             navigate({
-              to: "/s/$testId",
-              params: { testId: testAttempt?.testId as string },
+              to: '/s/$testId',
+              params: { testId: testAttempt?.testId as string }
             })
           }
           className="w-max"
@@ -160,42 +160,36 @@ const FinishTestButton = () => {
           <DialogTrigger asChild>
             <Button
               className="w-max px-4"
-              variant={
-                totalQuestions === answeredQuestions ? "default" : "outline"
-              }
+              variant={totalQuestions === answeredQuestions ? 'default' : 'outline'}
             >
               Submit
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>
-                Are you sure you want to submit the test?
-              </DialogTitle>
+              <DialogTitle>Are you sure you want to submit the test?</DialogTitle>
               <DialogDescription>
                 {totalQuestions === answeredQuestions
-                  ? "You have answered all the questions"
-                  : "You have answered " +
+                  ? 'You have answered all the questions'
+                  : 'You have answered ' +
                     answeredQuestions +
-                    " out of " +
+                    ' out of ' +
                     totalQuestions +
-                    " questions"}
+                    ' questions'}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant={"outline"}>Cancel</Button>
+                <Button variant={'outline'}>Cancel</Button>
               </DialogClose>
               <Button
                 onClick={() =>
-                  finishTest({ id: attemptId as Id<"testAttempt"> }).finally(
-                    () => {
-                      navigate({
-                        to: "/s/$testId",
-                        params: { testId: testAttempt?.testId as string },
-                      });
-                    }
-                  )
+                  finishTest({ id: attemptId as Id<'testAttempt'> }).finally(() => {
+                    navigate({
+                      to: '/s/$testId',
+                      params: { testId: testAttempt?.testId as string }
+                    })
+                  })
                 }
               >
                 Yes, submit
@@ -205,5 +199,5 @@ const FinishTestButton = () => {
         </Dialog>
       )}
     </div>
-  );
-};
+  )
+}

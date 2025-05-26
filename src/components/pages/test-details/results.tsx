@@ -1,11 +1,14 @@
-import SectionStats from "./results.section-stats";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ResultSectionSubmission from "./results.section-submission";
-import ResultsSectionSummary from "./results.section-summary";
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useNavigate, useSearch } from '@tanstack/react-router'
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
+import SectionStats from './results.section-stats'
+import ResultSectionSubmission from './results.section-submission'
+import ResultsSectionSummary from './results.section-summary'
+
 const Results = () => {
-  const search = useSearch({ from: "/(organizer)/app/tests/details" });
-  const navigate = useNavigate({ from: "/app/tests/details" });
+  const search = useSearch({ from: '/(organizer)/app/tests/details' })
+  const navigate = useNavigate({ from: '/app/tests/details' })
 
   return (
     <div className="grid grid-cols-6 gap-4">
@@ -15,13 +18,13 @@ const Results = () => {
       <Tabs
         className="col-span-6 mt-4"
         value={search.resultsTab}
-        onValueChange={(value) => {
+        onValueChange={value => {
           navigate({
             search: {
               ...search,
-              resultsTab: value as "submission" | "summary",
-            },
-          });
+              resultsTab: value as 'submission' | 'summary'
+            }
+          })
         }}
       >
         <TabsList className="mb-4">
@@ -46,7 +49,7 @@ const Results = () => {
         </TabsContent>
       </Tabs>
     </div>
-  );
-};
+  )
+}
 
-export default Results;
+export default Results

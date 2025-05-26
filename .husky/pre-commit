@@ -1,13 +1,15 @@
+# THE COMMENTED WILL BE CONFIGURE LATER
+
 echo '🏗️👷 Styling, testing and building your project before committing'
 
-# bun run format
+bun run format
 
 # bun run lint
 
-# bun run format:check
+bun run format:check
 
-# bun run check-types
+# bun run types:check
 
-# bun run build
+bun run build
 
 echo '✅✅✅✅ You win! I am committing this now. ✅✅✅✅'

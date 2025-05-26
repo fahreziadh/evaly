@@ -1,19 +1,20 @@
-import { api } from '@convex/_generated/api';
-import { useQuery, useMutation } from 'convex/react';
-import type { Value } from 'convex/values';
-import { useCallback, useEffect, useState } from 'react';
-import useSingleFlight from './use-single-flight';
-import type { Id } from '@convex/_generated/dataModel';
+import { api } from '@convex/_generated/api'
+import type { Id } from '@convex/_generated/dataModel'
+import { useMutation, useQuery } from 'convex/react'
+import type { Value } from 'convex/values'
+import { useCallback, useEffect, useState } from 'react'
+
+import useSingleFlight from './use-single-flight'
 
 export type PresenceData<D> = {
-  created: number;
+  created: number
   latestJoinedAt: number
-  participantId: string;
-  data: D;
-  present: boolean;
-};
+  participantId: string
+  data: D
+  present: boolean
+}
 
-const HEARTBEAT_PERIOD = 4_000;
+const HEARTBEAT_PERIOD = 4_000
 
 /**
  * usePresence is a React hook for reading & writing presence data.
@@ -43,50 +44,52 @@ const HEARTBEAT_PERIOD = 4_000;
  * 3. function to update this user's data. It will do a shallow merge.
  */
 export const usePresence = <T extends { [key: string]: Value }>(
-  testId: Id<"test">,
+  testId: Id<'test'>,
   participantId: string,
   initialData: T,
   heartbeatPeriod = HEARTBEAT_PERIOD
 ) => {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState(initialData)
   let presence = useQuery(api.participant.testPresence.list, {
-    testId: testId as Id<"test">
-  });
+    testId: testId as Id<'test'>
+  })
 
   if (presence) {
-    presence = presence.filter((p) => p.participantId !== participantId);
+    presence = presence.filter(p => p.participantId !== participantId)
   }
-  
-  const updatePresence = useSingleFlight(useMutation(api.participant.testPresence.update));
-  const heartbeat = useSingleFlight(useMutation(api.participant.testPresence.heartbeat));
+
+  const updatePresence = useSingleFlight(
+    useMutation(api.participant.testPresence.update)
+  )
+  const heartbeat = useSingleFlight(useMutation(api.participant.testPresence.heartbeat))
 
   // Initial update and signal departure when we leave.
   useEffect(() => {
-    void updatePresence({ testId, participantId, data });
-    void heartbeat({ testId, participantId });
-  }, []);
+    void updatePresence({ testId, participantId, data })
+    void heartbeat({ testId, participantId })
+  }, [])
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      void heartbeat({ testId, participantId });
-    }, heartbeatPeriod);
+      void heartbeat({ testId, participantId })
+    }, heartbeatPeriod)
     // Whenever we have any data change, it will get cleared.
-    return () => clearInterval(intervalId);
-  }, [heartbeat, testId, participantId, heartbeatPeriod]);
+    return () => clearInterval(intervalId)
+  }, [heartbeat, testId, participantId, heartbeatPeriod])
 
   // Updates the data, merged with previous data state.
   const updateData = useCallback(
     (patch: Partial<T>) => {
-      setData((prevState) => {
-        const data = { ...prevState, ...patch };
-        void updatePresence({ testId, participantId, data });
-        return data;
-      });
+      setData(prevState => {
+        const data = { ...prevState, ...patch }
+        void updatePresence({ testId, participantId, data })
+        return data
+      })
     },
     [testId, participantId, updatePresence]
-  );
+  )
 
-  return {data, presence, updateData} as const;
-};
+  return { data, presence, updateData } as const
+}
 
-export default usePresence;
+export default usePresence

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/(organizer)/app/settings')({
-  component: RouteComponent,
+  component: RouteComponent
 })
 
 function RouteComponent() {

@@ -1,73 +1,72 @@
-import { NavUser } from "../dashboard-sidebar/nav-user";
-import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
+
+import { cn } from '@/lib/utils'
+
+import { NavUser } from '../dashboard-sidebar/nav-user'
 
 const DashboardNavbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false)
   const pathname = useLocation({
     select(state) {
-      return state.pathname;
-    },
-  });
-  const [activeItem, setActiveItem] = useState("/dashboard");
+      return state.pathname
+    }
+  })
+  const [activeItem, setActiveItem] = useState('/dashboard')
 
   const navItems = [
     {
-      name: "Dashboard",
-      href: "/app",
+      name: 'Dashboard',
+      href: '/app'
     },
     {
-      name: "Questions",
-      href: "/app/questions",
+      name: 'Questions',
+      href: '/app/questions'
     },
     {
-      name: "Participants",
-      href: "/app/participants",
+      name: 'Participants',
+      href: '/app/participants'
     },
     {
-      name: "Settings",
-      href: "/app/settings",
-    },
-  ];
+      name: 'Settings',
+      href: '/app/settings'
+    }
+  ]
 
   useEffect(() => {
     // Set active item based on pathname or keep it as state for demo
     if (pathname) {
       // Special case for /dashboard - only active for /dashboard or /dashboard/test/*
-      if (pathname === "/app" || pathname.startsWith("/app/test")) {
-        setActiveItem("/app");
+      if (pathname === '/app' || pathname.startsWith('/app/test')) {
+        setActiveItem('/app')
       }
       // For other routes, find matching nav items
       else {
         const matchingItem = navItems
-          .filter(
-            (item) => item.href !== "/app" && pathname.startsWith(item.href)
-          )
-          .sort((a, b) => b.href.length - a.href.length)[0];
+          .filter(item => item.href !== '/app' && pathname.startsWith(item.href))
+          .sort((a, b) => b.href.length - a.href.length)[0]
 
         if (matchingItem) {
-          setActiveItem(matchingItem.href);
+          setActiveItem(matchingItem.href)
         }
       }
     }
-  }, [pathname, navItems]);
-
+  }, [pathname, navItems])
 
   useEffect(() => {
-    if (!window) return;
+    if (!window) return
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
+      setIsScrolled(window.scrollY > 10)
+    }
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
   return (
     <div
       className={cn(
-        "h-14 flex flex-row justify-between items-center px-4 md:px-6 sticky top-0 bg-background border-b border-transparent",
-        isScrolled ? "border-border" : ""
+        'bg-background sticky top-0 flex h-14 flex-row items-center justify-between border-b border-transparent px-4 md:px-6',
+        isScrolled ? 'border-border' : ''
       )}
     >
       <div className="flex flex-row items-center gap-2">
@@ -77,12 +76,14 @@ const DashboardNavbar = () => {
           <ChevronsUpDown />
         </Button> */}
 
-        {navItems.map((e) => (
+        {navItems.map(e => (
           <Link to={e.href}>
             <button
               className={cn(
-                "text-[15px] font-medium px-2",
-                activeItem === e.href ? "" : "text-muted-foreground hover:text-foreground"
+                'px-2 text-[15px] font-medium',
+                activeItem === e.href
+                  ? ''
+                  : 'text-muted-foreground hover:text-foreground'
               )}
             >
               {e.name}
@@ -94,7 +95,7 @@ const DashboardNavbar = () => {
         <NavUser />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DashboardNavbar;
+export default DashboardNavbar

@@ -1,131 +1,130 @@
-import { v } from "convex/values";
-import { mutation, query, type QueryCtx } from "../_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
-import { type Id } from "../_generated/dataModel";
+import { getAuthUserId } from '@convex-dev/auth/server'
+import { v } from 'convex/values'
+
+import { type Id } from '../_generated/dataModel'
+import { type QueryCtx, mutation, query } from '../_generated/server'
 
 export const createTest = mutation({
   args: {
-    type: v.union(v.literal("live"), v.literal("self-paced")),
+    type: v.union(v.literal('live'), v.literal('self-paced'))
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
+    const userId = await getAuthUserId(ctx)
     if (!userId) {
-      throw new Error("User not found");
+      throw new Error('User not found')
     }
 
-    const user = await ctx.db.get(userId);
+    const user = await ctx.db.get(userId)
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found')
     }
 
-    const organizationId = user.selectedOrganizationId;
-    const organizerId = user.selectedOrganizerId;
+    const organizationId = user.selectedOrganizationId
+    const organizerId = user.selectedOrganizerId
     if (!organizationId || !organizerId) {
-      throw new Error("Organization or organizer not found");
+      throw new Error('Organization or organizer not found')
     }
 
-    const test = await ctx.db.insert("test", {
-      title: "",
-      access: "public",
+    const test = await ctx.db.insert('test', {
+      title: '',
+      access: 'public',
       createdByOrganizerId: organizerId,
       organizationId,
       isPublished: false,
       showResultImmediately: false,
-      type: args.type,
-    });
+      type: args.type
+    })
 
-    await ctx.db.insert("testSection", {
+    await ctx.db.insert('testSection', {
       order: 1,
       testId: test,
-      title: "",
-    });
+      title: ''
+    })
 
-    return test;
-  },
-});
+    return test
+  }
+})
 
 export const getTests = query({
   args: {},
-  handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx);
+  handler: async ctx => {
+    const userId = await getAuthUserId(ctx)
     if (userId === null) {
-      return [];
+      return []
     }
 
-    const user = await ctx.db.get(userId);
+    const user = await ctx.db.get(userId)
     if (!user) {
-      return [];
+      return []
     }
 
-    const organizationId = user.selectedOrganizationId;
+    const organizationId = user.selectedOrganizationId
     if (!organizationId) {
-      return [];
+      return []
     }
 
     const tests = await ctx.db
-      .query("test")
-      .withIndex("by_organization_id", (q) =>
-        q.eq("organizationId", organizationId)
-      )
-      .filter((q) => q.lte(q.field("deletedAt"), 0))
-      .order("desc")
-      .collect();
+      .query('test')
+      .withIndex('by_organization_id', q => q.eq('organizationId', organizationId))
+      .filter(q => q.lte(q.field('deletedAt'), 0))
+      .order('desc')
+      .collect()
 
-    return tests;
-  },
-});
+    return tests
+  }
+})
 
 export const deleteTest = mutation({
   args: {
-    testId: v.id("test"),
+    testId: v.id('test')
   },
   handler: async (ctx, args) => {
-    const { isOwner } = await checkTestOwnership(ctx, args.testId);
+    const { isOwner } = await checkTestOwnership(ctx, args.testId)
     if (!isOwner) {
-      throw new Error("You are not allowed to delete this test");
+      throw new Error('You are not allowed to delete this test')
     }
 
     await ctx.db.patch(args.testId, {
-      deletedAt: Date.now(),
-    });
-  },
-});
+      deletedAt: Date.now()
+    })
+  }
+})
 
 export const getTestById = query({
   args: {
-    testId: v.id("test"),
+    testId: v.id('test')
   },
   handler: async (ctx, args) => {
-    const { isOwner, test } = await checkTestOwnership(ctx, args.testId);
+    const { isOwner, test } = await checkTestOwnership(ctx, args.testId)
     if (!isOwner) {
-      return null;
+      return null
     }
 
     if (!test) {
-      return null;
+      return null
     }
 
-    return test;
-  },
-});
+    return test
+  }
+})
 
 export const updateTest = mutation({
   args: {
-    testId: v.id("test"),
+    testId: v.id('test'),
     data: v.object({
       title: v.string(),
-      access: v.union(v.literal("public"), v.literal("private")),
+      access: v.union(v.literal('public'), v.literal('private')),
       showResultImmediately: v.boolean(),
       isPublished: v.boolean(),
-      type: v.union(v.literal("live"), v.literal("self-paced")),
+      type: v.union(v.literal('live'), v.literal('self-paced')),
       description: v.optional(v.string()),
-      finishedAt: v.optional(v.number()),
-    }),
+      finishedAt: v.optional(v.number())
+    })
   },
   handler: async (ctx, args) => {
-    const { isOwner } = await checkTestOwnership(ctx, args.testId);
+    const { isOwner } = await checkTestOwnership(ctx, args.testId)
     if (!isOwner) {
-      throw new Error("You are not allowed to update this test");
+      throw new Error('You are not allowed to update this test')
     }
 
     await ctx.db.patch(args.testId, {
@@ -135,28 +134,28 @@ export const updateTest = mutation({
       isPublished: args.data.isPublished,
       type: args.data.type,
       description: args.data.description,
-      finishedAt: args.data.finishedAt,
-    });
-  },
-});
+      finishedAt: args.data.finishedAt
+    })
+  }
+})
 
 export const duplicateTest = mutation({
   args: {
-    testId: v.id("test"),
+    testId: v.id('test')
   },
   handler: async (ctx, args) => {
-    const { isOwner } = await checkTestOwnership(ctx, args.testId);
+    const { isOwner } = await checkTestOwnership(ctx, args.testId)
     if (!isOwner) {
-      throw new Error("You are not allowed to duplicate this test");
+      throw new Error('You are not allowed to duplicate this test')
     }
 
     // Duplicate the test
-    const test = await ctx.db.get(args.testId);
+    const test = await ctx.db.get(args.testId)
     if (!test) {
-      throw new Error("Test not found");
+      throw new Error('Test not found')
     }
 
-    const newTestId = await ctx.db.insert("test", {
+    const newTestId = await ctx.db.insert('test', {
       title: `${test.title} (Copy)`,
       access: test.access,
       createdByOrganizerId: test.createdByOrganizerId,
@@ -164,36 +163,34 @@ export const duplicateTest = mutation({
       isPublished: false,
       showResultImmediately: test.showResultImmediately,
       type: test.type,
-      description: test.description,
-    });
+      description: test.description
+    })
 
     // Duplicate the all test sections
     const testSections = await ctx.db
-      .query("testSection")
-      .withIndex("by_test_id", (q) => q.eq("testId", args.testId))
-      .filter((q) => q.lte(q.field("deletedAt"), 0))
-      .collect();
+      .query('testSection')
+      .withIndex('by_test_id', q => q.eq('testId', args.testId))
+      .filter(q => q.lte(q.field('deletedAt'), 0))
+      .collect()
 
     for (const testSection of testSections) {
-      const newTestSectionId = await ctx.db.insert("testSection", {
+      const newTestSectionId = await ctx.db.insert('testSection', {
         testId: newTestId,
         order: testSection.order,
         title: testSection.title,
         description: testSection.description,
-        duration: testSection.duration,
-      });
+        duration: testSection.duration
+      })
 
       // Duplicate the all test questions
       const testQuestions = await ctx.db
-        .query("question")
-        .withIndex("by_reference_id", (q) =>
-          q.eq("referenceId", testSection._id)
-        )
-        .filter((q) => q.lte(q.field("deletedAt"), 0))
-        .collect();
+        .query('question')
+        .withIndex('by_reference_id', q => q.eq('referenceId', testSection._id))
+        .filter(q => q.lte(q.field('deletedAt'), 0))
+        .collect()
 
       for (const question of testQuestions) {
-        await ctx.db.insert("question", {
+        await ctx.db.insert('question', {
           referenceId: newTestSectionId,
           allowMultipleAnswers: question.allowMultipleAnswers,
           order: question.order,
@@ -201,59 +198,59 @@ export const duplicateTest = mutation({
           pointValue: question.pointValue,
           question: question.question,
           type: question.type,
-          options: question.options,
-        });
+          options: question.options
+        })
       }
     }
 
-    return newTestId;
-  },
-});
+    return newTestId
+  }
+})
 
-export async function checkTestOwnership(ctx: QueryCtx, testId: Id<"test">) {
-  const userId = await getAuthUserId(ctx);
+export async function checkTestOwnership(ctx: QueryCtx, testId: Id<'test'>) {
+  const userId = await getAuthUserId(ctx)
   if (!userId) {
     return {
       isOwner: false,
-      test: null,
-    };
+      test: null
+    }
   }
 
-  const user = await ctx.db.get(userId);
+  const user = await ctx.db.get(userId)
   if (!user) {
     return {
       isOwner: false,
-      test: null,
-    };
+      test: null
+    }
   }
 
   // check if the test is available
-  const test = await ctx.db.get(testId);
+  const test = await ctx.db.get(testId)
   if (!test) {
     return {
       isOwner: false,
-      test: null,
-    };
+      test: null
+    }
   }
 
-  const organizationId = user.selectedOrganizationId;
+  const organizationId = user.selectedOrganizationId
   if (!organizationId) {
     return {
       isOwner: false,
-      test: null,
-    };
+      test: null
+    }
   }
 
   // check if the user is the owner of the test
   if (test.organizationId !== organizationId) {
     return {
       isOwner: false,
-      test: null,
-    };
+      test: null
+    }
   }
 
   return {
     isOwner: true,
-    test,
-  };
+    test
+  }
 }

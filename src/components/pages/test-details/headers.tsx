@@ -21,7 +21,7 @@ import TestSections from "./headers.test-sections";
 import { DialogReopenTest } from "@/components/shared/dialog-reopen-test";
 import DialogDeleteTest from "@/components/shared/dialog-delete-test";
 import { cn } from "@/lib/utils";
-import { testTypeFormatter } from "@/lib/test-type-formatter";
+import { Separator } from "@/components/ui/separator";
 
 const Headers = () => {
   return (
@@ -77,9 +77,6 @@ const FirstSection = () => {
         <Skeleton className="w-24 h-8" />
       ) : (
         <div className="flex flex-row gap-3 items-center">
-          <Badge size="lg" variant={"outline"}>
-            {testTypeFormatter(dataTest?.type)}
-          </Badge>
           {/* Status */}
           <Badge
             size={"lg"}
@@ -97,6 +94,8 @@ const FirstSection = () => {
             ) : null}
             {status}
           </Badge>
+            
+          <Separator orientation="vertical" className="h-4"/>
 
           {/* Copy link to share */}
           {status === "active" ? (

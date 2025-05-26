@@ -8,6 +8,9 @@ yarn.lock
 .vercel
 .output
 .vinxi
+.next
+
+tsconfig.tsbuildinfo
 
 /build/
 /api/

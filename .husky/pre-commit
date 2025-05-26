@@ -1,0 +1,13 @@
+echo '🏗️👷 Styling, testing and building your project before committing'
+
+# bun run format
+
+# bun run lint
+
+# bun run format:check
+
+# bun run check-types
+
+# bun run build
+
+echo '✅✅✅✅ You win! I am committing this now. ✅✅✅✅'

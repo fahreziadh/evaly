@@ -1,31 +1,64 @@
 {
-  "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
+    // Project Configuration, Language & Environment
     "target": "ES2022",
-    "jsx": "react-jsx",
     "module": "ESNext",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
-
-    /* Bundler mode */
     "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "noEmit": true,
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
-    "noEmit": true,
+    "types": ["vite/client"],
 
-    /* Linting */
-    "skipLibCheck": true,
+    // Type Safety - Foundation
     "strict": true,
+    "alwaysStrict": true,
     "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+
+    // Type Safety - Advanced
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "useUnknownInCatchVariables": true,
+    "noImplicitOverride": true,
     "noUncheckedSideEffectImports": true,
+    "allowUnreachableCode": false,
+    // "noImplicitReturns": true,
+
+    // Interoperability
+    "allowJs": true,
+    "checkJs": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+
+    // Build & Performance
+    "skipLibCheck": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // Project Structure
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@convex/*": ["convex/*"]
+      "@convex/*": ["convex/*"],
+      "@/public/*": ["./public/*"]
     },
   },
-  "exclude": ["convex"]
+  "exclude": [
+    "convex",
+    "node_modules",
+    "sst.config.ts",
+    "**/*.spec.ts",
+    "**/*.e2e.ts"
+  ],
+  "include": [
+    "**/*.ts", 
+    "**/*.tsx"
+  ]
 }

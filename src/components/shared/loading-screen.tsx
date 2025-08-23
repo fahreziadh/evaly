@@ -1,17 +1,90 @@
 import { Loader2Icon } from "lucide-react";
 import { motion } from "motion/react";
+import { cn } from "@/lib/utils";
 
-const LoadingScreen = () => {
+interface LoadingScreenProps {
+  message?: string;
+  fullScreen?: boolean;
+  className?: string;
+  size?: "sm" | "md" | "lg";
+}
+
+const LoadingScreen = ({ 
+  message, 
+  fullScreen = true, 
+  className,
+  size = "md" 
+}: LoadingScreenProps) => {
+  const sizeClasses = {
+    sm: "size-6",
+    md: "size-10",
+    lg: "size-16"
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="flex flex-col justify-center items-center h-screen"
+      className={cn(
+        "flex flex-col justify-center items-center gap-4",
+        fullScreen ? "h-screen" : "py-8",
+        className
+      )}
     >
-      <Loader2Icon className="size-10 animate-spin" />
+      <Loader2Icon className={cn("animate-spin", sizeClasses[size])} />
+      {message && (
+        <p className="text-sm text-gray-600 animate-pulse">{message}</p>
+      )}
     </motion.div>
   );
 };
 
 export default LoadingScreen;
+
+// Inline loading spinner for smaller components
+export function LoadingSpinner({ 
+  className, 
+  size = "sm" 
+}: { 
+  className?: string; 
+  size?: "sm" | "md" | "lg";
+}) {
+  const sizeClasses = {
+    sm: "size-4",
+    md: "size-6",
+    lg: "size-8"
+  };
+
+  return (
+    <Loader2Icon 
+      className={cn(
+        "animate-spin",
+        sizeClasses[size],
+        className
+      )} 
+    />
+  );
+}
+
+// Loading overlay for sections
+export function LoadingOverlay({ 
+  visible, 
+  message 
+}: { 
+  visible: boolean; 
+  message?: string;
+}) {
+  if (!visible) return null;
+
+  return (
+    <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
+      <div className="flex flex-col items-center gap-3">
+        <LoadingSpinner size="md" />
+        {message && (
+          <p className="text-sm text-gray-600">{message}</p>
+        )}
+      </div>
+    </div>
+  );
+}

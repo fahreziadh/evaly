@@ -9,6 +9,8 @@ import {
 import { Toaster } from "../components/ui/sonner.tsx";
 import appCss from "../styles/app.css?url";
 import { NotFound } from "@/components/pages/not-found.tsx";
+import { ErrorBoundary } from "@/components/shared/error-boundary.tsx";
+import { GenericError } from "@/components/pages/error-pages.tsx";
 import { QueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils.ts";
 
@@ -41,11 +43,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 );
 
 function RootComponent() {
-
   return (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
+    <ErrorBoundary
+      fallback={<GenericError />}
+      onError={(error, errorInfo) => {
+        // Log to error tracking service in production
+        if (!import.meta.env.DEV) {
+          console.error("Application Error:", error, errorInfo);
+          // You can send to Sentry, LogRocket, etc. here
+        }
+      }}
+    >
+      <RootDocument>
+        <Outlet />
+      </RootDocument>
+    </ErrorBoundary>
   );
 }
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {

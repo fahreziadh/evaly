@@ -1,7 +1,7 @@
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import Headers from "./headers";
 import type { Id } from "@convex/_generated/dataModel";
-import { useQuery } from "convex/react";
+import { useQuery } from "convex-helpers/react/cache";
 import { api } from "@convex/_generated/api";
 import { lazy, Suspense, useEffect } from "react";
 import { QuestionEditorSkeleton, TestResultsSkeleton } from "@/components/ui/skeleton-loaders";

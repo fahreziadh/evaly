@@ -23,8 +23,8 @@ import { Route as organizerAppQuestionsIndexImport } from './routes/(organizer)/
 import { Route as participantSTestIdAttemptIdImport } from './routes/(participant)/s.$testId.$attemptId'
 import { Route as organizerAppTestsDetailsImport } from './routes/(organizer)/app/tests/details'
 import { Route as organizerAppQuestionsTemplateImport } from './routes/(organizer)/app/questions/template'
+import { Route as organizerAppQuestionsLibraryImport } from './routes/(organizer)/app/questions/library'
 import { Route as organizerAppQuestionsDetailsImport } from './routes/(organizer)/app/questions/details'
-import { Route as organizerAppQuestionsBankImport } from './routes/(organizer)/app/questions/bank'
 
 // Create/Update Routes
 
@@ -103,18 +103,19 @@ const organizerAppQuestionsTemplateRoute =
     getParentRoute: () => organizerAppRouteRoute,
   } as any)
 
+const organizerAppQuestionsLibraryRoute =
+  organizerAppQuestionsLibraryImport.update({
+    id: '/questions/library',
+    path: '/questions/library',
+    getParentRoute: () => organizerAppRouteRoute,
+  } as any)
+
 const organizerAppQuestionsDetailsRoute =
   organizerAppQuestionsDetailsImport.update({
     id: '/questions/details',
     path: '/questions/details',
     getParentRoute: () => organizerAppRouteRoute,
   } as any)
-
-const organizerAppQuestionsBankRoute = organizerAppQuestionsBankImport.update({
-  id: '/questions/bank',
-  path: '/questions/bank',
-  getParentRoute: () => organizerAppRouteRoute,
-} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -162,18 +163,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof organizerAppIndexImport
       parentRoute: typeof organizerAppRouteImport
     }
-    '/(organizer)/app/questions/bank': {
-      id: '/(organizer)/app/questions/bank'
-      path: '/questions/bank'
-      fullPath: '/app/questions/bank'
-      preLoaderRoute: typeof organizerAppQuestionsBankImport
-      parentRoute: typeof organizerAppRouteImport
-    }
     '/(organizer)/app/questions/details': {
       id: '/(organizer)/app/questions/details'
       path: '/questions/details'
       fullPath: '/app/questions/details'
       preLoaderRoute: typeof organizerAppQuestionsDetailsImport
+      parentRoute: typeof organizerAppRouteImport
+    }
+    '/(organizer)/app/questions/library': {
+      id: '/(organizer)/app/questions/library'
+      path: '/questions/library'
+      fullPath: '/app/questions/library'
+      preLoaderRoute: typeof organizerAppQuestionsLibraryImport
       parentRoute: typeof organizerAppRouteImport
     }
     '/(organizer)/app/questions/template': {
@@ -240,8 +241,8 @@ interface organizerAppRouteRouteChildren {
   organizerAppParticipantsRoute: typeof organizerAppParticipantsRoute
   organizerAppSettingsRoute: typeof organizerAppSettingsRoute
   organizerAppIndexRoute: typeof organizerAppIndexRoute
-  organizerAppQuestionsBankRoute: typeof organizerAppQuestionsBankRoute
   organizerAppQuestionsDetailsRoute: typeof organizerAppQuestionsDetailsRoute
+  organizerAppQuestionsLibraryRoute: typeof organizerAppQuestionsLibraryRoute
   organizerAppQuestionsTemplateRoute: typeof organizerAppQuestionsTemplateRoute
   organizerAppTestsDetailsRoute: typeof organizerAppTestsDetailsRoute
   organizerAppQuestionsIndexRoute: typeof organizerAppQuestionsIndexRoute
@@ -252,8 +253,8 @@ const organizerAppRouteRouteChildren: organizerAppRouteRouteChildren = {
   organizerAppParticipantsRoute: organizerAppParticipantsRoute,
   organizerAppSettingsRoute: organizerAppSettingsRoute,
   organizerAppIndexRoute: organizerAppIndexRoute,
-  organizerAppQuestionsBankRoute: organizerAppQuestionsBankRoute,
   organizerAppQuestionsDetailsRoute: organizerAppQuestionsDetailsRoute,
+  organizerAppQuestionsLibraryRoute: organizerAppQuestionsLibraryRoute,
   organizerAppQuestionsTemplateRoute: organizerAppQuestionsTemplateRoute,
   organizerAppTestsDetailsRoute: organizerAppTestsDetailsRoute,
   organizerAppQuestionsIndexRoute: organizerAppQuestionsIndexRoute,
@@ -269,8 +270,8 @@ export interface FileRoutesByFullPath {
   '/app/participants': typeof organizerAppParticipantsRoute
   '/app/settings': typeof organizerAppSettingsRoute
   '/app/': typeof organizerAppIndexRoute
-  '/app/questions/bank': typeof organizerAppQuestionsBankRoute
   '/app/questions/details': typeof organizerAppQuestionsDetailsRoute
+  '/app/questions/library': typeof organizerAppQuestionsLibraryRoute
   '/app/questions/template': typeof organizerAppQuestionsTemplateRoute
   '/app/tests/details': typeof organizerAppTestsDetailsRoute
   '/s/$testId/$attemptId': typeof participantSTestIdAttemptIdRoute
@@ -284,8 +285,8 @@ export interface FileRoutesByTo {
   '/app/participants': typeof organizerAppParticipantsRoute
   '/app/settings': typeof organizerAppSettingsRoute
   '/app': typeof organizerAppIndexRoute
-  '/app/questions/bank': typeof organizerAppQuestionsBankRoute
   '/app/questions/details': typeof organizerAppQuestionsDetailsRoute
+  '/app/questions/library': typeof organizerAppQuestionsLibraryRoute
   '/app/questions/template': typeof organizerAppQuestionsTemplateRoute
   '/app/tests/details': typeof organizerAppTestsDetailsRoute
   '/s/$testId/$attemptId': typeof participantSTestIdAttemptIdRoute
@@ -302,8 +303,8 @@ export interface FileRoutesById {
   '/(organizer)/app/participants': typeof organizerAppParticipantsRoute
   '/(organizer)/app/settings': typeof organizerAppSettingsRoute
   '/(organizer)/app/': typeof organizerAppIndexRoute
-  '/(organizer)/app/questions/bank': typeof organizerAppQuestionsBankRoute
   '/(organizer)/app/questions/details': typeof organizerAppQuestionsDetailsRoute
+  '/(organizer)/app/questions/library': typeof organizerAppQuestionsLibraryRoute
   '/(organizer)/app/questions/template': typeof organizerAppQuestionsTemplateRoute
   '/(organizer)/app/tests/details': typeof organizerAppTestsDetailsRoute
   '/(participant)/s/$testId/$attemptId': typeof participantSTestIdAttemptIdRoute
@@ -320,8 +321,8 @@ export interface FileRouteTypes {
     | '/app/participants'
     | '/app/settings'
     | '/app/'
-    | '/app/questions/bank'
     | '/app/questions/details'
+    | '/app/questions/library'
     | '/app/questions/template'
     | '/app/tests/details'
     | '/s/$testId/$attemptId'
@@ -334,8 +335,8 @@ export interface FileRouteTypes {
     | '/app/participants'
     | '/app/settings'
     | '/app'
-    | '/app/questions/bank'
     | '/app/questions/details'
+    | '/app/questions/library'
     | '/app/questions/template'
     | '/app/tests/details'
     | '/s/$testId/$attemptId'
@@ -350,8 +351,8 @@ export interface FileRouteTypes {
     | '/(organizer)/app/participants'
     | '/(organizer)/app/settings'
     | '/(organizer)/app/'
-    | '/(organizer)/app/questions/bank'
     | '/(organizer)/app/questions/details'
+    | '/(organizer)/app/questions/library'
     | '/(organizer)/app/questions/template'
     | '/(organizer)/app/tests/details'
     | '/(participant)/s/$testId/$attemptId'
@@ -404,8 +405,8 @@ export const routeTree = rootRoute
         "/(organizer)/app/participants",
         "/(organizer)/app/settings",
         "/(organizer)/app/",
-        "/(organizer)/app/questions/bank",
         "/(organizer)/app/questions/details",
+        "/(organizer)/app/questions/library",
         "/(organizer)/app/questions/template",
         "/(organizer)/app/tests/details",
         "/(organizer)/app/questions/",
@@ -424,12 +425,12 @@ export const routeTree = rootRoute
       "filePath": "(organizer)/app/index.tsx",
       "parent": "/(organizer)/app"
     },
-    "/(organizer)/app/questions/bank": {
-      "filePath": "(organizer)/app/questions/bank.tsx",
-      "parent": "/(organizer)/app"
-    },
     "/(organizer)/app/questions/details": {
       "filePath": "(organizer)/app/questions/details.tsx",
+      "parent": "/(organizer)/app"
+    },
+    "/(organizer)/app/questions/library": {
+      "filePath": "(organizer)/app/questions/library.tsx",
       "parent": "/(organizer)/app"
     },
     "/(organizer)/app/questions/template": {

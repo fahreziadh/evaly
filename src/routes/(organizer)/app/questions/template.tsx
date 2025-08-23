@@ -120,7 +120,7 @@ function RouteComponent() {
       
       // Navigate to the new library
       navigate({
-        to: "/app/questions/bank",
+        to: "/app/questions/library",
         search: { bankId },
       });
     } catch (error) {

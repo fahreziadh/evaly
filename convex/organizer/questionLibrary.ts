@@ -25,7 +25,7 @@ export const create = mutation({
       throw new Error("Organization not found");
     }
 
-    const questionBankId = await ctx.db.insert("questionBank", {
+    const questionLibraryId = await ctx.db.insert("questionLibrary", {
       title: args.title,
       description: args.description,
       organizationId,
@@ -35,7 +35,7 @@ export const create = mutation({
       createdBy: userId,
     });
 
-    return questionBankId;
+    return questionLibraryId;
   },
 });
 
@@ -55,8 +55,8 @@ export const getAll = query({
       throw new Error("Organization not found");
     }
 
-    const questionBanks = await ctx.db
-      .query("questionBank")
+    const questionLibraries = await ctx.db
+      .query("questionLibrary")
       .withIndex("by_organization_id", (q) =>
         q.eq("organizationId", organizationId)
       )
@@ -68,37 +68,37 @@ export const getAll = query({
       )
       .collect();
     
-    return questionBanks.sort((a, b) => b._creationTime - a._creationTime);
+    return questionLibraries.sort((a, b) => b._creationTime - a._creationTime);
   },
 });
 
 export const getById = query({
   args: {
-    id: v.id("questionBank"),
+    id: v.id("questionLibrary"),
   },
   handler: async (ctx, args) => {
-    const { isOwner } = await checkQuestionBankOwnership(ctx, args.id);
+    const { isOwner } = await checkQuestionLibraryOwnership(ctx, args.id);
     if (!isOwner) {
       return undefined;
     }
-    const questionBank = await ctx.db.get(args.id);
-    if (!questionBank || questionBank.deletedAt) {
+    const questionLibrary = await ctx.db.get(args.id);
+    if (!questionLibrary || questionLibrary.deletedAt) {
       return undefined;
     }
-    return questionBank;
+    return questionLibrary;
   },
 });
 
 export const update = mutation({
   args: {
-    id: v.id("questionBank"),
+    id: v.id("questionLibrary"),
     title: v.optional(v.string()),
     description: v.optional(v.string()),
     tags: v.optional(v.array(v.string())),
     isPublic: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
-    const { isOwner } = await checkQuestionBankOwnership(ctx, args.id);
+    const { isOwner } = await checkQuestionLibraryOwnership(ctx, args.id);
     if (!isOwner) {
       throw new Error("Unauthorized");
     }
@@ -116,20 +116,20 @@ export const update = mutation({
 
 export const deleteById = mutation({
   args: {
-    id: v.id("questionBank"),
+    id: v.id("questionLibrary"),
   },
   handler: async (ctx, args) => {
-    const { isOwner } = await checkQuestionBankOwnership(ctx, args.id);
+    const { isOwner } = await checkQuestionLibraryOwnership(ctx, args.id);
     if (!isOwner) {
       throw new Error("Unauthorized");
     }
 
-    // Soft delete the question bank
+    // Soft delete the question library
     await ctx.db.patch(args.id, {
       deletedAt: Date.now(),
     });
 
-    // Also soft delete all questions in this bank
+    // Also soft delete all questions in this library
     const questions = await ctx.db
       .query("question")
       .withIndex("by_reference_id", (q) =>
@@ -153,13 +153,13 @@ export const deleteById = mutation({
   },
 });
 
-// Get questions for a specific question bank
+// Get questions for a specific question library
 export const getQuestions = query({
   args: {
-    questionBankId: v.id("questionBank"),
+    questionLibraryId: v.id("questionLibrary"),
   },
   handler: async (ctx, args) => {
-    const { isOwner } = await checkQuestionBankOwnership(ctx, args.questionBankId);
+    const { isOwner } = await checkQuestionLibraryOwnership(ctx, args.questionLibraryId);
     if (!isOwner) {
       return [];
     }
@@ -167,7 +167,7 @@ export const getQuestions = query({
     const questions = await ctx.db
       .query("question")
       .withIndex("by_reference_id", (q) =>
-        q.eq("referenceId", args.questionBankId)
+        q.eq("referenceId", args.questionLibraryId)
       )
       .filter((q) => 
         q.or(
@@ -181,10 +181,10 @@ export const getQuestions = query({
   },
 });
 
-// Add question to question bank
+// Add question to question library
 export const addQuestion = mutation({
   args: {
-    questionBankId: v.id("questionBank"),
+    questionLibraryId: v.id("questionLibrary"),
     type: v.union(
       v.literal("multiple-choice"),
       v.literal("yes-or-no"),
@@ -200,7 +200,7 @@ export const addQuestion = mutation({
     question: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const { isOwner } = await checkQuestionBankOwnership(ctx, args.questionBankId);
+    const { isOwner } = await checkQuestionLibraryOwnership(ctx, args.questionLibraryId);
     if (!isOwner) {
       throw new Error("Unauthorized");
     }
@@ -213,7 +213,7 @@ export const addQuestion = mutation({
     const existingQuestions = await ctx.db
       .query("question")
       .withIndex("by_reference_id", (q) =>
-        q.eq("referenceId", args.questionBankId)
+        q.eq("referenceId", args.questionLibraryId)
       )
       .filter((q) => 
         q.or(
@@ -244,15 +244,15 @@ export const addQuestion = mutation({
     const questionId = await ctx.db.insert("question", {
       type: args.type,
       question: args.question || "<p></p>",
-      referenceId: args.questionBankId,
+      referenceId: args.questionLibraryId,
       organizationId,
       order: nextOrder,
       options,
       allowMultipleAnswers: false,
     });
 
-    // Update question count in the bank
-    await ctx.db.patch(args.questionBankId, {
+    // Update question count in the library
+    await ctx.db.patch(args.questionLibraryId, {
       questionCount: existingQuestions.length + 1,
     });
 
@@ -260,16 +260,16 @@ export const addQuestion = mutation({
   },
 });
 
-// Duplicate questions from question bank to test section
+// Duplicate questions from question library to test section
 export const duplicateQuestionsToSection = mutation({
   args: {
-    questionBankId: v.id("questionBank"),
+    questionLibraryId: v.id("questionLibrary"),
     testSectionId: v.id("testSection"),
     questionIds: v.optional(v.array(v.id("question"))), // if empty, duplicate all questions
     startingOrder: v.optional(v.number()), // where to insert in the section
   },
   handler: async (ctx, args) => {
-    const { isOwner } = await checkQuestionBankOwnership(ctx, args.questionBankId);
+    const { isOwner } = await checkQuestionLibraryOwnership(ctx, args.questionLibraryId);
     if (!isOwner) {
       throw new Error("Unauthorized");
     }
@@ -289,11 +289,11 @@ export const duplicateQuestionsToSection = mutation({
         .filter(q => q && !q.deletedAt)
         .sort((a, b) => a!.order - b!.order);
     } else {
-      // Duplicate all questions in the bank
+      // Duplicate all questions in the library
       questionsToDuplicate = await ctx.db
         .query("question")
         .withIndex("by_reference_id", (q) =>
-          q.eq("referenceId", args.questionBankId)
+          q.eq("referenceId", args.questionLibraryId)
         )
         .filter((q) => 
           q.or(
@@ -348,7 +348,7 @@ export const duplicateQuestionsToSection = mutation({
         type: sourceQuestion.type,
         question: sourceQuestion.question,
         referenceId: args.testSectionId,
-        originalReferenceId: args.questionBankId, // Keep track of original bank
+        originalReferenceId: args.questionLibraryId, // Keep track of original library
         organizationId,
         order: startOrder + i,
         options: sourceQuestion.options,
@@ -363,21 +363,21 @@ export const duplicateQuestionsToSection = mutation({
   },
 });
 
-async function checkQuestionBankOwnership(
+async function checkQuestionLibraryOwnership(
   ctx: QueryCtx,
-  questionBankId: Id<"questionBank">
+  questionLibraryId: Id<"questionLibrary">
 ) {
   const userId = await getAuthUserId(ctx);
   if (!userId) {
-    return { isOwner: false, questionBank: undefined };
+    return { isOwner: false, questionLibrary: undefined };
   }
 
   const user = await ctx.db.get(userId);
   if (!user) {
-    return { isOwner: false, questionBank: undefined };
+    return { isOwner: false, questionLibrary: undefined };
   }
 
-  const questionBank = await ctx.db.get(questionBankId);
-  const isOwner = questionBank?.organizationId === user.selectedOrganizationId;
-  return { isOwner, questionBank };
+  const questionLibrary = await ctx.db.get(questionLibraryId);
+  const isOwner = questionLibrary?.organizationId === user.selectedOrganizationId;
+  return { isOwner, questionLibrary };
 }

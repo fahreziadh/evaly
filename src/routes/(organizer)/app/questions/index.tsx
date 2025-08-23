@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { PlusCircle, WandSparkles, FolderOpen, Trash2, Edit, Package } from "lucide-react";
-import { useQuery, useMutation } from "convex/react";
+import { PlusCircle, WandSparkles, FolderOpen, Trash2, Package } from "lucide-react";
+import { useMutation } from "convex/react";
+import { useQuery } from "convex-helpers/react/cache";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
 import LoadingScreen from "@/components/shared/loading-screen";
@@ -101,7 +102,7 @@ function RouteComponent() {
                   key={bank._id} 
                   className="hover:border-primary/30 group relative cursor-pointer transition-colors"
                   onClick={() => {
-                    navigate({ to: "/app/questions/bank", search: { bankId: bank._id } });
+                    navigate({ to: "/app/questions/library", search: { bankId: bank._id } });
                   }}
                 >
                   <CardHeader className="pb-3">

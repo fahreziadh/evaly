@@ -5,7 +5,7 @@ import { organization } from "./schemas/organization";
 import { organizer } from "./schemas/organizer";
 import { test } from "./schemas/test";
 import { question } from "./schemas/question";
-import { questionBank } from "./schemas/questionBank";
+import { questionLibrary } from "./schemas/questionLibrary";
 import { testSection } from "./schemas/testSection";
 import { whistlist } from "./schemas/whistlist";
 import { testAttempt, testAttemptAnswer } from "./schemas/testAttempt";
@@ -18,7 +18,7 @@ export default defineSchema({
   test,
   testSection,
   question,
-  questionBank,
+  questionLibrary,
   whistlist,
   testAttempt,
   testAttemptAnswer,

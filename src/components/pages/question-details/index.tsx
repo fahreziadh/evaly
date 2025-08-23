@@ -28,7 +28,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type { DataModel, Id } from "@convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
+import { useQuery } from "convex-helpers/react/cache";
 import { api } from "@convex/_generated/api";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import { Editor } from "@/components/shared/editor/editor";
@@ -208,7 +209,7 @@ const EditQuestion = () => {
       });
     } else if (bankId) {
       navigate({
-        to: "/app/questions/bank",
+        to: "/app/questions/library",
         search: { bankId },
       });
     } else {

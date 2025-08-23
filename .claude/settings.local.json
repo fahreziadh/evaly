@@ -8,7 +8,22 @@
       "Bash(bun run:*)",
       "WebFetch(domain:github.com)",
       "Read(//Users/fahreziadh/work/evaly/src/routes/(organizer)/app/**)",
-      "Read(//Users/fahreziadh/work/evaly/src/routes/(organizer)/app/**)"
+      "Read(//Users/fahreziadh/work/evaly/src/routes/(organizer)/app/**)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Read(//Users/fahreziadh/work/evaly/src/routes/(organizer)/app/questions/**)",
+      "Read(//Users/fahreziadh/work/evaly/src/routes/(organizer)/app/**)",
+      "Read(//Users/fahreziadh/work/evaly/src/routes/(organizer)/app/questions/**)",
+      "Read(//Users/fahreziadh/work/evaly/src/routes/(organizer)/app/**)",
+      "Bash(cat:*)",
+      "Bash(sed:*)",
+      "Read(//Users/fahreziadh/work/evaly/**)",
+      "Bash(find:*)",
+      "Bash(for file in ./src/components/pages/test-details/{index,questions,settings,headers,share,results.section-stats,results.section-summary,headers.test-sections}.tsx)",
+      "Bash(do)",
+      "Bash(done)",
+      "Bash(ls:*)",
+      "Bash(head:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []

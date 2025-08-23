@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Trash2, Plus, Settings } from "lucide-react";
-import { useQuery, useMutation } from "convex/react";
+import { useMutation } from "convex/react";
+import { useQuery } from "convex-helpers/react/cache";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
 import LoadingScreen from "@/components/shared/loading-screen";
@@ -22,7 +23,7 @@ const searchSchema = z.object({
   bankId: z.string(),
 });
 
-export const Route = createFileRoute("/(organizer)/app/questions/bank")({
+export const Route = createFileRoute("/(organizer)/app/questions/library")({
   component: RouteComponent,
   validateSearch: (search) => searchSchema.parse(search),
 });
@@ -210,7 +211,7 @@ function RouteComponent() {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Library Info */}
-        <Card className="lg:col-span-1">
+        <Card className="lg:col-span-1 lg:self-start lg:sticky lg:top-4 shadow-sm border-border/50">
           <CardHeader>
             <CardTitle className="text-base">Library Information</CardTitle>
           </CardHeader>

@@ -7,7 +7,7 @@ import {
   DropdownMenu,
   DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { useQuery } from "convex/react";
+import { useQuery } from "convex-helpers/react/cache";
 import { api } from "@convex/_generated/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useIsMobile } from "@/hooks/use-mobile";

@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/dialog";
 import { api } from "@convex/_generated/api";
 import type { DataModel } from "@convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
+import { useQuery } from "convex-helpers/react/cache";
 import { LockIcon, TriangleAlert } from "lucide-react";
 import { useMemo, useState } from "react";
 

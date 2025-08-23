@@ -3,8 +3,8 @@ import { v } from "convex/values";
 
 export const question = defineTable({
   question: v.string(),
-  referenceId: v.string(), // points to testSectionId or questionBankId
-  originalReferenceId: v.optional(v.string()), // original questionBankId when duplicated from bank to section
+  referenceId: v.string(), // points to testSectionId or questionLibraryId
+  originalReferenceId: v.optional(v.string()), // original questionLibraryId when duplicated from library to section
   organizationId: v.id("organization"),
   order: v.number(),
   type: v.union(

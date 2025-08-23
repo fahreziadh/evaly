@@ -4,7 +4,7 @@ import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
 import NumberFlow, { NumberFlowGroup } from "@number-flow/react";
 import { useSearch } from "@tanstack/react-router";
-import { useQuery } from "convex/react";
+import { useQuery } from "convex-helpers/react/cache";
 import { useMemo } from "react";
 
 const SectionStats = ({ className }: { className?: string }) => {

@@ -2,6 +2,7 @@ import LoginOrganizerPage from "@/components/pages/login-organizer";
 import OrganizerOnboarding from "@/components/pages/organizer-onboarding";
 import DashboardSidebar from "@/components/shared/dashboard-sidebar/dashboard-sidebar";
 import LoadingScreen from "@/components/shared/loading-screen";
+import { DashboardNotFound } from "@/components/pages/dashboard-not-found";
 import { api } from "@convex/_generated/api";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import {
@@ -13,6 +14,7 @@ import {
 
 export const Route = createFileRoute("/(organizer)/app")({
   component: App,
+  notFoundComponent: DashboardNotFound,
   head: () => ({
     meta: [
       {

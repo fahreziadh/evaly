@@ -24,7 +24,8 @@
       "Bash(ls:*)",
       "Bash(head:*)",
       "Bash(git checkout:*)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": [],
     "ask": []

@@ -21,20 +21,20 @@ export const Route = createFileRoute("/(organizer)/app/questions/")({
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const questionBanks = useQuery(api.organizer.questionBank.getAll);
-  const deleteQuestionBank = useMutation(api.organizer.questionBank.deleteById);
-  const [deletingBankId, setDeletingBankId] = useState<string | null>(null);
+  const questionLibraries = useQuery(api.organizer.questionLibrary.getAll);
+  const deleteQuestionLibrary = useMutation(api.organizer.questionLibrary.deleteById);
+  const [deletingLibraryId, setDeletingLibraryId] = useState<string | null>(null);
 
-  const handleDeleteQuestionBank = async (bankId: string) => {
+  const handleDeleteQuestionLibrary = async (libraryId: string) => {
     if (confirm("Are you sure you want to delete this question library? All questions in this library will also be deleted.")) {
       try {
-        setDeletingBankId(bankId);
-        await deleteQuestionBank({ id: bankId as Id<"questionBank"> });
+        setDeletingLibraryId(libraryId);
+        await deleteQuestionLibrary({ id: libraryId as Id<"questionLibrary"> });
       } catch (error) {
         console.error("Failed to delete question library:", error);
         alert("Failed to delete question library. Please try again.");
       } finally {
-        setDeletingBankId(null);
+        setDeletingLibraryId(null);
       }
     }
   };
@@ -44,7 +44,7 @@ function RouteComponent() {
     return tags.slice(0, 3).join(", ") + (tags.length > 3 ? "..." : "");
   };
 
-  if (questionBanks === undefined) {
+  if (questionLibraries === undefined) {
     return <LoadingScreen />;
   }
 
@@ -54,7 +54,7 @@ function RouteComponent() {
         <div className="flex flex-col">
           <h1 className="dashboard-title">Question Libraries</h1>
           <h2 className="dashboard-description">
-            Organize your questions into reusable libraries ({questionBanks.length})
+            Organize your questions into reusable libraries ({questionLibraries.length})
           </h2>
         </div>
         <div className="flex flex-row gap-2">
@@ -73,13 +73,13 @@ function RouteComponent() {
       <div className="dashboard-margin">
         <Tabs defaultValue="all">
           <TabsList>
-            <TabsTrigger value="all">All Libraries ({questionBanks.length})</TabsTrigger>
+            <TabsTrigger value="all">All Libraries ({questionLibraries.length})</TabsTrigger>
             <TabsTrigger value="public" disabled>Public Libraries</TabsTrigger>
             <TabsTrigger value="ai-generated" disabled>AI Generated</TabsTrigger>
           </TabsList>
         </Tabs>
         <div className="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {questionBanks.length === 0 ? (
+          {questionLibraries.length === 0 ? (
             <Card className="col-span-full p-8 text-center">
               <Package className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
               <h3 className="text-lg font-medium mb-2">No question libraries yet</h3>
@@ -96,13 +96,13 @@ function RouteComponent() {
               </Button>
             </Card>
           ) : (
-            questionBanks.map((bank) => {
+            questionLibraries.map((library) => {
               return (
                 <Card 
-                  key={bank._id} 
+                  key={library._id} 
                   className="hover:border-primary/30 group relative cursor-pointer transition-colors"
                   onClick={() => {
-                    navigate({ to: "/app/questions/library", search: { bankId: bank._id } });
+                    navigate({ to: "/app/questions/library", search: { bankId: library._id } });
                   }}
                 >
                   <CardHeader className="pb-3">
@@ -110,13 +110,13 @@ function RouteComponent() {
                       <div className="flex-1">
                         <CardTitle className="text-lg flex items-center gap-2">
                           <FolderOpen className="h-5 w-5 text-primary" />
-                          {bank.title}
+                          {library.title}
                         </CardTitle>
-                        {bank.description && (
+                        {library.description && (
                           <p className="text-sm text-muted-foreground mt-1">
-                            {bank.description.length > 80 
-                              ? bank.description.substring(0, 80) + "..." 
-                              : bank.description}
+                            {library.description.length > 80 
+                              ? library.description.substring(0, 80) + "..." 
+                              : library.description}
                           </p>
                         )}
                       </div>
@@ -127,9 +127,9 @@ function RouteComponent() {
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            handleDeleteQuestionBank(bank._id);
+                            handleDeleteQuestionLibrary(library._id);
                           }}
-                          disabled={deletingBankId === bank._id}
+                          disabled={deletingLibraryId === library._id}
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
@@ -139,20 +139,20 @@ function RouteComponent() {
                   <CardContent>
                     <div className="flex flex-wrap gap-2 mb-3">
                       <Badge variant="secondary">
-                        {bank.questionCount} questions
+                        {library.questionCount} questions
                       </Badge>
-                      {bank.isPublic && (
+                      {library.isPublic && (
                         <Badge variant="outline">Public</Badge>
                       )}
-                      {formatTags(bank.tags || []) && (
+                      {formatTags(library.tags || []) && (
                         <Badge variant="outline">
-                          {formatTags(bank.tags || [])}
+                          {formatTags(library.tags || [])}
                         </Badge>
                       )}
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-xs text-muted-foreground">
-                        Created {dayjs(bank._creationTime).fromNow()}
+                        Created {dayjs(library._creationTime).fromNow()}
                       </span>
                     </div>
                   </CardContent>

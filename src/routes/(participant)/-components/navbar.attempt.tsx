@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { AccountDropdown } from "./navbar.lobby";
 import { useParams } from "@tanstack/react-router";
-import { useQuery } from "convex/react";
+import { useQuery } from "convex-helpers/react/cache";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
 import {

@@ -1,5 +1,6 @@
 import { api } from '@convex/_generated/api';
-import { useQuery, useMutation } from 'convex/react';
+import { useMutation } from 'convex/react';
+import { useQuery } from 'convex-helpers/react/cache';
 import type { Value } from 'convex/values';
 import { useCallback, useEffect, useState } from 'react';
 import useSingleFlight from './use-single-flight';

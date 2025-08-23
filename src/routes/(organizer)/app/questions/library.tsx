@@ -32,15 +32,15 @@ function RouteComponent() {
   const navigate = useNavigate();
   const { bankId } = Route.useSearch();
   
-  const questionBank = useQuery(api.organizer.questionBank.getById, {
-    id: bankId as Id<"questionBank">,
+  const questionLibrary = useQuery(api.organizer.questionLibrary.getById, {
+    id: bankId as Id<"questionLibrary">,
   });
   
-  const questions = useQuery(api.organizer.questionBank.getQuestions, {
-    questionBankId: bankId as Id<"questionBank">,
+  const questions = useQuery(api.organizer.questionLibrary.getQuestions, {
+    questionLibraryId: bankId as Id<"questionLibrary">,
   });
 
-  const addQuestion = useMutation(api.organizer.questionBank.addQuestion);
+  const addQuestion = useMutation(api.organizer.questionLibrary.addQuestion);
   const deleteQuestion = useMutation(api.organizer.question.deleteById);
   
   const [isEditing, setIsEditing] = useState(false);
@@ -48,14 +48,14 @@ function RouteComponent() {
   const [editedDescription, setEditedDescription] = useState("");
   const [deletingQuestionId, setDeletingQuestionId] = useState<string | null>(null);
 
-  const updateQuestionBank = useMutation(api.organizer.questionBank.update);
+  const updateQuestionLibrary = useMutation(api.organizer.questionLibrary.update);
 
   const handleSaveEdit = async () => {
-    if (!questionBank) return;
+    if (!questionLibrary) return;
     
     try {
-      await updateQuestionBank({
-        id: questionBank._id,
+      await updateQuestionLibrary({
+        id: questionLibrary._id,
         title: editedTitle,
         description: editedDescription,
       });
@@ -67,9 +67,9 @@ function RouteComponent() {
   };
 
   const handleCancelEdit = () => {
-    if (questionBank) {
-      setEditedTitle(questionBank.title);
-      setEditedDescription(questionBank.description || "");
+    if (questionLibrary) {
+      setEditedTitle(questionLibrary.title);
+      setEditedDescription(questionLibrary.description || "");
     }
     setIsEditing(false);
   };
@@ -77,7 +77,7 @@ function RouteComponent() {
   const handleAddQuestion = async (type: any) => {
     try {
       const questionId = await addQuestion({
-        questionBankId: bankId as Id<"questionBank">,
+        questionLibraryId: bankId as Id<"questionLibrary">,
         type,
       });
       
@@ -128,11 +128,11 @@ function RouteComponent() {
     return div.textContent || div.innerText || "";
   };
 
-  if (questionBank === undefined || questions === undefined) {
+  if (questionLibrary === undefined || questions === undefined) {
     return <LoadingScreen />;
   }
 
-  if (!questionBank) {
+  if (!questionLibrary) {
     return (
       <div className="text-center py-8">
         <h2 className="text-xl font-semibold mb-2">Question Library Not Found</h2>
@@ -183,9 +183,9 @@ function RouteComponent() {
             </div>
           ) : (
             <>
-              <h1 className="dashboard-title">{questionBank.title}</h1>
-              {questionBank.description && (
-                <p className="dashboard-description">{questionBank.description}</p>
+              <h1 className="dashboard-title">{questionLibrary.title}</h1>
+              {questionLibrary.description && (
+                <p className="dashboard-description">{questionLibrary.description}</p>
               )}
             </>
           )}
@@ -194,8 +194,8 @@ function RouteComponent() {
           <Button
             variant="outline"
             onClick={() => {
-              setEditedTitle(questionBank.title);
-              setEditedDescription(questionBank.description || "");
+              setEditedTitle(questionLibrary.title);
+              setEditedDescription(questionLibrary.description || "");
               setIsEditing(true);
             }}
           >
@@ -224,16 +224,16 @@ function RouteComponent() {
             <div>
               <Label className="text-sm font-medium">Created</Label>
               <p className="text-sm text-muted-foreground">
-                {dayjs(questionBank._creationTime).fromNow()}
+                {dayjs(questionLibrary._creationTime).fromNow()}
               </p>
             </div>
-            {questionBank.tags && questionBank.tags.length > 0 && (
+            {questionLibrary.tags && questionLibrary.tags.length > 0 && (
               <>
                 <Separator />
                 <div>
                   <Label className="text-sm font-medium">Tags</Label>
                   <div className="flex flex-wrap gap-1 mt-1">
-                    {questionBank.tags.map((tag, index) => (
+                    {questionLibrary.tags.map((tag, index) => (
                       <Badge key={index} variant="outline" className="text-xs">
                         {tag}
                       </Badge>

@@ -98,7 +98,7 @@ const questionTemplates: QuestionTemplate[] = [
 function RouteComponent() {
   const navigate = useNavigate();
   const { mode } = Route.useSearch();
-  const createQuestionBank = useMutation(api.organizer.questionBank.create);
+  const createQuestionLibrary = useMutation(api.organizer.questionLibrary.create);
   const createQuestion = useMutation(api.organizer.question.create);
   const [creatingType, setCreatingType] = useState<QuestionType | null>(null);
   const [isCreatingBank, setIsCreatingBank] = useState(false);
@@ -113,7 +113,7 @@ function RouteComponent() {
 
     try {
       setIsCreatingBank(true);
-      const bankId = await createQuestionBank({
+      const bankId = await createQuestionLibrary({
         title: bankTitle,
         description: bankDescription || undefined,
       });

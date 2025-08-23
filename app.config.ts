@@ -13,10 +13,4 @@ export default defineConfig({
       }),
     ],
   },
-  server: {
-    preset: "aws-lambda",
-    awsLambda: {
-      streaming: true
-    }
-  }
 });

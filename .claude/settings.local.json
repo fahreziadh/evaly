@@ -23,7 +23,8 @@
       "Bash(done)",
       "Bash(ls:*)",
       "Bash(head:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(rg:*)"
     ],
     "deny": [],
     "ask": []

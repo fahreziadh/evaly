@@ -4,7 +4,8 @@ import type { Id } from "@convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import { lazy, Suspense, useEffect } from "react";
-import { TextShimmer } from "@/components/ui/text-shimmer";
+import { QuestionEditorSkeleton, TestResultsSkeleton } from "@/components/ui/skeleton-loaders";
+import { ContentPlaceholder } from "@/components/ui/loading-states";
 import Settings from "./settings";
 import Share from "./share";
 import { useNavigate, useSearch } from "@tanstack/react-router";
@@ -63,30 +64,21 @@ export default function TestsDetails() {
       <div className="mt-2">
         <TabsContent value="questions">
           {selectedSection ? (
-            <Suspense
-              fallback={
-                <TextShimmer className="w-full h-full">
-                  Loading section...
-                </TextShimmer>
-              }
-            >
+            <Suspense fallback={<QuestionEditorSkeleton />}>
               <Questions
                 selectedSectionId={selectedSection as Id<"testSection">}
                 testId={testId as Id<"test">}
               />
             </Suspense>
           ) : (
-            <TextShimmer className="w-full h-full">
-              Loading section...
-            </TextShimmer>
+            <ContentPlaceholder 
+              title="Loading section..." 
+              description="Please wait while we load the questions"
+            />
           )}
         </TabsContent>
         <TabsContent value="results">
-          <Suspense
-            fallback={
-              <TextShimmer className="w-full h-full">Loading results...</TextShimmer>
-            }
-          >
+          <Suspense fallback={<TestResultsSkeleton />}>
             <Results />
           </Suspense>
         </TabsContent>

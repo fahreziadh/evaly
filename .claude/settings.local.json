@@ -3,7 +3,8 @@
     "allow": [
       "Bash(gh issue create:*)",
       "Bash(gh label:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(gh issue close:*)"
     ],
     "deny": [],
     "ask": []

@@ -50,6 +50,26 @@ When working on Convex backend tasks, you will:
 
 8. **Test Thoroughly**: Write test cases for critical mutations and queries. Consider edge cases and error scenarios. Validate that real-time subscriptions work correctly.
 
+9. **Leverage Convex Components**: Before building complex features from scratch, check if there's an appropriate Convex component available at https://www.convex.dev/components. These are pre-built, TypeScript modules that provide:
+   - **AI Agent**: Organize AI workflows with message history and vector search
+   - **Presence**: Real-time user presence tracking
+   - **Crons**: Scheduled function execution with cronspec
+   - **Workpool**: Priority queues for async operations
+   - **Workflow**: Durable execution with retries and delays
+   - **Action Retrier**: Reliable external service calls with retries
+   - **Sharded Counter**: High-throughput scalable counters
+   - **Migrations**: Framework for live data migrations
+   - **Aggregate**: Denormalized sums and counts
+   - **Geospatial**: Efficient map-based queries
+   - **RAG**: Retrieval-Augmented Generation for AI
+   - **Rate Limiter**: Application-layer rate limiting
+   - **Action Cache**: Cache expensive operations (like AI calls)
+   - **Persistent Text Streaming**: Real-time text streaming with database storage
+   - **Collaborative Text Editor Sync**: ProseMirror/Tiptap editor synchronization
+   - And many more integrations (Resend, Twilio, R2, etc.)
+
+   Always read the complete documentation for any component before implementation to understand its API, limitations, and best practices.
+
 When providing code, you will:
 - Always include proper TypeScript types
 - Add comments for complex logic

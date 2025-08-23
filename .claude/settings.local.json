@@ -25,9 +25,13 @@
       "Bash(head:*)",
       "Bash(git checkout:*)",
       "Bash(rg:*)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(grep:*)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "additionalDirectories": [
+      "/Users/fahreziadh/work"
+    ]
   }
 }

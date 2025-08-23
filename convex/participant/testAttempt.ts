@@ -134,8 +134,65 @@ export const finish = mutation({
       throw new ConvexError("Unauthorized");
     }
 
-    return await ctx.db.patch(args.id, {
+    // Update the test attempt as finished
+    await ctx.db.patch(args.id, {
       finishedAt: Date.now(),
     });
+
+    // Automatically calculate scores for completed attempts
+    try {
+      // Get all questions for this test section
+      const questions = await ctx.db
+        .query("question")
+        .withIndex("by_reference_id", (q) => q.eq("referenceId", testAttempt.testSectionId))
+        .filter((q) => q.lte(q.field("deletedAt"), 0))
+        .collect();
+
+      // Get all answers for this test attempt
+      const answers = await ctx.db
+        .query("testAttemptAnswer")
+        .withIndex("by_attempt", (q) => q.eq("testAttemptId", args.id))
+        .filter((q) => q.lte(q.field("deletedAt"), 0))
+        .collect();
+
+      // Calculate score for each question and update answer correctness
+      for (const question of questions) {
+        const answer = answers.find(a => a.questionId === question._id);
+        if (!answer) continue;
+
+        let isCorrect = false;
+
+        // Handle different question types
+        if (question.type === "multiple-choice" || question.type === "yes-or-no") {
+          if (question.options && answer.answerOptions) {
+            // Get correct option IDs
+            const correctOptionIds = question.options
+              .filter(opt => opt.isCorrect)
+              .map(opt => opt.id);
+
+            // Check if answer matches exactly (for single-answer questions)
+            if (!question.allowMultipleAnswers) {
+              isCorrect = correctOptionIds.length === answer.answerOptions.length &&
+                         correctOptionIds.every(id => answer.answerOptions!.includes(id));
+            } else {
+              // For multiple-answer questions, require all correct answers selected
+              isCorrect = correctOptionIds.length === answer.answerOptions.length &&
+                         correctOptionIds.every(id => answer.answerOptions!.includes(id)) &&
+                         answer.answerOptions.every(id => correctOptionIds.includes(id));
+            }
+          }
+        }
+
+        // Update the answer with correctness
+        await ctx.db.patch(answer._id, {
+          isCorrect,
+        });
+      }
+    } catch (error) {
+      // Log error but don't fail the finish operation
+      console.error("Failed to calculate scores:", error);
+    }
+
+    return args.id;
   },
 });

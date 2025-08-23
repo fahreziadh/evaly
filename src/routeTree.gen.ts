@@ -20,6 +20,7 @@ import { Route as organizerAppParticipantsImport } from './routes/(organizer)/ap
 import { Route as participantSTestIdIndexImport } from './routes/(participant)/s.$testId.index'
 import { Route as organizerAppTestsIndexImport } from './routes/(organizer)/app/tests/index'
 import { Route as organizerAppQuestionsIndexImport } from './routes/(organizer)/app/questions/index'
+import { Route as participantSTestIdResultsImport } from './routes/(participant)/s.$testId.results'
 import { Route as participantSTestIdAttemptIdImport } from './routes/(participant)/s.$testId.$attemptId'
 import { Route as organizerAppTestsDetailsImport } from './routes/(organizer)/app/tests/details'
 import { Route as organizerAppQuestionsTemplateImport } from './routes/(organizer)/app/questions/template'
@@ -82,6 +83,12 @@ const organizerAppQuestionsIndexRoute = organizerAppQuestionsIndexImport.update(
     getParentRoute: () => organizerAppRouteRoute,
   } as any,
 )
+
+const participantSTestIdResultsRoute = participantSTestIdResultsImport.update({
+  id: '/s/$testId/results',
+  path: '/s/$testId/results',
+  getParentRoute: () => participantRouteRoute,
+} as any)
 
 const participantSTestIdAttemptIdRoute =
   participantSTestIdAttemptIdImport.update({
@@ -198,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof participantSTestIdAttemptIdImport
       parentRoute: typeof participantRouteImport
     }
+    '/(participant)/s/$testId/results': {
+      id: '/(participant)/s/$testId/results'
+      path: '/s/$testId/results'
+      fullPath: '/s/$testId/results'
+      preLoaderRoute: typeof participantSTestIdResultsImport
+      parentRoute: typeof participantRouteImport
+    }
     '/(organizer)/app/questions/': {
       id: '/(organizer)/app/questions/'
       path: '/questions'
@@ -226,11 +240,13 @@ declare module '@tanstack/react-router' {
 
 interface participantRouteRouteChildren {
   participantSTestIdAttemptIdRoute: typeof participantSTestIdAttemptIdRoute
+  participantSTestIdResultsRoute: typeof participantSTestIdResultsRoute
   participantSTestIdIndexRoute: typeof participantSTestIdIndexRoute
 }
 
 const participantRouteRouteChildren: participantRouteRouteChildren = {
   participantSTestIdAttemptIdRoute: participantSTestIdAttemptIdRoute,
+  participantSTestIdResultsRoute: participantSTestIdResultsRoute,
   participantSTestIdIndexRoute: participantSTestIdIndexRoute,
 }
 
@@ -275,6 +291,7 @@ export interface FileRoutesByFullPath {
   '/app/questions/template': typeof organizerAppQuestionsTemplateRoute
   '/app/tests/details': typeof organizerAppTestsDetailsRoute
   '/s/$testId/$attemptId': typeof participantSTestIdAttemptIdRoute
+  '/s/$testId/results': typeof participantSTestIdResultsRoute
   '/app/questions': typeof organizerAppQuestionsIndexRoute
   '/app/tests': typeof organizerAppTestsIndexRoute
   '/s/$testId': typeof participantSTestIdIndexRoute
@@ -290,6 +307,7 @@ export interface FileRoutesByTo {
   '/app/questions/template': typeof organizerAppQuestionsTemplateRoute
   '/app/tests/details': typeof organizerAppTestsDetailsRoute
   '/s/$testId/$attemptId': typeof participantSTestIdAttemptIdRoute
+  '/s/$testId/results': typeof participantSTestIdResultsRoute
   '/app/questions': typeof organizerAppQuestionsIndexRoute
   '/app/tests': typeof organizerAppTestsIndexRoute
   '/s/$testId': typeof participantSTestIdIndexRoute
@@ -308,6 +326,7 @@ export interface FileRoutesById {
   '/(organizer)/app/questions/template': typeof organizerAppQuestionsTemplateRoute
   '/(organizer)/app/tests/details': typeof organizerAppTestsDetailsRoute
   '/(participant)/s/$testId/$attemptId': typeof participantSTestIdAttemptIdRoute
+  '/(participant)/s/$testId/results': typeof participantSTestIdResultsRoute
   '/(organizer)/app/questions/': typeof organizerAppQuestionsIndexRoute
   '/(organizer)/app/tests/': typeof organizerAppTestsIndexRoute
   '/(participant)/s/$testId/': typeof participantSTestIdIndexRoute
@@ -326,6 +345,7 @@ export interface FileRouteTypes {
     | '/app/questions/template'
     | '/app/tests/details'
     | '/s/$testId/$attemptId'
+    | '/s/$testId/results'
     | '/app/questions'
     | '/app/tests'
     | '/s/$testId'
@@ -340,6 +360,7 @@ export interface FileRouteTypes {
     | '/app/questions/template'
     | '/app/tests/details'
     | '/s/$testId/$attemptId'
+    | '/s/$testId/results'
     | '/app/questions'
     | '/app/tests'
     | '/s/$testId'
@@ -356,6 +377,7 @@ export interface FileRouteTypes {
     | '/(organizer)/app/questions/template'
     | '/(organizer)/app/tests/details'
     | '/(participant)/s/$testId/$attemptId'
+    | '/(participant)/s/$testId/results'
     | '/(organizer)/app/questions/'
     | '/(organizer)/app/tests/'
     | '/(participant)/s/$testId/'
@@ -396,6 +418,7 @@ export const routeTree = rootRoute
       "filePath": "(participant)/route.tsx",
       "children": [
         "/(participant)/s/$testId/$attemptId",
+        "/(participant)/s/$testId/results",
         "/(participant)/s/$testId/"
       ]
     },
@@ -443,6 +466,10 @@ export const routeTree = rootRoute
     },
     "/(participant)/s/$testId/$attemptId": {
       "filePath": "(participant)/s.$testId.$attemptId.tsx",
+      "parent": "/(participant)"
+    },
+    "/(participant)/s/$testId/results": {
+      "filePath": "(participant)/s.$testId.results.tsx",
       "parent": "/(participant)"
     },
     "/(organizer)/app/questions/": {

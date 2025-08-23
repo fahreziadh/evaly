@@ -26,7 +26,8 @@
       "Bash(git checkout:*)",
       "Bash(rg:*)",
       "mcp__ide__getDiagnostics",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": [],

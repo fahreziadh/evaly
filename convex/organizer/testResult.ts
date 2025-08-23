@@ -213,6 +213,8 @@ export const getResultsWithScores = query({
     // Group attempts by participant
     const participantResults = new Map<Id<"users">, {
       participantId: Id<"users">;
+      participantName?: string;
+      participantImage?: string;
       attempts: DataModel["testAttempt"]["document"][];
       totalScore: number;
       maxPossibleScore: number;
@@ -228,6 +230,8 @@ export const getResultsWithScores = query({
       if (!existing) {
         existing = {
           participantId: attempt.participantId,
+          participantName: undefined,
+          participantImage: undefined,
           attempts: [],
           totalScore: 0,
           maxPossibleScore: 0,
@@ -295,8 +299,17 @@ export const getResultsWithScores = query({
       }
     }
 
-    return Array.from(participantResults.values())
-      .sort((a, b) => b.percentage - a.percentage); // Sort by highest score first
+    // Fetch user data for all participants
+    const results = Array.from(participantResults.values());
+    for (const result of results) {
+      const user = await ctx.db.get(result.participantId);
+      if (user) {
+        result.participantName = user.name;
+        result.participantImage = user.image;
+      }
+    }
+
+    return results.sort((a, b) => b.percentage - a.percentage); // Sort by highest score first
   },
 });
 

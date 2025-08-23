@@ -6,6 +6,7 @@ const searchSchema = z.object({
   testId: z.string().optional(),
   selectedSectionId: z.string().optional(),
   questionId: z.string().catch(""),
+  bankId: z.string().optional(),
 });
 
 export const Route = createFileRoute("/(organizer)/app/questions/details")({

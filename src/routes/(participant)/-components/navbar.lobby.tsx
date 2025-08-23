@@ -1,4 +1,4 @@
-import { LogoType } from "@/components/shared/logo";
+import { LogoLink } from "@/components/shared/logo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -32,7 +32,7 @@ const NavbarLobby = ({ user }: { user: DataModel["users"]["document"] }) => {
   return (
     <div className="flex flex-row justify-between h-14 px-4 fixed top-0 w-full">
       <div className="flex flex-row items-center gap-2">
-        <LogoType href="/" />
+        <LogoLink href="/" />
       </div>
       <div className="flex flex-row items-center gap-2">
         <AccountDropdown user={user} />

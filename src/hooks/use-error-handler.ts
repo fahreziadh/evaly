@@ -108,7 +108,7 @@ export function useErrorHandler(options: ErrorHandlerOptions = {}) {
               toast.error(errorMessage);
               // Redirect to login after a delay
               setTimeout(() => {
-                navigate({ to: "/login" });
+                navigate({ to: "/" });
               }, 1500);
               break;
             default:
@@ -120,7 +120,7 @@ export function useErrorHandler(options: ErrorHandlerOptions = {}) {
         if (redirectTo) {
           await navigate({ to: redirectTo });
         } else if (errorType === "UNAUTHORIZED" && !showToast) {
-          await navigate({ to: "/login" });
+          await navigate({ to: "/" });
         }
       } finally {
         setIsHandlingError(false);

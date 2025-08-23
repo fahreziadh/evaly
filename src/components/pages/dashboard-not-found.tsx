@@ -7,7 +7,7 @@ import { Home, FileText, HelpCircle, Search } from "lucide-react";
 const suggestions = [
   { to: "/app", label: "Dashboard", icon: Home, description: "Go to main dashboard" },
   { to: "/app/tests", label: "Tests", icon: FileText, description: "Manage your tests" },
-  { to: "/app/questions", label: "Questions", icon: HelpCircle, description: "Question bank" },
+  { to: "/app/questions", label: "Questions", icon: HelpCircle, description: "Question library" },
 ];
 
 const funMessages = [

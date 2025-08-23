@@ -154,7 +154,9 @@ class LoadingManager {
 
   subscribe(callback: (isLoading: boolean) => void) {
     this.subscribers.add(callback);
-    return () => this.subscribers.delete(callback);
+    return () => {
+      this.subscribers.delete(callback);
+    };
   }
 
   private notify() {
@@ -192,7 +194,8 @@ export function useGlobalLoading() {
   const [isLoading, setIsLoading] = useState(globalLoadingManager.isLoading());
 
   useEffect(() => {
-    return globalLoadingManager.subscribe(setIsLoading);
+    const unsubscribe = globalLoadingManager.subscribe(setIsLoading);
+    return unsubscribe;
   }, []);
 
   return { isGloballyLoading: isLoading };

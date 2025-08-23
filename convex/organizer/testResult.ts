@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import { query } from "../_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { checkTestOwnership } from "./test";
-import { DataModel, Id } from "../_generated/dataModel";
+import type { DataModel, Id } from "../_generated/dataModel";
 
 export const getProgress = query({
   args: {
@@ -58,7 +58,7 @@ export const getProgress = query({
     }
 
     // Get Progress
-    for (const [participantId, attempts] of attemptByParticipant) {
+    for (const [, attempts] of attemptByParticipant) {
       const isCompleted = attempts
         .map((e) => e.finishedAt !== undefined && e.finishedAt > 0)
         .filter((e) => e);

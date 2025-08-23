@@ -6,7 +6,8 @@
     "build": "vinxi build",
     "dev": "vinxi dev",
     "start": "vinxi start",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@auth/core": "0.37.0",

@@ -18,7 +18,7 @@ type TestSection = Awaited<
 >[number];
 
 function ResultsSectionSummary() {
-  const { testId, selectedSection } = useSearch({
+  const { testId } = useSearch({
     from: "/(organizer)/app/tests/details",
   });
   const testSections = useQuery(api.organizer.testSection.getByTestId, {

@@ -85,3 +85,4 @@ The app is configured for AWS Lambda deployment via Vinxi with streaming support
 - TypeScript path aliases: `@/*` → `./src/*`, `@convex/*` → `convex/*`
 - Environment configuration: `.env.local` for Convex deployment settings
 - never tells me to run the project, because its always run
+- never tell me to run the convex backend

@@ -22,7 +22,7 @@ export const getByTestId = query({
       .filter((q) => q.lte(q.field("deletedAt"), 0))
       .collect();
 
-      const sortedQuestions = questions.sort((a, b) => a.order - b.order);
+      questions.sort((a, b) => a.order - b.order);
 
       return {
         ...e,

@@ -44,7 +44,7 @@ const MIN_QUESTION_LENGTH = 10;
 
 const EditQuestion = () => {
   const navigate = useNavigate();
-  const { questionId, selectedSectionId, testId } = useSearch({
+  const { questionId, selectedSectionId, testId, bankId } = useSearch({
     from: "/(organizer)/app/questions/details",
   });
   const [questionTextLength, setQuestionTextLength] = useState(0);
@@ -203,7 +203,13 @@ const EditQuestion = () => {
           tabs: "questions",
           testId,
           selectedSection: selectedSectionId,
+          resultsTab: "summary"
         },
+      });
+    } else if (bankId) {
+      navigate({
+        to: "/app/questions/bank",
+        search: { bankId },
       });
     } else {
       navigate({
@@ -233,7 +239,7 @@ const EditQuestion = () => {
               Reset
             </Button>
           )}
-          {isDirty && testId && selectedSectionId ? (
+          {isDirty && ((testId && selectedSectionId) || bankId) ? (
             <Button
               disabled={!isDirty}
               variant={isDirty ? "outline-solid" : "secondary"}

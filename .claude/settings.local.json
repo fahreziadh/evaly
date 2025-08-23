@@ -4,7 +4,11 @@
       "Bash(gh issue create:*)",
       "Bash(gh label:*)",
       "Bash(rm:*)",
-      "Bash(gh issue close:*)"
+      "Bash(gh issue close:*)",
+      "Bash(bun run:*)",
+      "WebFetch(domain:github.com)",
+      "Read(//Users/fahreziadh/work/evaly/src/routes/(organizer)/app/**)",
+      "Read(//Users/fahreziadh/work/evaly/src/routes/(organizer)/app/**)"
     ],
     "deny": [],
     "ask": []

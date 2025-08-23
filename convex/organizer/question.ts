@@ -4,6 +4,93 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { nanoid } from "nanoid";
 import { type Id } from "../_generated/dataModel";
 
+export const create = mutation({
+  args: {
+    type: v.union(
+      v.literal("multiple-choice"),
+      v.literal("yes-or-no"),
+      v.literal("text-field"),
+      v.literal("file-upload"),
+      v.literal("fill-the-blank"),
+      v.literal("audio-response"),
+      v.literal("video-response"),
+      v.literal("dropdown"),
+      v.literal("matching-pairs"),
+      v.literal("slider-scale")
+    ),
+    question: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+    const user = await ctx.db.get(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const organizationId = user.selectedOrganizationId;
+    if (!organizationId) {
+      throw new Error("Organization not found");
+    }
+    
+    // Generate a unique referenceId for standalone questions
+    const referenceId = `standalone_${nanoid(10)}`;
+    
+    let options;
+    if (args.type === "yes-or-no") {
+      options = [
+        {
+          id: nanoid(5),
+          text: "Yes",
+          isCorrect: true,
+        },
+        {
+          id: nanoid(5),
+          text: "No",
+          isCorrect: false,
+        },
+      ];
+    } else if (args.type === "multiple-choice") {
+      options = [
+        {
+          id: nanoid(5),
+          text: "",
+          isCorrect: true,
+        },
+        {
+          id: nanoid(5),
+          text: "",
+          isCorrect: false,
+        },
+        {
+          id: nanoid(5),
+          text: "",
+          isCorrect: false,
+        },
+        {
+          id: nanoid(5),
+          text: "",
+          isCorrect: false,
+        },
+      ];
+    }
+    
+    const questionId = await ctx.db.insert("question", {
+      type: args.type,
+      allowMultipleAnswers: false,
+      organizationId,
+      referenceId,
+      originalReferenceId: undefined, // standalone questions don't have original reference
+      order: 1, // standalone questions always have order 1
+      question: args.question || "<p></p>", // default question or provided question
+      options,
+    });
+
+    return questionId;
+  },
+});
+
 export const createInitialQuestions = mutation({
   args: {
     type: v.union(
@@ -77,6 +164,7 @@ export const createInitialQuestions = mutation({
       allowMultipleAnswers: false,
       organizationId,
       referenceId: args.referenceId,
+      originalReferenceId: undefined, // questions created directly in sections don't have original reference
       order: args.order,
       question: "<p></p>", // default question
       options,
@@ -117,6 +205,39 @@ export const getAllByReferenceId = query({
       .collect();
     return questions
       .sort((a, b) => a.order - b.order)
+  },
+});
+
+export const getAll = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+    const user = await ctx.db.get(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const organizationId = user.selectedOrganizationId;
+    if (!organizationId) {
+      throw new Error("Organization not found");
+    }
+
+    const questions = await ctx.db
+      .query("question")
+      .filter((q) => 
+        q.and(
+          q.eq(q.field("organizationId"), organizationId),
+          q.or(
+            q.eq(q.field("deletedAt"), undefined),
+            q.eq(q.field("deletedAt"), null)
+          )
+        )
+      )
+      .collect();
+    
+    return questions.sort((a, b) => b._creationTime - a._creationTime);
   },
 });
 

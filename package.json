@@ -6,10 +6,7 @@
     "build": "vinxi build",
     "dev": "vinxi dev",
     "start": "vinxi start",
-    "test": "vitest run",
-    "sst:dev": "sst dev --stage dev",
-    "sst:main": "bunx sst deploy --stage main",
-    "sst:staging": "bunx sst deploy --stage staging"
+    "test": "vitest run"
   },
   "dependencies": {
     "@auth/core": "0.37.0",
@@ -71,7 +68,6 @@
     "react-moveable": "^0.56.0",
     "react-resizable-panels": "^3.0.1",
     "sonner": "^2.0.3",
-    "sst": "3.14.16",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.0.6",
     "vaul": "^1.1.2",

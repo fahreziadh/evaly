@@ -21,8 +21,5 @@ yarn.lock
 /blob-report/
 /playwright/.cache/
 
-# sst
-.sst
-
 
 *.local

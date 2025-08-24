@@ -29,7 +29,12 @@
       "Bash(grep:*)",
       "WebSearch",
       "Bash(bunx tsc:*)",
-      "Bash(gh issue:*)"
+      "Bash(gh issue:*)",
+      "WebFetch(domain:www.convex.dev)",
+      "Bash(bun install:*)",
+      "WebFetch(domain:tanstack.com)",
+      "Bash(bun remove:*)",
+      "Read(//var/folders/qv/h90bnb4132s7_6mbh4z_dlz40000gn/T/TemporaryItems/NSIRD_screencaptureui_1uKR5D/**)"
     ],
     "deny": [],
     "ask": [],

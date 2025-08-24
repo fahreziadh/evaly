@@ -13,12 +13,20 @@ import {
   BookOpen,
   ArrowRight,
   CheckCircle,
-  GithubIcon,
-  ChevronDown
+  ChevronDown,
+  Star
 } from "lucide-react";
+import { fetchGitHubStars } from "@/lib/github";
+import { useLoaderData } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/use-cases")({
   component: UseCasesPage,
+  loader: async () => {
+    const stars = await fetchGitHubStars("fahreziadh/evaly");
+    return { stars };
+  },
+  staleTime: 1000 * 60 * 60 * 4, // 4 hours cache
+  gcTime: 1000 * 60 * 60 * 8,    // 8 hours garbage collection
   head: () => ({
     meta: [
       {
@@ -33,6 +41,7 @@ export const Route = createFileRoute("/use-cases")({
 });
 
 function UseCasesPage() {
+  const { stars } = useLoaderData({ from: "/use-cases" });
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -87,8 +96,8 @@ function UseCasesPage() {
               
               <a href="https://github.com/fahreziadh/evaly" target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" size="sm" >
-                  <GithubIcon className="h-4 w-4 mr-1" />
-                  Star
+                  <Star className="h-4 w-4 mr-2" />
+                  Star {stars > 0 && `${stars.toLocaleString()}`}
                 </Button>
               </a>
               

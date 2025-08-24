@@ -1,11 +1,11 @@
 import { Button } from "../ui/button";
 import {
-  GithubIcon,
   Users,
   BarChart3,
   Shield,
   ArrowRight,
-  ChevronDown
+  ChevronDown,
+  Star
 } from "lucide-react";
 import { 
   DropdownMenu, 
@@ -13,8 +13,10 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "../ui/dropdown-menu";
+import { useLoaderData } from "@tanstack/react-router";
 
 const LandingPage = () => {
+  const { stars } = useLoaderData({ from: "/" });
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -27,34 +29,34 @@ const LandingPage = () => {
             <div className="flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="font-mono">
+                  <Button variant="ghost" size="sm" >
                     Use cases
                     <ChevronDown className="h-3 w-3 ml-1" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuItem asChild>
-                    <a href="/use-cases" className="font-mono text-sm">
+                    <a href="/use-cases" className="text-sm">
                       All use cases
                     </a>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <a href="/use-cases#educators" className="font-mono text-sm">
+                    <a href="/use-cases#educators" className="text-sm">
                       For educators
                     </a>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <a href="/use-cases#companies" className="font-mono text-sm">
+                    <a href="/use-cases#companies" className="text-sm">
                       For companies
                     </a>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <a href="/use-cases#training-centers" className="font-mono text-sm">
+                    <a href="/use-cases#training-centers" className="text-sm">
                       For training centers
                     </a>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <a href="/use-cases#self-learners" className="font-mono text-sm">
+                    <a href="/use-cases#self-learners" className="text-sm">
                       For self-learners
                     </a>
                   </DropdownMenuItem>
@@ -62,20 +64,20 @@ const LandingPage = () => {
               </DropdownMenu>
               
               <a href="/pricing">
-                <Button variant="ghost" size="sm" className="font-mono">
+                <Button variant="ghost" size="sm" >
                   Pricing
                 </Button>
               </a>
               
               <a href="https://github.com/fahreziadh/evaly" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm" className="font-mono">
-                  <GithubIcon className="h-4 w-4 mr-1" />
-                  Star
+                <Button variant="outline" size="sm">
+                  <Star className="h-4 w-4 mr-2" />
+                  Star {stars > 0 && `${stars.toLocaleString()}`}
                 </Button>
               </a>
               
               <a href="/app">
-                <Button size="sm" className="font-mono">Get started</Button>
+                <Button size="sm" >Get started</Button>
               </a>
             </div>
           </div>
@@ -201,7 +203,7 @@ const LandingPage = () => {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
             <a href="/app">
-              <Button className="font-mono">
+              <Button >
                 get started now
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>

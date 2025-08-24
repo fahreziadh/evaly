@@ -10,7 +10,9 @@ import {
   CheckCircleIcon,
   CheckIcon,
   FileSearch,
-  FileText, LockIcon
+  FileText,
+  LockIcon,
+  BarChart3
 } from "lucide-react";
 import { testTypeFormatter } from "@/lib/test-type-formatter";
 import LoadingScreen from "@/components/shared/loading-screen";
@@ -182,31 +184,55 @@ const TestSections = ({ test }: { test: DataModel["test"]["document"] }) => {
       )?.finishedAt !== undefined;
 
     return (
-      <Button
-        disabled={
-          testAttempts === undefined || !!startTestSectionId || isFinished
-        }
-        variant={"default"}
-        className="w-max mt-4 px-4 select-none"
-        onClick={() => handleStartTestAttempt(testSections[0]._id)}
-      >
-        {startTestSectionId ? "Starting..." : null}
-        {testAttempts === undefined ? "Loading..." : null}
-        {testAttempts && isFinished ? (
-          <>
-            <CheckIcon />
-            Finished
-          </>
-        ) : null}
-        {!isFinished && !startTestSectionId && !testAttempts
-          ? "Start Test"
-          : null}
-        {testAttempts && !isFinished && !startTestSectionId
-          ? "Continue Test"
-          : null}
-      </Button>
+      <div className="flex flex-col gap-3 mt-4">
+        <Button
+          disabled={
+            testAttempts === undefined || !!startTestSectionId || isFinished
+          }
+          variant={"default"}
+          className="w-max px-4 select-none"
+          onClick={() => handleStartTestAttempt(testSections[0]._id)}
+        >
+          {startTestSectionId ? "Starting..." : null}
+          {testAttempts === undefined ? "Loading..." : null}
+          {testAttempts && isFinished ? (
+            <>
+              <CheckIcon />
+              Finished
+            </>
+          ) : null}
+          {!isFinished && !startTestSectionId && !testAttempts
+            ? "Start Test"
+            : null}
+          {testAttempts && !isFinished && !startTestSectionId
+            ? "Continue Test"
+            : null}
+        </Button>
+        
+        {isFinished && testAttempts && (
+          <Button
+            variant="outline"
+            className="w-max px-4 select-none"
+            onClick={() => navigate({ 
+              to: "/s/$testId/results", 
+              params: { testId: test._id } 
+            })}
+          >
+            <BarChart3 className="mr-2 h-4 w-4" />
+            View Results
+          </Button>
+        )}
+      </div>
     );
   }
+
+  // Check if all sections are completed
+  const allSectionsCompleted = testSections?.every((section) => {
+    const attempt = testAttempts?.find(
+      (attempt) => attempt.testSectionId === section._id
+    );
+    return attempt?.finishedAt !== undefined;
+  });
 
   return (
     <>
@@ -263,6 +289,20 @@ const TestSections = ({ test }: { test: DataModel["test"]["document"] }) => {
           );
         })}
       </Card>
+      
+      {allSectionsCompleted && testAttempts && (
+        <Button
+          variant="default"
+          className="w-max mt-4 px-4 select-none"
+          onClick={() => navigate({ 
+            to: "/s/$testId/results", 
+            params: { testId: test._id } 
+          })}
+        >
+          <BarChart3 className="mr-2 h-4 w-4" />
+          View Results
+        </Button>
+      )}
     </>
   );
 };

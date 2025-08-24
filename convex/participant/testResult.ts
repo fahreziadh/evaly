@@ -13,6 +13,18 @@ export const getMyResults = query({
       return null;
     }
 
+    // Get participant details
+    const participant = await ctx.db.get(userId);
+    
+    // Get test information
+    const test = await ctx.db.get(args.testId);
+    if (!test) {
+      return null;
+    }
+
+    // Get organization information
+    const organization = await ctx.db.get(test.organizationId);
+
     // Get all my test attempts for this test
     const myAttempts = await ctx.db
       .query("testAttempt")
@@ -118,6 +130,24 @@ export const getMyResults = query({
       completedSectionsCount: myAttempts.filter(a => a.finishedAt).length,
       sections: sectionResults,
       grade: getLetterGrade(overallPercentage),
+      // Participant details
+      participant: {
+        name: participant?.name || "Anonymous",
+        email: participant?.email || null,
+        id: userId,
+      },
+      // Test information
+      test: {
+        title: test.title,
+        description: test.description || null,
+        type: test.type,
+        heldAt: test.heldAt || null,
+        createdAt: test._creationTime,
+      },
+      // Organization information
+      organization: {
+        name: organization?.name || "Unknown Organization",
+      },
     };
   },
 });

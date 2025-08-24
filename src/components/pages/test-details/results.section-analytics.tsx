@@ -79,13 +79,13 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
         {/* Participants */}
         <div className="border p-3">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-mono text-muted-foreground">PARTICIPANTS</span>
+            <span className="text-xs  text-muted-foreground">PARTICIPANTS</span>
             <Users className="h-3 w-3 text-muted-foreground" />
           </div>
-          <div className="text-xl font-mono font-bold text-foreground">
+          <div className="text-xl  font-bold text-foreground">
             {analytics.overview.totalParticipants}
           </div>
-          <div className="text-xs font-mono text-muted-foreground mb-2">
+          <div className="text-xs  text-muted-foreground mb-2">
             {analytics.overview.completedParticipants}/{analytics.overview.totalParticipants} done
           </div>
           <Progress value={analytics.overview.completionRate} className="h-1" />
@@ -94,13 +94,13 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
         {/* Average Score */}
         <div className="border p-3">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-mono text-muted-foreground">AVG SCORE</span>
+            <span className="text-xs  text-muted-foreground">AVG SCORE</span>
             <Trophy className="h-3 w-3 text-muted-foreground" />
           </div>
-          <div className={`text-xl font-mono font-bold ${getScoreColor(analytics.overview.averageScore)}`}>
+          <div className={`text-xl  font-bold ${getScoreColor(analytics.overview.averageScore)}`}>
             {analytics.overview.averageScore}%
           </div>
-          <div className="text-xs font-mono text-muted-foreground">
+          <div className="text-xs  text-muted-foreground">
             median: {analytics.overview.medianScore}%
           </div>
         </div>
@@ -108,10 +108,10 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
         {/* Score Range */}
         <div className="border p-3">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-mono text-muted-foreground">RANGE</span>
+            <span className="text-xs  text-muted-foreground">RANGE</span>
             <Target className="h-3 w-3 text-muted-foreground" />
           </div>
-          <div className="flex items-center justify-between text-sm font-mono">
+          <div className="flex items-center justify-between text-sm ">
             <div className="flex items-center gap-1">
               <TrendingDown className="h-3 w-3 text-destructive" />
               <span>{analytics.overview.lowestScore}%</span>
@@ -127,13 +127,13 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
         {/* Average Time */}
         <div className="border p-3">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-mono text-muted-foreground">AVG TIME</span>
+            <span className="text-xs  text-muted-foreground">AVG TIME</span>
             <Clock className="h-3 w-3 text-muted-foreground" />
           </div>
-          <div className="text-xl font-mono font-bold text-foreground">
+          <div className="text-xl  font-bold text-foreground">
             {formatTime(analytics.overview.averageTimeSpent)}
           </div>
-          <div className="text-xs font-mono text-muted-foreground">
+          <div className="text-xs  text-muted-foreground">
             per participant
           </div>
         </div>
@@ -143,8 +143,8 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
       <div className="border p-3">
         <div className="flex items-center gap-2 mb-3">
           <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-mono font-medium text-foreground">SCORE DISTRIBUTION</span>
-          <span className="text-xs font-mono text-muted-foreground ml-auto">
+          <span className="text-sm  font-medium text-foreground">SCORE DISTRIBUTION</span>
+          <span className="text-xs  text-muted-foreground ml-auto">
             {analytics.overview.totalParticipants} total
           </span>
         </div>
@@ -169,14 +169,14 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
               <div key={range}>
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono w-12 text-muted-foreground">
+                    <span className="text-xs  w-12 text-muted-foreground">
                       {range}%
                     </span>
-                    <span className="text-xs font-mono text-muted-foreground">
+                    <span className="text-xs  text-muted-foreground">
                       {count} participants
                     </span>
                   </div>
-                  <span className="text-xs font-mono font-medium text-foreground">
+                  <span className="text-xs  font-medium text-foreground">
                     {Math.round(percentage)}%
                   </span>
                 </div>
@@ -198,8 +198,8 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
         <div className="border p-3">
           <div className="flex items-center gap-2 mb-3">
             <AlertCircle className="h-4 w-4 text-destructive" />
-            <span className="text-sm font-mono font-medium text-foreground">CHALLENGING QUESTIONS</span>
-            <span className="text-xs font-mono text-muted-foreground ml-auto">
+            <span className="text-sm  font-medium text-foreground">CHALLENGING QUESTIONS</span>
+            <span className="text-xs  text-muted-foreground ml-auto">
               top {analytics.hardestQuestions.length}
             </span>
           </div>
@@ -212,12 +212,12 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
                 onClick={() => onQuestionClick?.(q.questionId)}
               >
                 <div className="flex items-start gap-2">
-                  <span className="text-xs font-mono bg-muted px-1 text-center min-w-[16px]">
+                  <span className="text-xs  bg-muted px-1 text-center min-w-[16px]">
                     {index + 1}
                   </span>
                   <div className="flex-1 min-w-0">
                     <div 
-                      className="text-xs font-mono line-clamp-2 custom-prose"
+                      className="text-xs  line-clamp-2 custom-prose"
                       style={{ 
                         display: '-webkit-box',
                         WebkitLineClamp: 2,
@@ -227,10 +227,10 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
                       dangerouslySetInnerHTML={{ __html: q.question }}
                     />
                     <div className="flex items-center justify-between mt-1">
-                      <span className="text-xs font-mono text-destructive">
+                      <span className="text-xs  text-destructive">
                         {Math.round(q.successRate)}%
                       </span>
-                      <span className="text-xs font-mono text-muted-foreground">
+                      <span className="text-xs  text-muted-foreground">
                         {q.correctAttempts}/{q.totalAttempts}
                       </span>
                     </div>
@@ -245,8 +245,8 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
         <div className="border p-3">
           <div className="flex items-center gap-2 mb-3">
             <CheckCircle className="h-4 w-4 text-green-600" />
-            <span className="text-sm font-mono font-medium text-foreground">HIGH-PERFORMING QUESTIONS</span>
-            <span className="text-xs font-mono text-muted-foreground ml-auto">
+            <span className="text-sm  font-medium text-foreground">HIGH-PERFORMING QUESTIONS</span>
+            <span className="text-xs  text-muted-foreground ml-auto">
               top {analytics.easiestQuestions.length}
             </span>
           </div>
@@ -259,12 +259,12 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
                 onClick={() => onQuestionClick?.(q.questionId)}
               >
                 <div className="flex items-start gap-2">
-                  <span className="text-xs font-mono bg-muted px-1 text-center min-w-[16px]">
+                  <span className="text-xs  bg-muted px-1 text-center min-w-[16px]">
                     {index + 1}
                   </span>
                   <div className="flex-1 min-w-0">
                     <div 
-                      className="text-xs font-mono line-clamp-2 custom-prose"
+                      className="text-xs  line-clamp-2 custom-prose"
                       style={{ 
                         display: '-webkit-box',
                         WebkitLineClamp: 2,
@@ -274,10 +274,10 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
                       dangerouslySetInnerHTML={{ __html: q.question }}
                     />
                     <div className="flex items-center justify-between mt-1">
-                      <span className="text-xs font-mono text-green-600">
+                      <span className="text-xs  text-green-600">
                         {Math.round(q.successRate)}%
                       </span>
-                      <span className="text-xs font-mono text-muted-foreground">
+                      <span className="text-xs  text-muted-foreground">
                         {q.correctAttempts}/{q.totalAttempts}
                       </span>
                     </div>
@@ -293,8 +293,8 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
       <div className="border p-3">
         <div className="flex items-center gap-2 mb-3">
           <Activity className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-mono font-medium text-foreground">SECTION PERFORMANCE</span>
-          <span className="text-xs font-mono text-muted-foreground ml-auto">
+          <span className="text-sm  font-medium text-foreground">SECTION PERFORMANCE</span>
+          <span className="text-xs  text-muted-foreground ml-auto">
             {analytics.sectionAnalysis.length} sections
           </span>
         </div>
@@ -304,14 +304,14 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
             <div key={section.sectionId}>
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono bg-muted px-1 text-center min-w-[16px]">
+                  <span className="text-xs  bg-muted px-1 text-center min-w-[16px]">
                     {index + 1}
                   </span>
-                  <span className="text-xs font-mono text-foreground truncate">
+                  <span className="text-xs  text-foreground truncate">
                     {section.sectionTitle}
                   </span>
                 </div>
-                <span className={`text-xs font-mono font-medium ${
+                <span className={`text-xs  font-medium ${
                   section.averageScore >= 80 ? 'text-green-600' :
                   section.averageScore >= 60 ? 'text-yellow-600' : 'text-red-600'
                 }`}>
@@ -319,7 +319,7 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
                 </span>
               </div>
               
-              <div className="flex items-center justify-between text-xs font-mono text-muted-foreground mb-1">
+              <div className="flex items-center justify-between text-xs  text-muted-foreground mb-1">
                 <span>{section.questionsCount} questions</span>
                 <span>{section.completedBy} completed</span>
               </div>

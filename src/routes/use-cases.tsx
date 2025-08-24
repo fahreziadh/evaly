@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { 
+import {
   GraduationCap,
   Building,
   Users,
@@ -49,7 +49,7 @@ function UseCasesPage() {
         <div className="container max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <a href="/" className="flex items-center gap-2">
-              <h1 className="text-lg font-mono font-bold">evaly</h1>
+              <h1 className="text-lg  font-bold">evaly</h1>
             </a>
             <div className="flex items-center gap-2">
               <DropdownMenu>
@@ -112,16 +112,16 @@ function UseCasesPage() {
       {/* Hero */}
       <section className="container max-w-4xl mx-auto px-4 py-16">
         <div className="space-y-6">
-          <div className="inline-block border px-3 py-1 text-xs font-mono text-muted-foreground">
+          <div className="inline-block border px-3 py-1 text-xs  text-muted-foreground">
             USE CASES
           </div>
           
-          <h1 className="text-3xl md:text-4xl font-mono font-bold tracking-tight">
+          <h1 className="text-3xl md:text-4xl  font-bold tracking-tight">
             Perfect for every<br />
             testing <span className="text-primary">need</span>
           </h1>
           
-          <p className="text-muted-foreground max-w-xl font-mono">
+          <p className="text-muted-foreground max-w-xl ">
             from classrooms to corporate training,<br />
             evaly adapts to your specific requirements.
           </p>
@@ -136,14 +136,14 @@ function UseCasesPage() {
             <div className="flex items-start gap-4">
               <GraduationCap className="h-8 w-8 text-primary mt-1" />
               <div className="flex-1">
-                <h2 className="text-xl font-mono font-bold mb-3">educators</h2>
-                <p className="text-muted-foreground font-mono mb-4">
+                <h2 className="text-xl  font-bold mb-3">educators</h2>
+                <p className="text-muted-foreground  mb-4">
                   streamline classroom assessments and track student progress
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <h3 className="font-mono font-bold text-sm mb-2">classroom testing</h3>
-                    <ul className="text-sm text-muted-foreground font-mono space-y-1">
+                    <h3 className=" font-bold text-sm mb-2">classroom testing</h3>
+                    <ul className="text-sm text-muted-foreground  space-y-1">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-3 w-3" />
                         quick pop quizzes
@@ -159,8 +159,8 @@ function UseCasesPage() {
                     </ul>
                   </div>
                   <div>
-                    <h3 className="font-mono font-bold text-sm mb-2">student management</h3>
-                    <ul className="text-sm text-muted-foreground font-mono space-y-1">
+                    <h3 className=" font-bold text-sm mb-2">student management</h3>
+                    <ul className="text-sm text-muted-foreground  space-y-1">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-3 w-3" />
                         progress tracking
@@ -185,14 +185,14 @@ function UseCasesPage() {
             <div className="flex items-start gap-4">
               <Building className="h-8 w-8 text-primary mt-1" />
               <div className="flex-1">
-                <h2 className="text-xl font-mono font-bold mb-3">companies</h2>
-                <p className="text-muted-foreground font-mono mb-4">
+                <h2 className="text-xl  font-bold mb-3">companies</h2>
+                <p className="text-muted-foreground  mb-4">
                   enhance employee training and validate skills across teams
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <h3 className="font-mono font-bold text-sm mb-2">training & development</h3>
-                    <ul className="text-sm text-muted-foreground font-mono space-y-1">
+                    <h3 className=" font-bold text-sm mb-2">training & development</h3>
+                    <ul className="text-sm text-muted-foreground  space-y-1">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-3 w-3" />
                         onboarding tests
@@ -208,8 +208,8 @@ function UseCasesPage() {
                     </ul>
                   </div>
                   <div>
-                    <h3 className="font-mono font-bold text-sm mb-2">hr & recruitment</h3>
-                    <ul className="text-sm text-muted-foreground font-mono space-y-1">
+                    <h3 className=" font-bold text-sm mb-2">hr & recruitment</h3>
+                    <ul className="text-sm text-muted-foreground  space-y-1">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-3 w-3" />
                         candidate screening
@@ -234,14 +234,14 @@ function UseCasesPage() {
             <div className="flex items-start gap-4">
               <Users className="h-8 w-8 text-primary mt-1" />
               <div className="flex-1">
-                <h2 className="text-xl font-mono font-bold mb-3">training centers</h2>
-                <p className="text-muted-foreground font-mono mb-4">
+                <h2 className="text-xl  font-bold mb-3">training centers</h2>
+                <p className="text-muted-foreground  mb-4">
                   manage courses and certifications with professional testing
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <h3 className="font-mono font-bold text-sm mb-2">course management</h3>
-                    <ul className="text-sm text-muted-foreground font-mono space-y-1">
+                    <h3 className=" font-bold text-sm mb-2">course management</h3>
+                    <ul className="text-sm text-muted-foreground  space-y-1">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-3 w-3" />
                         module completion tests
@@ -257,8 +257,8 @@ function UseCasesPage() {
                     </ul>
                   </div>
                   <div>
-                    <h3 className="font-mono font-bold text-sm mb-2">certifications</h3>
-                    <ul className="text-sm text-muted-foreground font-mono space-y-1">
+                    <h3 className=" font-bold text-sm mb-2">certifications</h3>
+                    <ul className="text-sm text-muted-foreground  space-y-1">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-3 w-3" />
                         certification exams
@@ -283,14 +283,14 @@ function UseCasesPage() {
             <div className="flex items-start gap-4">
               <BookOpen className="h-8 w-8 text-primary mt-1" />
               <div className="flex-1">
-                <h2 className="text-xl font-mono font-bold mb-3">self-learners</h2>
-                <p className="text-muted-foreground font-mono mb-4">
+                <h2 className="text-xl  font-bold mb-3">self-learners</h2>
+                <p className="text-muted-foreground  mb-4">
                   practice and validate knowledge at your own pace
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <h3 className="font-mono font-bold text-sm mb-2">practice & study</h3>
-                    <ul className="text-sm text-muted-foreground font-mono space-y-1">
+                    <h3 className=" font-bold text-sm mb-2">practice & study</h3>
+                    <ul className="text-sm text-muted-foreground  space-y-1">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-3 w-3" />
                         knowledge checks
@@ -306,8 +306,8 @@ function UseCasesPage() {
                     </ul>
                   </div>
                   <div>
-                    <h3 className="font-mono font-bold text-sm mb-2">progress tracking</h3>
-                    <ul className="text-sm text-muted-foreground font-mono space-y-1">
+                    <h3 className=" font-bold text-sm mb-2">progress tracking</h3>
+                    <ul className="text-sm text-muted-foreground  space-y-1">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-3 w-3" />
                         study progress
@@ -332,10 +332,10 @@ function UseCasesPage() {
       {/* CTA */}
       <section className="container max-w-4xl mx-auto px-4 py-16 border-t border-border">
         <div className="text-center space-y-4">
-          <h2 className="text-2xl font-mono font-bold">
+          <h2 className="text-2xl  font-bold">
             ready for your use case?
           </h2>
-          <p className="text-muted-foreground font-mono">
+          <p className="text-muted-foreground ">
             start testing today - completely free during alpha
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
@@ -354,12 +354,12 @@ function UseCasesPage() {
         <div className="container max-w-4xl mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <h1 className="text-sm font-mono font-bold">evaly</h1>
-              <span className="text-xs font-mono text-muted-foreground">open source testing platform</span>
+              <h1 className="text-sm  font-bold">evaly</h1>
+              <span className="text-xs  text-muted-foreground">open source testing platform</span>
             </div>
             <div className="flex items-center gap-4">
               <a href="https://github.com/fahreziadh/evaly" target="_blank" rel="noopener noreferrer" 
-                 className="text-sm font-mono text-muted-foreground hover:text-foreground">
+                 className="text-sm  text-muted-foreground hover:text-foreground">
                 github
               </a>
             </div>

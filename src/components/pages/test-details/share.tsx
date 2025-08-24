@@ -251,7 +251,7 @@ const Share = ({ testId }: { testId: Id<"test"> }) => {
                   <Input
                     value={`${window.location.origin}/s/${testId}`}
                     readOnly
-                    className="pr-10 font-mono text-sm"
+                    className="pr-10  text-sm"
                   />
                   <Button
                     variant="ghost"

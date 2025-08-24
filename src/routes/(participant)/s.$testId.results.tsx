@@ -100,7 +100,7 @@ function RouteComponent() {
                   )}
                   <div>
                     <span className="text-muted-foreground">ID: </span>
-                    <span className="text-foreground font-mono text-xs">{results.participant?.id?.slice(-8) || 'N/A'}</span>
+                    <span className="text-foreground  text-xs">{results.participant?.id?.slice(-8) || 'N/A'}</span>
                   </div>
                 </div>
               </div>

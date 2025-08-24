@@ -68,7 +68,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <head>
         <HeadContent />
       </head>
-      <body className={cn("antialiased font-mono",status.isLoading ? "animate-pulse" : "")}>
+      <body className={cn("antialiased ",status.isLoading ? "animate-pulse" : "")}>
         {children}
         <Toaster position="top-center" />
         {/* <TanStackRouterDevtools /> */}

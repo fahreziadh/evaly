@@ -33,7 +33,7 @@ export function DashboardNotFound() {
             {randomMessage}
           </h1>
           <p className="text-gray-600">
-            The page <Badge variant="secondary" className="mx-1 font-mono text-xs">{attemptedPath}</Badge> doesn't exist in your dashboard.
+            The page <Badge variant="secondary" className="mx-1  text-xs">{attemptedPath}</Badge> doesn't exist in your dashboard.
           </p>
         </div>
         

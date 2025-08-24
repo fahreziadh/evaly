@@ -63,7 +63,7 @@ export const extensions = (params: { limit?: number, placeholder?: string }) => 
     },
   }).configure({
     lowlight,
-    HTMLAttributes: { class: cx("rounded-lg border border-muted font-mono") },
+    HTMLAttributes: { class: cx("rounded-lg border border-muted ") },
   }),
   Placeholder.configure({
     placeholder: params.placeholder || "Write something...",

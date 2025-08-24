@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { 
+import {
   CheckCircle,
   ArrowRight,
   ChevronDown,
@@ -108,16 +108,16 @@ function PricingPage() {
       {/* Hero */}
       <section className="container max-w-4xl mx-auto px-4 py-16">
         <div className="space-y-6">
-          <div className="inline-block border px-3 py-1 text-xs font-mono text-muted-foreground">
+          <div className="inline-block border px-3 py-1 text-xs  text-muted-foreground">
             PRICING
           </div>
           
-          <h1 className="text-3xl md:text-4xl font-mono font-bold tracking-tight">
+          <h1 className="text-3xl md:text-4xl  font-bold tracking-tight">
             Simple, transparent<br />
             <span className="text-primary">pricing</span>
           </h1>
           
-          <p className="text-muted-foreground max-w-xl font-mono">
+          <p className="text-muted-foreground max-w-xl ">
             free during alpha, open source forever.<br />
             no hidden fees, no vendor lock-in.
           </p>
@@ -131,15 +131,15 @@ function PricingPage() {
           <div className="border p-6">
             <div className="mb-4">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-xl font-mono font-bold">alpha</h2>
-                <div className="inline-block border border-primary px-2 py-1 text-xs font-mono text-primary">
+                <h2 className="text-xl  font-bold">alpha</h2>
+                <div className="inline-block border border-primary px-2 py-1 text-xs  text-primary">
                   CURRENT
                 </div>
               </div>
               <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-3xl font-mono font-bold">free</span>
+                <span className="text-3xl  font-bold">free</span>
               </div>
-              <p className="text-sm text-muted-foreground font-mono">
+              <p className="text-sm text-muted-foreground ">
                 full access during alpha testing
               </p>
             </div>
@@ -147,32 +147,32 @@ function PricingPage() {
             <div className="space-y-3 mb-6">
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-primary" />
-                <span className="text-sm font-mono">unlimited tests</span>
+                <span className="text-sm ">unlimited tests</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-primary" />
-                <span className="text-sm font-mono">unlimited participants</span>
+                <span className="text-sm ">unlimited participants</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-primary" />
-                <span className="text-sm font-mono">question banks</span>
+                <span className="text-sm ">question banks</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-primary" />
-                <span className="text-sm font-mono">real-time analytics</span>
+                <span className="text-sm ">real-time analytics</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-primary" />
-                <span className="text-sm font-mono">csv exports</span>
+                <span className="text-sm ">csv exports</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-primary" />
-                <span className="text-sm font-mono">community support</span>
+                <span className="text-sm ">community support</span>
               </div>
             </div>
             
             <a href="/app" className="block">
-              <Button className="w-full font-mono">
+              <Button className="w-full ">
                 start testing now
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
@@ -183,15 +183,15 @@ function PricingPage() {
           <div className="border p-6 opacity-75">
             <div className="mb-4">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-xl font-mono font-bold">future plans</h2>
-                <div className="inline-block border px-2 py-1 text-xs font-mono text-muted-foreground">
+                <h2 className="text-xl  font-bold">future plans</h2>
+                <div className="inline-block border px-2 py-1 text-xs  text-muted-foreground">
                   COMING SOON
                 </div>
               </div>
               <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-3xl font-mono font-bold text-muted-foreground">tbd</span>
+                <span className="text-3xl  font-bold text-muted-foreground">tbd</span>
               </div>
-              <p className="text-sm text-muted-foreground font-mono">
+              <p className="text-sm text-muted-foreground ">
                 pricing will be announced before beta
               </p>
             </div>
@@ -199,31 +199,31 @@ function PricingPage() {
             <div className="space-y-3 mb-6">
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-mono text-muted-foreground">everything in alpha</span>
+                <span className="text-sm  text-muted-foreground">everything in alpha</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-mono text-muted-foreground">priority support</span>
+                <span className="text-sm  text-muted-foreground">priority support</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-mono text-muted-foreground">advanced integrations</span>
+                <span className="text-sm  text-muted-foreground">advanced integrations</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-mono text-muted-foreground">custom branding</span>
+                <span className="text-sm  text-muted-foreground">custom branding</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-mono text-muted-foreground">sla guarantees</span>
+                <span className="text-sm  text-muted-foreground">sla guarantees</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-mono text-muted-foreground">dedicated support</span>
+                <span className="text-sm  text-muted-foreground">dedicated support</span>
               </div>
             </div>
             
-            <Button disabled className="w-full font-mono">
+            <Button disabled className="w-full ">
               coming soon
             </Button>
           </div>
@@ -233,16 +233,16 @@ function PricingPage() {
       {/* Open Source Promise */}
       <section className="container max-w-4xl mx-auto px-4 py-16 border-t border-border">
         <div className="text-center space-y-6">
-          <h2 className="text-2xl font-mono font-bold">
+          <h2 className="text-2xl  font-bold">
             open source promise
           </h2>
-          <p className="text-muted-foreground font-mono max-w-2xl mx-auto">
+          <p className="text-muted-foreground  max-w-2xl mx-auto">
             evaly will always have an open source version available.<br />
             self-host for free, forever. no vendor lock-in.
           </p>
           <div className="flex items-center justify-center gap-4">
             <a href="https://github.com/fahreziadh/evaly" target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" className="font-mono">
+              <Button variant="outline" className="">
                 <GithubIcon className="h-4 w-4 mr-2" />
                 view source code
               </Button>
@@ -254,28 +254,28 @@ function PricingPage() {
       {/* FAQ */}
       <section className="container max-w-4xl mx-auto px-4 py-16 border-t border-border">
         <div className="mb-10">
-          <h2 className="text-2xl font-mono font-bold mb-2">frequently asked</h2>
-          <p className="text-muted-foreground font-mono">common pricing questions</p>
+          <h2 className="text-2xl  font-bold mb-2">frequently asked</h2>
+          <p className="text-muted-foreground ">common pricing questions</p>
         </div>
         
         <div className="space-y-6">
           <div className="border p-4">
-            <h3 className="font-mono font-bold mb-2">how long is alpha free?</h3>
-            <p className="text-sm text-muted-foreground font-mono">
+            <h3 className=" font-bold mb-2">how long is alpha free?</h3>
+            <p className="text-sm text-muted-foreground ">
               alpha is free until we reach beta status. we'll announce pricing at least 30 days before any charges begin.
             </p>
           </div>
           
           <div className="border p-4">
-            <h3 className="font-mono font-bold mb-2">will there always be a free option?</h3>
-            <p className="text-sm text-muted-foreground font-mono">
+            <h3 className=" font-bold mb-2">will there always be a free option?</h3>
+            <p className="text-sm text-muted-foreground ">
               yes. evaly is open source, so you can always self-host for free. we'll also consider a free tier for hosted service.
             </p>
           </div>
           
           <div className="border p-4">
-            <h3 className="font-mono font-bold mb-2">what happens to my data?</h3>
-            <p className="text-sm text-muted-foreground font-mono">
+            <h3 className=" font-bold mb-2">what happens to my data?</h3>
+            <p className="text-sm text-muted-foreground ">
               your data is yours. export anytime, migrate easily. no vendor lock-in with open source architecture.
             </p>
           </div>
@@ -287,12 +287,12 @@ function PricingPage() {
         <div className="container max-w-4xl mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <h1 className="text-sm font-mono font-bold">evaly</h1>
-              <span className="text-xs font-mono text-muted-foreground">open source testing platform</span>
+              <h1 className="text-sm  font-bold">evaly</h1>
+              <span className="text-xs  text-muted-foreground">open source testing platform</span>
             </div>
             <div className="flex items-center gap-4">
               <a href="https://github.com/fahreziadh/evaly" target="_blank" rel="noopener noreferrer" 
-                 className="text-sm font-mono text-muted-foreground hover:text-foreground">
+                 className="text-sm  text-muted-foreground hover:text-foreground">
                 github
               </a>
             </div>

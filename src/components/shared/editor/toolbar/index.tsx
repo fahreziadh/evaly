@@ -41,7 +41,7 @@ export const EditorToolbar = ({
         disabled={!editor.can().chain().focus().toggleItalic().run()}
         variant={editor.isActive("italic") ? "default" : "ghost"}
         
-        className="italic font-mono text-base"
+        className="italic  text-base"
       >
         <Italic />
       </Button>
@@ -53,7 +53,7 @@ export const EditorToolbar = ({
         disabled={!editor.can().chain().focus().toggleUnderline().run()}
         variant={editor.isActive("underline") ? "default" : "ghost"}
         
-        className="font-mono  underline text-base"
+        className="  underline text-base"
       >
         <Underline />
       </Button>
@@ -65,7 +65,7 @@ export const EditorToolbar = ({
         disabled={!editor.can().chain().focus().toggleStrike().run()}
         variant={editor.isActive("strike") ? "default" : "ghost"}
         
-        className="font-mono  line-through text-base"
+        className="  line-through text-base"
       >
         <Strikethrough />
       </Button>

@@ -1,5 +1,5 @@
 {
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "postcss.config.mjs"],
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",

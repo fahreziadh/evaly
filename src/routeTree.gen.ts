@@ -8,305 +8,117 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as UseCasesRouteImport } from './routes/use-cases'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as participantRouteRouteImport } from './routes/(participant)/route'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as organizerAppRouteRouteImport } from './routes/(organizer)/app/route'
+import { Route as organizerAppIndexRouteImport } from './routes/(organizer)/app/index'
+import { Route as organizerAppSettingsRouteImport } from './routes/(organizer)/app/settings'
+import { Route as organizerAppParticipantsRouteImport } from './routes/(organizer)/app/participants'
+import { Route as participantSTestIdIndexRouteImport } from './routes/(participant)/s.$testId.index'
+import { Route as organizerAppTestsIndexRouteImport } from './routes/(organizer)/app/tests/index'
+import { Route as organizerAppQuestionsIndexRouteImport } from './routes/(organizer)/app/questions/index'
+import { Route as participantSTestIdResultsRouteImport } from './routes/(participant)/s.$testId.results'
+import { Route as participantSTestIdAttemptIdRouteImport } from './routes/(participant)/s.$testId.$attemptId'
+import { Route as organizerAppTestsDetailsRouteImport } from './routes/(organizer)/app/tests/details'
+import { Route as organizerAppQuestionsTemplateRouteImport } from './routes/(organizer)/app/questions/template'
+import { Route as organizerAppQuestionsLibraryRouteImport } from './routes/(organizer)/app/questions/library'
+import { Route as organizerAppQuestionsDetailsRouteImport } from './routes/(organizer)/app/questions/details'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as UseCasesImport } from './routes/use-cases'
-import { Route as PricingImport } from './routes/pricing'
-import { Route as participantRouteImport } from './routes/(participant)/route'
-import { Route as IndexImport } from './routes/index'
-import { Route as organizerAppRouteImport } from './routes/(organizer)/app/route'
-import { Route as organizerAppIndexImport } from './routes/(organizer)/app/index'
-import { Route as organizerAppSettingsImport } from './routes/(organizer)/app/settings'
-import { Route as organizerAppParticipantsImport } from './routes/(organizer)/app/participants'
-import { Route as participantSTestIdIndexImport } from './routes/(participant)/s.$testId.index'
-import { Route as organizerAppTestsIndexImport } from './routes/(organizer)/app/tests/index'
-import { Route as organizerAppQuestionsIndexImport } from './routes/(organizer)/app/questions/index'
-import { Route as participantSTestIdResultsImport } from './routes/(participant)/s.$testId.results'
-import { Route as participantSTestIdAttemptIdImport } from './routes/(participant)/s.$testId.$attemptId'
-import { Route as organizerAppTestsDetailsImport } from './routes/(organizer)/app/tests/details'
-import { Route as organizerAppQuestionsTemplateImport } from './routes/(organizer)/app/questions/template'
-import { Route as organizerAppQuestionsLibraryImport } from './routes/(organizer)/app/questions/library'
-import { Route as organizerAppQuestionsDetailsImport } from './routes/(organizer)/app/questions/details'
-
-// Create/Update Routes
-
-const UseCasesRoute = UseCasesImport.update({
+const UseCasesRoute = UseCasesRouteImport.update({
   id: '/use-cases',
   path: '/use-cases',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PricingRoute = PricingImport.update({
+const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const participantRouteRoute = participantRouteImport.update({
+const participantRouteRoute = participantRouteRouteImport.update({
   id: '/(participant)',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const organizerAppRouteRoute = organizerAppRouteImport.update({
+const organizerAppRouteRoute = organizerAppRouteRouteImport.update({
   id: '/(organizer)/app',
   path: '/app',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const organizerAppIndexRoute = organizerAppIndexImport.update({
+const organizerAppIndexRoute = organizerAppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => organizerAppRouteRoute,
 } as any)
-
-const organizerAppSettingsRoute = organizerAppSettingsImport.update({
+const organizerAppSettingsRoute = organizerAppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => organizerAppRouteRoute,
 } as any)
-
-const organizerAppParticipantsRoute = organizerAppParticipantsImport.update({
-  id: '/participants',
-  path: '/participants',
-  getParentRoute: () => organizerAppRouteRoute,
-} as any)
-
-const participantSTestIdIndexRoute = participantSTestIdIndexImport.update({
+const organizerAppParticipantsRoute =
+  organizerAppParticipantsRouteImport.update({
+    id: '/participants',
+    path: '/participants',
+    getParentRoute: () => organizerAppRouteRoute,
+  } as any)
+const participantSTestIdIndexRoute = participantSTestIdIndexRouteImport.update({
   id: '/s/$testId/',
   path: '/s/$testId/',
   getParentRoute: () => participantRouteRoute,
 } as any)
-
-const organizerAppTestsIndexRoute = organizerAppTestsIndexImport.update({
+const organizerAppTestsIndexRoute = organizerAppTestsIndexRouteImport.update({
   id: '/tests/',
   path: '/tests/',
   getParentRoute: () => organizerAppRouteRoute,
 } as any)
-
-const organizerAppQuestionsIndexRoute = organizerAppQuestionsIndexImport.update(
-  {
+const organizerAppQuestionsIndexRoute =
+  organizerAppQuestionsIndexRouteImport.update({
     id: '/questions/',
     path: '/questions/',
     getParentRoute: () => organizerAppRouteRoute,
-  } as any,
-)
-
-const participantSTestIdResultsRoute = participantSTestIdResultsImport.update({
-  id: '/s/$testId/results',
-  path: '/s/$testId/results',
-  getParentRoute: () => participantRouteRoute,
-} as any)
-
+  } as any)
+const participantSTestIdResultsRoute =
+  participantSTestIdResultsRouteImport.update({
+    id: '/s/$testId/results',
+    path: '/s/$testId/results',
+    getParentRoute: () => participantRouteRoute,
+  } as any)
 const participantSTestIdAttemptIdRoute =
-  participantSTestIdAttemptIdImport.update({
+  participantSTestIdAttemptIdRouteImport.update({
     id: '/s/$testId/$attemptId',
     path: '/s/$testId/$attemptId',
     getParentRoute: () => participantRouteRoute,
   } as any)
-
-const organizerAppTestsDetailsRoute = organizerAppTestsDetailsImport.update({
-  id: '/tests/details',
-  path: '/tests/details',
-  getParentRoute: () => organizerAppRouteRoute,
-} as any)
-
+const organizerAppTestsDetailsRoute =
+  organizerAppTestsDetailsRouteImport.update({
+    id: '/tests/details',
+    path: '/tests/details',
+    getParentRoute: () => organizerAppRouteRoute,
+  } as any)
 const organizerAppQuestionsTemplateRoute =
-  organizerAppQuestionsTemplateImport.update({
+  organizerAppQuestionsTemplateRouteImport.update({
     id: '/questions/template',
     path: '/questions/template',
     getParentRoute: () => organizerAppRouteRoute,
   } as any)
-
 const organizerAppQuestionsLibraryRoute =
-  organizerAppQuestionsLibraryImport.update({
+  organizerAppQuestionsLibraryRouteImport.update({
     id: '/questions/library',
     path: '/questions/library',
     getParentRoute: () => organizerAppRouteRoute,
   } as any)
-
 const organizerAppQuestionsDetailsRoute =
-  organizerAppQuestionsDetailsImport.update({
+  organizerAppQuestionsDetailsRouteImport.update({
     id: '/questions/details',
     path: '/questions/details',
     getParentRoute: () => organizerAppRouteRoute,
   } as any)
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/(participant)': {
-      id: '/(participant)'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof participantRouteImport
-      parentRoute: typeof rootRoute
-    }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingImport
-      parentRoute: typeof rootRoute
-    }
-    '/use-cases': {
-      id: '/use-cases'
-      path: '/use-cases'
-      fullPath: '/use-cases'
-      preLoaderRoute: typeof UseCasesImport
-      parentRoute: typeof rootRoute
-    }
-    '/(organizer)/app': {
-      id: '/(organizer)/app'
-      path: '/app'
-      fullPath: '/app'
-      preLoaderRoute: typeof organizerAppRouteImport
-      parentRoute: typeof rootRoute
-    }
-    '/(organizer)/app/participants': {
-      id: '/(organizer)/app/participants'
-      path: '/participants'
-      fullPath: '/app/participants'
-      preLoaderRoute: typeof organizerAppParticipantsImport
-      parentRoute: typeof organizerAppRouteImport
-    }
-    '/(organizer)/app/settings': {
-      id: '/(organizer)/app/settings'
-      path: '/settings'
-      fullPath: '/app/settings'
-      preLoaderRoute: typeof organizerAppSettingsImport
-      parentRoute: typeof organizerAppRouteImport
-    }
-    '/(organizer)/app/': {
-      id: '/(organizer)/app/'
-      path: '/'
-      fullPath: '/app/'
-      preLoaderRoute: typeof organizerAppIndexImport
-      parentRoute: typeof organizerAppRouteImport
-    }
-    '/(organizer)/app/questions/details': {
-      id: '/(organizer)/app/questions/details'
-      path: '/questions/details'
-      fullPath: '/app/questions/details'
-      preLoaderRoute: typeof organizerAppQuestionsDetailsImport
-      parentRoute: typeof organizerAppRouteImport
-    }
-    '/(organizer)/app/questions/library': {
-      id: '/(organizer)/app/questions/library'
-      path: '/questions/library'
-      fullPath: '/app/questions/library'
-      preLoaderRoute: typeof organizerAppQuestionsLibraryImport
-      parentRoute: typeof organizerAppRouteImport
-    }
-    '/(organizer)/app/questions/template': {
-      id: '/(organizer)/app/questions/template'
-      path: '/questions/template'
-      fullPath: '/app/questions/template'
-      preLoaderRoute: typeof organizerAppQuestionsTemplateImport
-      parentRoute: typeof organizerAppRouteImport
-    }
-    '/(organizer)/app/tests/details': {
-      id: '/(organizer)/app/tests/details'
-      path: '/tests/details'
-      fullPath: '/app/tests/details'
-      preLoaderRoute: typeof organizerAppTestsDetailsImport
-      parentRoute: typeof organizerAppRouteImport
-    }
-    '/(participant)/s/$testId/$attemptId': {
-      id: '/(participant)/s/$testId/$attemptId'
-      path: '/s/$testId/$attemptId'
-      fullPath: '/s/$testId/$attemptId'
-      preLoaderRoute: typeof participantSTestIdAttemptIdImport
-      parentRoute: typeof participantRouteImport
-    }
-    '/(participant)/s/$testId/results': {
-      id: '/(participant)/s/$testId/results'
-      path: '/s/$testId/results'
-      fullPath: '/s/$testId/results'
-      preLoaderRoute: typeof participantSTestIdResultsImport
-      parentRoute: typeof participantRouteImport
-    }
-    '/(organizer)/app/questions/': {
-      id: '/(organizer)/app/questions/'
-      path: '/questions'
-      fullPath: '/app/questions'
-      preLoaderRoute: typeof organizerAppQuestionsIndexImport
-      parentRoute: typeof organizerAppRouteImport
-    }
-    '/(organizer)/app/tests/': {
-      id: '/(organizer)/app/tests/'
-      path: '/tests'
-      fullPath: '/app/tests'
-      preLoaderRoute: typeof organizerAppTestsIndexImport
-      parentRoute: typeof organizerAppRouteImport
-    }
-    '/(participant)/s/$testId/': {
-      id: '/(participant)/s/$testId/'
-      path: '/s/$testId'
-      fullPath: '/s/$testId'
-      preLoaderRoute: typeof participantSTestIdIndexImport
-      parentRoute: typeof participantRouteImport
-    }
-  }
-}
-
-// Create and export the route tree
-
-interface participantRouteRouteChildren {
-  participantSTestIdAttemptIdRoute: typeof participantSTestIdAttemptIdRoute
-  participantSTestIdResultsRoute: typeof participantSTestIdResultsRoute
-  participantSTestIdIndexRoute: typeof participantSTestIdIndexRoute
-}
-
-const participantRouteRouteChildren: participantRouteRouteChildren = {
-  participantSTestIdAttemptIdRoute: participantSTestIdAttemptIdRoute,
-  participantSTestIdResultsRoute: participantSTestIdResultsRoute,
-  participantSTestIdIndexRoute: participantSTestIdIndexRoute,
-}
-
-const participantRouteRouteWithChildren =
-  participantRouteRoute._addFileChildren(participantRouteRouteChildren)
-
-interface organizerAppRouteRouteChildren {
-  organizerAppParticipantsRoute: typeof organizerAppParticipantsRoute
-  organizerAppSettingsRoute: typeof organizerAppSettingsRoute
-  organizerAppIndexRoute: typeof organizerAppIndexRoute
-  organizerAppQuestionsDetailsRoute: typeof organizerAppQuestionsDetailsRoute
-  organizerAppQuestionsLibraryRoute: typeof organizerAppQuestionsLibraryRoute
-  organizerAppQuestionsTemplateRoute: typeof organizerAppQuestionsTemplateRoute
-  organizerAppTestsDetailsRoute: typeof organizerAppTestsDetailsRoute
-  organizerAppQuestionsIndexRoute: typeof organizerAppQuestionsIndexRoute
-  organizerAppTestsIndexRoute: typeof organizerAppTestsIndexRoute
-}
-
-const organizerAppRouteRouteChildren: organizerAppRouteRouteChildren = {
-  organizerAppParticipantsRoute: organizerAppParticipantsRoute,
-  organizerAppSettingsRoute: organizerAppSettingsRoute,
-  organizerAppIndexRoute: organizerAppIndexRoute,
-  organizerAppQuestionsDetailsRoute: organizerAppQuestionsDetailsRoute,
-  organizerAppQuestionsLibraryRoute: organizerAppQuestionsLibraryRoute,
-  organizerAppQuestionsTemplateRoute: organizerAppQuestionsTemplateRoute,
-  organizerAppTestsDetailsRoute: organizerAppTestsDetailsRoute,
-  organizerAppQuestionsIndexRoute: organizerAppQuestionsIndexRoute,
-  organizerAppTestsIndexRoute: organizerAppTestsIndexRoute,
-}
-
-const organizerAppRouteRouteWithChildren =
-  organizerAppRouteRoute._addFileChildren(organizerAppRouteRouteChildren)
 
 export interface FileRoutesByFullPath {
   '/': typeof participantRouteRouteWithChildren
@@ -326,7 +138,6 @@ export interface FileRoutesByFullPath {
   '/app/tests': typeof organizerAppTestsIndexRoute
   '/s/$testId': typeof participantSTestIdIndexRoute
 }
-
 export interface FileRoutesByTo {
   '/': typeof participantRouteRouteWithChildren
   '/pricing': typeof PricingRoute
@@ -344,9 +155,8 @@ export interface FileRoutesByTo {
   '/app/tests': typeof organizerAppTestsIndexRoute
   '/s/$testId': typeof participantSTestIdIndexRoute
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute
+  __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/(participant)': typeof participantRouteRouteWithChildren
   '/pricing': typeof PricingRoute
@@ -365,7 +175,6 @@ export interface FileRoutesById {
   '/(organizer)/app/tests/': typeof organizerAppTestsIndexRoute
   '/(participant)/s/$testId/': typeof participantSTestIdIndexRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
@@ -423,7 +232,6 @@ export interface FileRouteTypes {
     | '/(participant)/s/$testId/'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   participantRouteRoute: typeof participantRouteRouteWithChildren
@@ -432,6 +240,172 @@ export interface RootRouteChildren {
   organizerAppRouteRoute: typeof organizerAppRouteRouteWithChildren
 }
 
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/use-cases': {
+      id: '/use-cases'
+      path: '/use-cases'
+      fullPath: '/use-cases'
+      preLoaderRoute: typeof UseCasesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(participant)': {
+      id: '/(participant)'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof participantRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(organizer)/app': {
+      id: '/(organizer)/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof organizerAppRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(organizer)/app/': {
+      id: '/(organizer)/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof organizerAppIndexRouteImport
+      parentRoute: typeof organizerAppRouteRoute
+    }
+    '/(organizer)/app/settings': {
+      id: '/(organizer)/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof organizerAppSettingsRouteImport
+      parentRoute: typeof organizerAppRouteRoute
+    }
+    '/(organizer)/app/participants': {
+      id: '/(organizer)/app/participants'
+      path: '/participants'
+      fullPath: '/app/participants'
+      preLoaderRoute: typeof organizerAppParticipantsRouteImport
+      parentRoute: typeof organizerAppRouteRoute
+    }
+    '/(participant)/s/$testId/': {
+      id: '/(participant)/s/$testId/'
+      path: '/s/$testId'
+      fullPath: '/s/$testId'
+      preLoaderRoute: typeof participantSTestIdIndexRouteImport
+      parentRoute: typeof participantRouteRoute
+    }
+    '/(organizer)/app/tests/': {
+      id: '/(organizer)/app/tests/'
+      path: '/tests'
+      fullPath: '/app/tests'
+      preLoaderRoute: typeof organizerAppTestsIndexRouteImport
+      parentRoute: typeof organizerAppRouteRoute
+    }
+    '/(organizer)/app/questions/': {
+      id: '/(organizer)/app/questions/'
+      path: '/questions'
+      fullPath: '/app/questions'
+      preLoaderRoute: typeof organizerAppQuestionsIndexRouteImport
+      parentRoute: typeof organizerAppRouteRoute
+    }
+    '/(participant)/s/$testId/results': {
+      id: '/(participant)/s/$testId/results'
+      path: '/s/$testId/results'
+      fullPath: '/s/$testId/results'
+      preLoaderRoute: typeof participantSTestIdResultsRouteImport
+      parentRoute: typeof participantRouteRoute
+    }
+    '/(participant)/s/$testId/$attemptId': {
+      id: '/(participant)/s/$testId/$attemptId'
+      path: '/s/$testId/$attemptId'
+      fullPath: '/s/$testId/$attemptId'
+      preLoaderRoute: typeof participantSTestIdAttemptIdRouteImport
+      parentRoute: typeof participantRouteRoute
+    }
+    '/(organizer)/app/tests/details': {
+      id: '/(organizer)/app/tests/details'
+      path: '/tests/details'
+      fullPath: '/app/tests/details'
+      preLoaderRoute: typeof organizerAppTestsDetailsRouteImport
+      parentRoute: typeof organizerAppRouteRoute
+    }
+    '/(organizer)/app/questions/template': {
+      id: '/(organizer)/app/questions/template'
+      path: '/questions/template'
+      fullPath: '/app/questions/template'
+      preLoaderRoute: typeof organizerAppQuestionsTemplateRouteImport
+      parentRoute: typeof organizerAppRouteRoute
+    }
+    '/(organizer)/app/questions/library': {
+      id: '/(organizer)/app/questions/library'
+      path: '/questions/library'
+      fullPath: '/app/questions/library'
+      preLoaderRoute: typeof organizerAppQuestionsLibraryRouteImport
+      parentRoute: typeof organizerAppRouteRoute
+    }
+    '/(organizer)/app/questions/details': {
+      id: '/(organizer)/app/questions/details'
+      path: '/questions/details'
+      fullPath: '/app/questions/details'
+      preLoaderRoute: typeof organizerAppQuestionsDetailsRouteImport
+      parentRoute: typeof organizerAppRouteRoute
+    }
+  }
+}
+
+interface participantRouteRouteChildren {
+  participantSTestIdAttemptIdRoute: typeof participantSTestIdAttemptIdRoute
+  participantSTestIdResultsRoute: typeof participantSTestIdResultsRoute
+  participantSTestIdIndexRoute: typeof participantSTestIdIndexRoute
+}
+
+const participantRouteRouteChildren: participantRouteRouteChildren = {
+  participantSTestIdAttemptIdRoute: participantSTestIdAttemptIdRoute,
+  participantSTestIdResultsRoute: participantSTestIdResultsRoute,
+  participantSTestIdIndexRoute: participantSTestIdIndexRoute,
+}
+
+const participantRouteRouteWithChildren =
+  participantRouteRoute._addFileChildren(participantRouteRouteChildren)
+
+interface organizerAppRouteRouteChildren {
+  organizerAppParticipantsRoute: typeof organizerAppParticipantsRoute
+  organizerAppSettingsRoute: typeof organizerAppSettingsRoute
+  organizerAppIndexRoute: typeof organizerAppIndexRoute
+  organizerAppQuestionsDetailsRoute: typeof organizerAppQuestionsDetailsRoute
+  organizerAppQuestionsLibraryRoute: typeof organizerAppQuestionsLibraryRoute
+  organizerAppQuestionsTemplateRoute: typeof organizerAppQuestionsTemplateRoute
+  organizerAppTestsDetailsRoute: typeof organizerAppTestsDetailsRoute
+  organizerAppQuestionsIndexRoute: typeof organizerAppQuestionsIndexRoute
+  organizerAppTestsIndexRoute: typeof organizerAppTestsIndexRoute
+}
+
+const organizerAppRouteRouteChildren: organizerAppRouteRouteChildren = {
+  organizerAppParticipantsRoute: organizerAppParticipantsRoute,
+  organizerAppSettingsRoute: organizerAppSettingsRoute,
+  organizerAppIndexRoute: organizerAppIndexRoute,
+  organizerAppQuestionsDetailsRoute: organizerAppQuestionsDetailsRoute,
+  organizerAppQuestionsLibraryRoute: organizerAppQuestionsLibraryRoute,
+  organizerAppQuestionsTemplateRoute: organizerAppQuestionsTemplateRoute,
+  organizerAppTestsDetailsRoute: organizerAppTestsDetailsRoute,
+  organizerAppQuestionsIndexRoute: organizerAppQuestionsIndexRoute,
+  organizerAppTestsIndexRoute: organizerAppTestsIndexRoute,
+}
+
+const organizerAppRouteRouteWithChildren =
+  organizerAppRouteRoute._addFileChildren(organizerAppRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   participantRouteRoute: participantRouteRouteWithChildren,
@@ -439,103 +413,6 @@ const rootRouteChildren: RootRouteChildren = {
   UseCasesRoute: UseCasesRoute,
   organizerAppRouteRoute: organizerAppRouteRouteWithChildren,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/(participant)",
-        "/pricing",
-        "/use-cases",
-        "/(organizer)/app"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/(participant)": {
-      "filePath": "(participant)/route.tsx",
-      "children": [
-        "/(participant)/s/$testId/$attemptId",
-        "/(participant)/s/$testId/results",
-        "/(participant)/s/$testId/"
-      ]
-    },
-    "/pricing": {
-      "filePath": "pricing.tsx"
-    },
-    "/use-cases": {
-      "filePath": "use-cases.tsx"
-    },
-    "/(organizer)/app": {
-      "filePath": "(organizer)/app/route.tsx",
-      "children": [
-        "/(organizer)/app/participants",
-        "/(organizer)/app/settings",
-        "/(organizer)/app/",
-        "/(organizer)/app/questions/details",
-        "/(organizer)/app/questions/library",
-        "/(organizer)/app/questions/template",
-        "/(organizer)/app/tests/details",
-        "/(organizer)/app/questions/",
-        "/(organizer)/app/tests/"
-      ]
-    },
-    "/(organizer)/app/participants": {
-      "filePath": "(organizer)/app/participants.tsx",
-      "parent": "/(organizer)/app"
-    },
-    "/(organizer)/app/settings": {
-      "filePath": "(organizer)/app/settings.tsx",
-      "parent": "/(organizer)/app"
-    },
-    "/(organizer)/app/": {
-      "filePath": "(organizer)/app/index.tsx",
-      "parent": "/(organizer)/app"
-    },
-    "/(organizer)/app/questions/details": {
-      "filePath": "(organizer)/app/questions/details.tsx",
-      "parent": "/(organizer)/app"
-    },
-    "/(organizer)/app/questions/library": {
-      "filePath": "(organizer)/app/questions/library.tsx",
-      "parent": "/(organizer)/app"
-    },
-    "/(organizer)/app/questions/template": {
-      "filePath": "(organizer)/app/questions/template.tsx",
-      "parent": "/(organizer)/app"
-    },
-    "/(organizer)/app/tests/details": {
-      "filePath": "(organizer)/app/tests/details.tsx",
-      "parent": "/(organizer)/app"
-    },
-    "/(participant)/s/$testId/$attemptId": {
-      "filePath": "(participant)/s.$testId.$attemptId.tsx",
-      "parent": "/(participant)"
-    },
-    "/(participant)/s/$testId/results": {
-      "filePath": "(participant)/s.$testId.results.tsx",
-      "parent": "/(participant)"
-    },
-    "/(organizer)/app/questions/": {
-      "filePath": "(organizer)/app/questions/index.tsx",
-      "parent": "/(organizer)/app"
-    },
-    "/(organizer)/app/tests/": {
-      "filePath": "(organizer)/app/tests/index.tsx",
-      "parent": "/(organizer)/app"
-    },
-    "/(participant)/s/$testId/": {
-      "filePath": "(participant)/s.$testId.index.tsx",
-      "parent": "/(participant)"
-    }
-  }
-}
-ROUTE_MANIFEST_END */

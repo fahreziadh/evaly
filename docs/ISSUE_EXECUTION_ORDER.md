@@ -63,20 +63,20 @@ Execute in this exact order:
 
 ### Week 3 - Landing Page & Mobile
 
-5. **Issue #67** - 🎨 [P1] Enhance Landing Page Design and Content
-   - **Why first**: Professional presentation for users and marketing
+5. ✅ ~~**Issue #67** - 🎨 [P1] Enhance Landing Page Design and Content~~ **[COMPLETED]**
+   - **Status**: ✅ Done - Professional landing page implemented (Phase 1)
    - **Time**: 1-2 days
-   - **Blockers**: None (can be done in parallel)
+   - **Completed**: Landing page redesign, use-cases page, pricing page, GitHub stars integration
 
-6. **Issue #48** - 🟡 [P1] Navigation and forms broken on mobile devices
-   - **Why next**: Must work on phones before public use
+6. ✅ ~~**Issue #48** - 🟡 [P1] Navigation and forms broken on mobile devices~~ **[COMPLETED]**
+   - **Status**: ✅ Done - Full mobile responsiveness implemented
    - **Time**: 2 days
-   - **Blockers**: None
+   - **Completed**: Mobile navigation, responsive forms, touch-friendly UI, dashboard sidebar
 
-7. **Issue #51** - 🟡 [P1] Implement test scheduling and time limits
-   - **Why**: Essential for real classroom use
+7. ✅ ~~**Issue #51** - 🟡 [P1] Implement test scheduling and time limits~~ **[COMPLETED]**
+   - **Status**: ✅ Done - Complete test scheduling system with countdown and live editing
    - **Time**: 2 days
-   - **Blockers**: None
+   - **Completed**: Publish dialog with scheduling options, live countdown, edit schedule functionality, scheduler job management
 
 ### Week 4 - Participant Experience
 
@@ -104,7 +104,7 @@ Execute in this exact order:
     - **Blockers**: After main features complete
 
 **Beta Release Checkpoint** ✅
-- Mobile fully functional
+- ✅ Mobile fully functional (Issue #48 completed)
 - Easy participant access (links + invites)
 - Participant management
 - Test scheduling
@@ -215,8 +215,8 @@ Execute in this exact order:
 | ✅ | ~~#45~~ | ~~Question management~~ | Alpha | 2 | **COMPLETED** |
 | ✅ | ~~#46~~ | ~~Test results~~ | Alpha | 3 | **COMPLETED** |
 | ✅ | ~~#67~~ | ~~Landing page enhancement~~ | Alpha | 1.5 | **COMPLETED** |
-| 6 | #48 | Mobile responsive | Beta | 2 | None |
-| 7 | #51 | Test scheduling | Beta | 2 | None |
+| ✅ | ~~#48~~ | ~~Mobile responsive~~ | Beta | 2 | **COMPLETED** |
+| ✅ | ~~#51~~ | ~~Test scheduling~~ | Beta | 2 | **COMPLETED** |
 | 8 | #49 | Participant experience | Beta | 3 | #51 |
 | 9 | #50 | Participant management | Beta | 2 | #49 |
 | 10 | #54 | CSV import/export | Beta | 1.5 | #45 |
@@ -261,7 +261,8 @@ Execute in this exact order:
 
 ### Sprint 2 (Week 3-4): Beta Features
 - **Goal**: Classroom ready with mobile support
-- **Issues**: #48, #51, #49, #50
+- **Issues**: ✅ #48, ✅ #51, #49, #50
+- **Progress**: 2/4 completed - Mobile + Scheduling done!
 - **Deliverable**: Mobile responsive + participant management system
 
 ### Sprint 3 (Week 5-6): Beta Polish + Performance

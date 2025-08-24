@@ -25,35 +25,28 @@ const DialogUnpublishTest = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const updateTest = useMutation(
-    api.organizer.test.updateTest
-  ).withOptimisticUpdate((localStore, args) => {
-    const currentValue = localStore.getQuery(api.organizer.test.getTestById, {
-      testId: args.testId,
-    });
-    if (!currentValue) return;
-    localStore.setQuery(
-      api.organizer.test.getTestById,
-      { testId: args.testId },
-      {
-        ...currentValue,
-        ...args.data,
-      }
-    );
-  });
+  const stopTest = useMutation(api.organizer.test.stopTest).withOptimisticUpdate(
+    (localStore, args) => {
+      const currentValue = localStore.getQuery(api.organizer.test.getTestById, {
+        testId: args.testId,
+      });
+      if (!currentValue) return;
+      localStore.setQuery(
+        api.organizer.test.getTestById,
+        { testId: args.testId },
+        {
+          ...currentValue,
+          finishedAt: Date.now(),
+          activationJobId: undefined,
+          finishJobId: undefined,
+        }
+      );
+    }
+  );
 
   const handleUnpublish = () => {
-    updateTest({
+    stopTest({
       testId: test._id,
-      data: {
-        access: test.access,
-        isPublished: true,
-        finishedAt: Date.now(),
-        type: test.type,
-        title: test.title,
-        description: test.description,
-        showResultImmediately: test.showResultImmediately,
-      },
     });
     onUnpublished?.();
   };
@@ -67,7 +60,7 @@ const DialogUnpublishTest = ({
         <DialogHeader>
           <DialogTitle>Stop test</DialogTitle>
           <DialogDescription>
-            Are you sure you want to stop this test?
+            Are you sure you want to stop this test? This will end the test immediately and cancel any scheduled finish time.
           </DialogDescription>
         </DialogHeader>
 

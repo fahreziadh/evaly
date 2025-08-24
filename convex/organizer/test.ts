@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { mutation, query, type QueryCtx } from "../_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { type Id } from "../_generated/dataModel";
+import { internal } from "../_generated/api";
 
 export const createTest = mutation({
   args: {
@@ -80,11 +81,31 @@ export const deleteTest = mutation({
     testId: v.id("test"),
   },
   handler: async (ctx, args) => {
-    const { isOwner } = await checkTestOwnership(ctx, args.testId);
-    if (!isOwner) {
+    const { isOwner, test } = await checkTestOwnership(ctx, args.testId);
+    if (!isOwner || !test) {
       throw new Error("You are not allowed to delete this test");
     }
 
+    // Cancel any scheduled jobs before deleting
+    if (test.activationJobId) {
+      try {
+        await ctx.scheduler.cancel(test.activationJobId);
+      } catch (error) {
+        // Job might already be executed or canceled, continue with deletion
+        console.warn(`Failed to cancel activation job ${test.activationJobId}:`, error);
+      }
+    }
+
+    if (test.finishJobId) {
+      try {
+        await ctx.scheduler.cancel(test.finishJobId);
+      } catch (error) {
+        // Job might already be executed or canceled, continue with deletion
+        console.warn(`Failed to cancel finish job ${test.finishJobId}:`, error);
+      }
+    }
+
+    // Soft delete the test
     await ctx.db.patch(args.testId, {
       deletedAt: Date.now(),
     });
@@ -257,3 +278,183 @@ export async function checkTestOwnership(ctx: QueryCtx, testId: Id<"test">) {
     test,
   };
 }
+
+/**
+ * Publish a test with optional scheduling
+ * Supports both immediate publishing and scheduled publishing
+ */
+export const publishTest = mutation({
+  args: {
+    testId: v.id("test"),
+    startOption: v.union(v.literal("now"), v.literal("schedule")),
+    scheduledStartAt: v.optional(v.number()),
+    scheduledEndAt: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const { testId, startOption, scheduledStartAt, scheduledEndAt } = args;
+    
+    // Check ownership
+    const { isOwner, test } = await checkTestOwnership(ctx, testId);
+    if (!isOwner || !test) {
+      throw new Error("You are not allowed to publish this test");
+    }
+
+    // Cancel existing scheduled jobs if they exist (for rescheduling)
+    if (test.activationJobId) {
+      try {
+        await ctx.scheduler.cancel(test.activationJobId);
+      } catch (error) {
+        console.warn(`Failed to cancel existing activation job:`, error);
+      }
+    }
+    if (test.finishJobId) {
+      try {
+        await ctx.scheduler.cancel(test.finishJobId);
+      } catch (error) {
+        console.warn(`Failed to cancel existing finish job:`, error);
+      }
+    }
+
+    let updates: any = {};
+    let activationJobId: Id<"_scheduled_functions"> | undefined;
+    let finishJobId: Id<"_scheduled_functions"> | undefined;
+
+    // Handle start scheduling
+    if (startOption === "now") {
+      updates.isPublished = true;
+      updates.scheduledStartAt = Date.now();
+      updates.activationJobId = undefined; // Clear any existing job ID
+    } else if (startOption === "schedule" && scheduledStartAt) {
+      // Only set isPublished to false if test isn't already published
+      // This allows rescheduling without unpublishing
+      if (!test.isPublished) {
+        updates.isPublished = false;
+      }
+      updates.scheduledStartAt = scheduledStartAt;
+      
+      // Only schedule activation if test isn't already active
+      if (!test.isPublished || scheduledStartAt > Date.now()) {
+        activationJobId = await ctx.scheduler.runAt(
+          scheduledStartAt,
+          internal.internal.test.activateTest,
+          { testId }
+        );
+        updates.activationJobId = activationJobId;
+      } else {
+        updates.activationJobId = undefined;
+      }
+    } else {
+      throw new Error("Invalid start option or missing scheduled start time");
+    }
+
+    // Handle end scheduling
+    if (scheduledEndAt) {
+      updates.scheduledEndAt = scheduledEndAt;
+      
+      // Only schedule finish if end time is in the future
+      if (scheduledEndAt > Date.now()) {
+        finishJobId = await ctx.scheduler.runAt(
+          scheduledEndAt,
+          internal.internal.test.finishTest,
+          { testId }
+        );
+        updates.finishJobId = finishJobId;
+      } else {
+        updates.finishJobId = undefined;
+      }
+    } else {
+      updates.scheduledEndAt = undefined;
+      updates.finishJobId = undefined;
+    }
+
+    // Update the test
+    await ctx.db.patch(testId, updates);
+
+    return { success: true };
+  }
+});
+
+/**
+ * Update test schedule (change end date/duration while active)
+ */
+export const updateTestSchedule = mutation({
+  args: {
+    testId: v.id("test"),
+    scheduledEndAt: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const { testId, scheduledEndAt } = args;
+    
+    // Check ownership
+    const { isOwner, test } = await checkTestOwnership(ctx, testId);
+    if (!isOwner || !test) {
+      throw new Error("You are not allowed to update this test schedule");
+    }
+
+    // Cancel existing finish job if it exists
+    if (test.finishJobId) {
+      await ctx.scheduler.cancel(test.finishJobId);
+    }
+
+    let updates: any = {
+      scheduledEndAt,
+      finishJobId: undefined
+    };
+
+    // Schedule new finish job if end date is provided
+    if (scheduledEndAt) {
+      const finishJobId = await ctx.scheduler.runAt(
+        scheduledEndAt,
+        internal.internal.test.finishTest,
+        { testId }
+      );
+      updates.finishJobId = finishJobId;
+    }
+
+    await ctx.db.patch(testId, updates);
+
+    return { success: true };
+  }
+});
+
+/**
+ * Stop/unpublish a test manually and cancel all scheduled jobs
+ */
+export const stopTest = mutation({
+  args: {
+    testId: v.id("test"),
+  },
+  handler: async (ctx, args) => {
+    const { isOwner, test } = await checkTestOwnership(ctx, args.testId);
+    if (!isOwner || !test) {
+      throw new Error("You are not allowed to stop this test");
+    }
+
+    // Cancel any remaining scheduled jobs
+    if (test.activationJobId) {
+      try {
+        await ctx.scheduler.cancel(test.activationJobId);
+      } catch (error) {
+        console.warn(`Failed to cancel activation job during stop:`, error);
+      }
+    }
+
+    if (test.finishJobId) {
+      try {
+        await ctx.scheduler.cancel(test.finishJobId);
+      } catch (error) {
+        console.warn(`Failed to cancel finish job during stop:`, error);
+      }
+    }
+
+    // Stop the test
+    await ctx.db.patch(args.testId, {
+      finishedAt: Date.now(),
+      // Clear scheduler job IDs since we canceled them
+      activationJobId: undefined,
+      finishJobId: undefined,
+    });
+
+    return { success: true };
+  },
+});

@@ -34,7 +34,11 @@
       "Bash(bun install:*)",
       "WebFetch(domain:tanstack.com)",
       "Bash(bun remove:*)",
-      "Read(//var/folders/qv/h90bnb4132s7_6mbh4z_dlz40000gn/T/TemporaryItems/NSIRD_screencaptureui_1uKR5D/**)"
+      "Read(//var/folders/qv/h90bnb4132s7_6mbh4z_dlz40000gn/T/TemporaryItems/NSIRD_screencaptureui_1uKR5D/**)",
+      "WebFetch(domain:docs.convex.dev)",
+      "Bash(bunx convex:*)",
+      "Bash(npx:*)",
+      "Bash(bun add:*)"
     ],
     "deny": [],
     "ask": [],

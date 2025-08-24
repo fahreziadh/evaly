@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { ArrowLeftIcon, CircleIcon, LinkIcon } from "lucide-react";
+import { ArrowLeftIcon, CircleIcon, LinkIcon, ClockIcon, CalendarIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { PopoverAnchor, PopoverContent } from "@/components/ui/popover";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
@@ -12,6 +12,11 @@ import { useMutation } from "convex/react";
 import { useQuery } from "convex-helpers/react/cache";
 import { Loader2, PencilLine, Save } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { useCountdown } from "@/hooks/use-countdown";
+
+dayjs.extend(relativeTime);
 import { useForm } from "react-hook-form";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -21,6 +26,7 @@ import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TestSections from "./headers.test-sections";
 import { DialogReopenTest } from "@/components/shared/dialog-reopen-test";
 import DialogDeleteTest from "@/components/shared/dialog-delete-test";
+import DialogEditSchedule from "@/components/shared/dialog-edit-schedule";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 
@@ -50,10 +56,53 @@ const FirstSection = () => {
   };
 
   const status = useMemo(() => {
-    if (dataTest?.isPublished && dataTest?.finishedAt) return "finished";
-    if (dataTest?.isPublished && !dataTest?.finishedAt) return "active";
+    if (!dataTest) return "draft";
+    
+    const now = Date.now();
+    const scheduledStart = dataTest.scheduledStartAt;
+    const scheduledEnd = dataTest.scheduledEndAt;
+    const finished = dataTest.finishedAt;
+    
+    // Test is finished
+    if (finished || (scheduledEnd && now > scheduledEnd)) return "finished";
+    
+    // Test is published and active
+    if (dataTest.isPublished && !finished) return "active";
+    
+    // Test is scheduled but not started yet
+    if (scheduledStart && now < scheduledStart) return "scheduled";
+    
     return "draft";
   }, [dataTest]);
+  
+  const countdownTarget = useMemo(() => {
+    if (!dataTest) return undefined;
+    
+    const now = Date.now();
+    const scheduledStart = dataTest.scheduledStartAt;
+    const scheduledEnd = dataTest.scheduledEndAt;
+    
+    if (status === "scheduled" && scheduledStart) {
+      return scheduledStart;
+    }
+    
+    if (status === "active" && scheduledEnd && now < scheduledEnd) {
+      return scheduledEnd;
+    }
+    
+    return undefined;
+  }, [dataTest, status]);
+  
+  const { timeLeft } = useCountdown(countdownTarget);
+  
+  const timeInfo = useMemo(() => {
+    if (!countdownTarget || !timeLeft) return null;
+    
+    return {
+      type: status === "scheduled" ? "starts" : "ends",
+      relative: timeLeft
+    };
+  }, [countdownTarget, timeLeft, status]);
 
   return (
     <div className="flex flex-col sm:flex-row gap-3 sm:gap-2 justify-between sm:items-center bg-card">
@@ -79,22 +128,39 @@ const FirstSection = () => {
       ) : (
         <div className="flex flex-row gap-2 sm:gap-3 items-center flex-wrap justify-end sm:justify-start">
           {/* Status */}
-          <Badge
-            size={"lg"}
-            className="capitalize gap-2"
-            variant={
-              status === "draft"
-                ? "secondary"
-                : status === "active"
-                  ? "ghost"
-                  : "success"
-            }
-          >
-            {status === "active" ? (
-              <CircleIcon className="fill-emerald-500 stroke-emerald-500 max-w-2.5" />
-            ) : null}
-            {status}
-          </Badge>
+          <div className="flex flex-col sm:flex-row gap-2 items-end sm:items-center">
+            <Badge
+              size={"lg"}
+              className="capitalize gap-2"
+              variant={
+                status === "draft"
+                  ? "secondary"
+                  : status === "scheduled"
+                    ? "outline"
+                    : status === "active"
+                      ? "ghost"
+                      : "success"
+              }
+            >
+              {status === "active" ? (
+                <CircleIcon className="fill-emerald-500 stroke-emerald-500 max-w-2.5" />
+              ) : status === "scheduled" ? (
+                <ClockIcon className="size-3 text-primary" />
+              ) : null}
+              {status}
+            </Badge>
+            
+            {timeInfo && (
+              <div className="text-xs text-muted-foreground flex items-center gap-1">
+                {timeInfo.type === "starts" ? (
+                  <CalendarIcon className="size-3" />
+                ) : (
+                  <ClockIcon className="size-3" />
+                )}
+                {timeInfo.type === "starts" ? "Starts in" : "Ends in"} {timeInfo.relative}
+              </div>
+            )}
+          </div>
             
           <Separator orientation="vertical" className="h-4"/>
 
@@ -119,7 +185,7 @@ const FirstSection = () => {
           ) : null}
 
           {/* Publish button */}
-          {status === "draft" ? (
+          {(status === "draft" || status === "scheduled") ? (
             <DialogPublishTest
               test={dataTest}
               onPublished={() => {
@@ -131,6 +197,16 @@ const FirstSection = () => {
             />
           ) : null}
 
+          {/* Edit schedule button */}
+          {status === "active" ? (
+            <DialogEditSchedule
+              test={dataTest}
+              onUpdated={() => {
+                // Refresh will happen automatically via Convex reactivity
+              }}
+            />
+          ) : null}
+          
           {/* Unpublish button */}
           {status === "active" ? (
             <DialogUnpublishTest
@@ -168,8 +244,22 @@ const SecondSection = () => {
   });
 
   const status = useMemo(() => {
-    if (dataTest?.isPublished && dataTest?.finishedAt) return "finished";
-    if (dataTest?.isPublished && !dataTest?.finishedAt) return "active";
+    if (!dataTest) return "draft";
+    
+    const now = Date.now();
+    const scheduledStart = dataTest.scheduledStartAt;
+    const scheduledEnd = dataTest.scheduledEndAt;
+    const finished = dataTest.finishedAt;
+    
+    // Test is finished
+    if (finished || (scheduledEnd && now > scheduledEnd)) return "finished";
+    
+    // Test is published and active
+    if (dataTest.isPublished && !finished) return "active";
+    
+    // Test is scheduled but not started yet
+    if (scheduledStart && now < scheduledStart) return "scheduled";
+    
     return "draft";
   }, [dataTest]);
 
@@ -185,14 +275,14 @@ const SecondSection = () => {
       <TabsList>
         <TabsTrigger
           value="results"
-          className={status === "draft" ? "hidden" : ""}
+          className={status === "draft" || status === "scheduled" ? "hidden" : ""}
         >
           Results
         </TabsTrigger>
         <TabsTrigger value="questions">Questions</TabsTrigger>
         <TabsTrigger
           value="share"
-          className={status === "draft" ? "hidden" : ""}
+          className={status === "draft" || status === "scheduled" ? "hidden" : ""}
         >
           Share
         </TabsTrigger>

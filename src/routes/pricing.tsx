@@ -10,7 +10,8 @@ import {
   CheckCircle,
   ArrowRight,
   ChevronDown,
-  Star
+  Star,
+  GithubIcon
 } from "lucide-react";
 import { fetchGitHubStars } from "@/lib/github";
 import { useLoaderData } from "@tanstack/react-router";

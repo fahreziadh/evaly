@@ -36,16 +36,16 @@ export default function ResultsLeaderboard({ testId }: Props) {
             className="flex items-center justify-between py-3"
           >
             <div className="flex items-center space-x-3">
-              <span className="w-8 text-left text-sm font-medium">
+              <span className="w-8 text-left font-medium">
                 {index + 1}
               </span>
 
-              <div className="size-10 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+              <div className="size-8 rounded-full bg-muted flex items-center justify-center overflow-hidden">
                 {result.participantImage ? (
                   <img 
                     src={result.participantImage} 
                     alt={result.participantName || 'Participant'} 
-                    className="size-10 rounded-full object-cover"
+                    className="size-8 rounded-full object-cover"
                   />
                 ) : (
                   <span className="text-xs font-medium text-muted-foreground">

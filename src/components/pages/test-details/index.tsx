@@ -61,7 +61,7 @@ export default function TestsDetails() {
       }}
     >
       <Headers />
-      <div className="mt-2">
+      <div className="mt-2 pb-20">
         <TabsContent value="questions">
           {selectedSection ? (
             <Suspense fallback={<QuestionEditorSkeleton />}>

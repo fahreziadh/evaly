@@ -4,7 +4,6 @@ import {
   Scripts,
   createRootRouteWithContext,
   useRouterState,
-  type ReactNode,
 } from "@tanstack/react-router";
 import { Toaster } from "../components/ui/sonner.tsx";
 import appCss from "../styles/app.css?url";
@@ -13,6 +12,7 @@ import { ErrorBoundary } from "@/components/shared/error-boundary.tsx";
 import { GenericError } from "@/components/pages/error-pages.tsx";
 import { QueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils.ts";
+import type { ReactNode } from "react";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {

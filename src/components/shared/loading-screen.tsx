@@ -1,5 +1,4 @@
 import { Loader2Icon } from "lucide-react";
-import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 interface LoadingScreenProps {
@@ -22,21 +21,18 @@ const LoadingScreen = ({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <div
       className={cn(
-        "flex flex-col justify-center items-center gap-4",
+        "flex flex-col justify-center items-center gap-4 animate-in fade-in duration-300",
         fullScreen ? "h-screen" : "py-8",
         className
       )}
     >
       <Loader2Icon className={cn("animate-spin", sizeClasses[size])} />
       {message && (
-        <p className="text-sm text-gray-600 animate-pulse">{message}</p>
+        <p className="text-sm text-muted-foreground animate-pulse">{message}</p>
       )}
-    </motion.div>
+    </div>
   );
 };
 
@@ -82,7 +78,7 @@ export function LoadingOverlay({
       <div className="flex flex-col items-center gap-3">
         <LoadingSpinner size="md" />
         {message && (
-          <p className="text-sm text-gray-600">{message}</p>
+          <p className="text-sm text-muted-foreground">{message}</p>
         )}
       </div>
     </div>

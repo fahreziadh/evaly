@@ -213,9 +213,14 @@ const EditQuestion = () => {
         search: { bankId },
       });
     } else {
-      navigate({
-        to: "/app/questions",
-      });
+      // Check if there's browser history to go back to
+      if (window.history.length > 1 && document.referrer) {
+        window.history.back();
+      } else {
+        navigate({
+          to: "/app/questions",
+        });
+      }
     }
   };
 

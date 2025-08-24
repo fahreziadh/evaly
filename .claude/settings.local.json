@@ -28,7 +28,8 @@
       "mcp__ide__getDiagnostics",
       "Bash(grep:*)",
       "WebSearch",
-      "Bash(bunx tsc:*)"
+      "Bash(bunx tsc:*)",
+      "Bash(gh issue:*)"
     ],
     "deny": [],
     "ask": [],

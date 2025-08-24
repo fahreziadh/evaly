@@ -7,7 +7,7 @@ yarn.lock
 .env
 .vercel
 .output
-.vinxi
+.tanstack
 
 /build/
 /api/

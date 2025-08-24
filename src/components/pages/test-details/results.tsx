@@ -63,7 +63,15 @@ const Results = () => {
           <ResultsSectionSummary />
         </TabsContent>
         <TabsContent value="analytics">
-          <TestAnalytics testId={search.testId as Id<"test">} />
+          <TestAnalytics 
+            testId={search.testId as Id<"test">} 
+            onQuestionClick={(questionId) => {
+              navigate({
+                to: "/app/questions/details",
+                search: { questionId },
+              });
+            }}
+          />
         </TabsContent>
       </Tabs>
     </div>

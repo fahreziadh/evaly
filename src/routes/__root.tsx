@@ -38,14 +38,31 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { rel: "icon", href: "/favicon.ico" },
       ],
     }),
-    notFoundComponent: () => <NotFound />,
+    notFoundComponent: () => {
+      return (
+        <RootDocument>
+          <NotFound />
+        </RootDocument>
+      );
+    },
+    errorComponent: () => {
+      return (
+        <RootDocument>
+          <GenericError />
+        </RootDocument>
+      );
+    },
   }
 );
 
 function RootComponent() {
   return (
     <ErrorBoundary
-      fallback={<GenericError />}
+      fallback={
+        <RootDocument>
+          <GenericError />
+        </RootDocument>
+      }
       onError={(error, errorInfo) => {
         // Log to error tracking service in production
         if (!import.meta.env.DEV) {

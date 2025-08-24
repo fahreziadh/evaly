@@ -5,17 +5,48 @@ import { testTypeFormatter } from "@/lib/test-type-formatter";
 import type { DataModel } from "@convex/_generated/dataModel";
 import { Link } from "@tanstack/react-router";
 import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { useCountdown } from "@/hooks/use-countdown";
 import {
   CheckIcon,
   CircleIcon,
   CircleUserIcon,
   PencilLine,
+  ClockIcon,
 } from "lucide-react";
+
+dayjs.extend(relativeTime);
 import DialogDeleteTest from "./dialog-delete-test";
 import { Label } from "../ui/label";
 
 const CardTest = ({ data }: { data: DataModel["test"]["document"] }) => {
-  const redirectLink = data.isPublished
+  const now = Date.now();
+  const scheduledStart = data.scheduledStartAt;
+  const scheduledEnd = data.scheduledEndAt;
+  const finished = data.finishedAt;
+  
+  const status = (() => {
+    // Test is finished
+    if (finished || (scheduledEnd && now > scheduledEnd)) return "finished";
+    
+    // Test is published and active
+    if (data.isPublished && !finished) return "active";
+    
+    // Test is scheduled but not started yet
+    if (scheduledStart && now < scheduledStart) return "scheduled";
+    
+    return "draft";
+  })();
+  
+  const countdownTarget = (() => {
+    if (status === "scheduled" && scheduledStart) return scheduledStart;
+    if (status === "active" && scheduledEnd && now < scheduledEnd) return scheduledEnd;
+    return undefined;
+  })();
+  
+  const { timeLeft } = useCountdown(countdownTarget);
+  
+  const redirectLink = (status === "active" || status === "finished")
     ? `/app/tests/details?testId=${data._id}&tabs=results`
     : `/app/tests/details?testId=${data._id}&tabs=questions`;
 
@@ -27,24 +58,40 @@ const CardTest = ({ data }: { data: DataModel["test"]["document"] }) => {
       <div className="flex justify-between items-start">
         <h3 className="font-normal">{data.title || "Untitled Test"}</h3>
 
-        <div>
-          {data.isPublished && !data.finishedAt ? (
-            <Badge variant={"ghost"} className="text-muted-foreground">
+        <div className="flex flex-col items-end gap-1">
+          <Badge 
+            variant={
+              status === "draft" 
+                ? "outline" 
+                : status === "scheduled" 
+                  ? "secondary" 
+                  : status === "active" 
+                    ? "ghost" 
+                    : "success"
+            } 
+            className={status === "active" ? "text-muted-foreground" : ""}
+          >
+            {status === "active" ? (
               <CircleIcon className="fill-success-foreground stroke-success-foreground size-3" />
-              Active
-            </Badge>
-          ) : null}
-
-          {!data.isPublished && !data.finishedAt ? (
-            <Badge variant={"outline"}>Draft</Badge>
-          ) : null}
-
-          {data.isPublished && data.finishedAt ? (
-            <Badge variant={"secondary"}>
-              <CheckIcon />
-              Finished
-            </Badge>
-          ) : null}
+            ) : status === "scheduled" ? (
+              <ClockIcon className="size-3" />
+            ) : status === "finished" ? (
+              <CheckIcon className="size-3" />
+            ) : null}
+            {status === "scheduled" ? "Scheduled" : status.charAt(0).toUpperCase() + status.slice(1)}
+          </Badge>
+          
+          {status === "scheduled" && timeLeft && (
+            <span className="text-xs text-muted-foreground">
+              Starts in {timeLeft}
+            </span>
+          )}
+          
+          {status === "active" && timeLeft && (
+            <span className="text-xs text-muted-foreground">
+              Ends in {timeLeft}
+            </span>
+          )}
         </div>
       </div>
 

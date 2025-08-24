@@ -13,6 +13,14 @@ export const test = defineTable({
   heldAt: v.optional(v.string()),
   finishedAt: v.optional(v.number()),
   deletedAt: v.optional(v.number()),
+  
+  // Scheduling fields
+  scheduledStartAt: v.optional(v.number()),
+  scheduledEndAt: v.optional(v.number()),
+  
+  // Job IDs for cancellation
+  activationJobId: v.optional(v.id("_scheduled_functions")),
+  finishJobId: v.optional(v.id("_scheduled_functions")),
 }).index("by_organization_id", ["organizationId"]);
 
 export const testPresence = defineTable({

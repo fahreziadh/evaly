@@ -11,6 +11,7 @@
 import type * as auth from "../auth.js";
 import type * as common_storage from "../common/storage.js";
 import type * as http from "../http.js";
+import type * as internal_test from "../internal/test.js";
 import type * as organizer_profile from "../organizer/profile.js";
 import type * as organizer_question from "../organizer/question.js";
 import type * as organizer_questionLibrary from "../organizer/questionLibrary.js";
@@ -53,6 +54,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   "common/storage": typeof common_storage;
   http: typeof http;
+  "internal/test": typeof internal_test;
   "organizer/profile": typeof organizer_profile;
   "organizer/question": typeof organizer_question;
   "organizer/questionLibrary": typeof organizer_questionLibrary;

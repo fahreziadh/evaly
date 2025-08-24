@@ -12,6 +12,7 @@ export default defineConfig({
     }),
     tanstackStart({
         customViteReactPlugin: true,
+        target: "vercel"
     }),
   ],
 })

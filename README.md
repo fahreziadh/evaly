@@ -1,33 +1,26 @@
 # Evaly - Test & Exam Management Platform
 
-A comprehensive test and exam management platform built with modern web technologies. Evaly enables organizations to create, manage, and conduct online tests with real-time monitoring, detailed analytics, and seamless user experiences.
+A comprehensive platform designed to help educators create, manage, and conduct online tests and exams. Evaly simplifies the assessment process with intuitive tools for test creation, real-time monitoring, and detailed analytics.
 
 ![Evaly Platform](https://img.shields.io/badge/Built%20with-TanStack%20Start-brightgreen) ![Convex](https://img.shields.io/badge/Backend-Convex-blue) ![Tailwind](https://img.shields.io/badge/Styling-Tailwind%20CSS-38B2AC)
 
 ## 🚀 Features
 
-### For Organizers
-- **Test Creation & Management**: Create comprehensive tests with multiple question types
-- **Rich Question Editor**: Built-in TipTap editor for creating rich-text questions with images, links, and formatting
-- **Real-time Monitoring**: Live participant tracking with presence detection
-- **Advanced Analytics**: Detailed test results, performance metrics, and progress tracking
-- **Question Library**: Reusable question bank for efficient test creation
-- **Test Scheduling**: Schedule tests with custom time limits and access controls
-- **Multi-tenant Support**: Organization-based user management
+### For Educators
+- **Test Creation & Management**: Create tests with multiple question types and formats
+- **Rich Question Editor**: Create questions with images, links, and formatting
+- **Live Monitoring**: Track participants in real-time during exams
+- **Detailed Analytics**: View test results, performance metrics, and progress reports
+- **Question Library**: Build and reuse question banks across multiple tests
+- **Flexible Scheduling**: Set time limits, access controls, and test availability
+- **Organization Management**: Manage multiple educators and student groups
 
-### For Participants
-- **Seamless Test-taking**: Clean, intuitive interface for taking tests
-- **Real-time Auto-save**: Automatic answer saving with progress tracking
-- **Mobile Responsive**: Optimized for desktop, tablet, and mobile devices
-- **Instant Results**: Immediate feedback and detailed result breakdowns
-- **Profile Management**: Customizable participant profiles
-
-### Technical Highlights
-- **Real-time Features**: Live presence tracking, instant updates, and collaborative features
-- **Type-safe Architecture**: End-to-end type safety with TypeScript and Convex
-- **Modern UI/UX**: Responsive design with shadcn/ui components and Tailwind CSS
-- **Scalable Backend**: Serverless architecture with Convex for optimal performance
-- **Testing Ready**: Configured with Vitest and React Testing Library
+### For Students
+- **Simple Test Interface**: Clean, distraction-free environment for taking tests
+- **Auto-save Progress**: Answers are automatically saved as students work
+- **Mobile Friendly**: Works on desktop, tablet, and mobile devices
+- **Instant Results**: Get immediate feedback and detailed score breakdowns
+- **Profile Management**: Maintain student profiles and test history
 
 ## 🛠 Tech Stack
 
@@ -225,31 +218,31 @@ npx convex deploy
 npx convex env set VARIABLE_NAME value
 ```
 
-## 🌟 Key Features Deep Dive
+## 🌟 Key Features
 
-### Real-time Test Monitoring
-- Live participant presence tracking
-- Real-time answer submission monitoring
-- Instant test completion notifications
-- Heartbeat system for connection monitoring
+### Live Test Monitoring
+- Track student presence during exams
+- Monitor answer submissions in real-time
+- Receive instant notifications when tests are completed
+- Connection monitoring to ensure exam integrity
 
-### Advanced Question Types
+### Flexible Question Types
 - Multiple choice questions
-- Rich text formatting with images
-- Code syntax highlighting
-- Mathematical expressions support
+- Rich text with images and formatting
+- Code highlighting for programming assessments
+- Mathematical expressions and formulas
 
-### Comprehensive Analytics
-- Individual participant performance
-- Question-level statistics
-- Time tracking and analysis
-- Exportable results and reports
+### Detailed Analytics
+- Individual student performance analysis
+- Question-level statistics and difficulty metrics
+- Time tracking and completion analysis
+- Export results for further analysis
 
 ### Security & Reliability
-- Secure authentication with multiple providers
-- Data validation at database level
-- Automatic backup and recovery
-- Rate limiting and abuse prevention
+- Secure authentication and access control
+- Data validation and integrity checks
+- Automatic backup and recovery systems
+- Protection against cheating and abuse
 
 ## 🤝 Contributing
 
@@ -279,4 +272,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Built with ❤️ using TanStack Start, Convex, and modern web technologies.
+Built with ❤️ for educators using TanStack Start and Convex.

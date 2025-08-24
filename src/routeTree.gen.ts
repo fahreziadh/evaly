@@ -11,6 +11,8 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as UseCasesImport } from './routes/use-cases'
+import { Route as PricingImport } from './routes/pricing'
 import { Route as participantRouteImport } from './routes/(participant)/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as organizerAppRouteImport } from './routes/(organizer)/app/route'
@@ -28,6 +30,18 @@ import { Route as organizerAppQuestionsLibraryImport } from './routes/(organizer
 import { Route as organizerAppQuestionsDetailsImport } from './routes/(organizer)/app/questions/details'
 
 // Create/Update Routes
+
+const UseCasesRoute = UseCasesImport.update({
+  id: '/use-cases',
+  path: '/use-cases',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PricingRoute = PricingImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const participantRouteRoute = participantRouteImport.update({
   id: '/(participant)',
@@ -140,6 +154,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof participantRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingImport
+      parentRoute: typeof rootRoute
+    }
+    '/use-cases': {
+      id: '/use-cases'
+      path: '/use-cases'
+      fullPath: '/use-cases'
+      preLoaderRoute: typeof UseCasesImport
       parentRoute: typeof rootRoute
     }
     '/(organizer)/app': {
@@ -282,6 +310,8 @@ const organizerAppRouteRouteWithChildren =
 
 export interface FileRoutesByFullPath {
   '/': typeof participantRouteRouteWithChildren
+  '/pricing': typeof PricingRoute
+  '/use-cases': typeof UseCasesRoute
   '/app': typeof organizerAppRouteRouteWithChildren
   '/app/participants': typeof organizerAppParticipantsRoute
   '/app/settings': typeof organizerAppSettingsRoute
@@ -299,6 +329,8 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof participantRouteRouteWithChildren
+  '/pricing': typeof PricingRoute
+  '/use-cases': typeof UseCasesRoute
   '/app/participants': typeof organizerAppParticipantsRoute
   '/app/settings': typeof organizerAppSettingsRoute
   '/app': typeof organizerAppIndexRoute
@@ -317,6 +349,8 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/(participant)': typeof participantRouteRouteWithChildren
+  '/pricing': typeof PricingRoute
+  '/use-cases': typeof UseCasesRoute
   '/(organizer)/app': typeof organizerAppRouteRouteWithChildren
   '/(organizer)/app/participants': typeof organizerAppParticipantsRoute
   '/(organizer)/app/settings': typeof organizerAppSettingsRoute
@@ -336,6 +370,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/pricing'
+    | '/use-cases'
     | '/app'
     | '/app/participants'
     | '/app/settings'
@@ -352,6 +388,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/pricing'
+    | '/use-cases'
     | '/app/participants'
     | '/app/settings'
     | '/app'
@@ -368,6 +406,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/(participant)'
+    | '/pricing'
+    | '/use-cases'
     | '/(organizer)/app'
     | '/(organizer)/app/participants'
     | '/(organizer)/app/settings'
@@ -387,12 +427,16 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   participantRouteRoute: typeof participantRouteRouteWithChildren
+  PricingRoute: typeof PricingRoute
+  UseCasesRoute: typeof UseCasesRoute
   organizerAppRouteRoute: typeof organizerAppRouteRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   participantRouteRoute: participantRouteRouteWithChildren,
+  PricingRoute: PricingRoute,
+  UseCasesRoute: UseCasesRoute,
   organizerAppRouteRoute: organizerAppRouteRouteWithChildren,
 }
 
@@ -408,6 +452,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/(participant)",
+        "/pricing",
+        "/use-cases",
         "/(organizer)/app"
       ]
     },
@@ -421,6 +467,12 @@ export const routeTree = rootRoute
         "/(participant)/s/$testId/results",
         "/(participant)/s/$testId/"
       ]
+    },
+    "/pricing": {
+      "filePath": "pricing.tsx"
+    },
+    "/use-cases": {
+      "filePath": "use-cases.tsx"
     },
     "/(organizer)/app": {
       "filePath": "(organizer)/app/route.tsx",

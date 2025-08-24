@@ -1,13 +1,20 @@
 import { Button } from "../ui/button";
-import { 
-  Github, 
-  Users, 
-  BarChart3, 
+import {
+  GithubIcon,
+  Users,
+  BarChart3,
   Shield,
-  ArrowRight
+  ArrowRight,
+  ChevronDown
 } from "lucide-react";
-const Whistlist = () => {
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "../ui/dropdown-menu";
 
+const LandingPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -18,15 +25,58 @@ const Whistlist = () => {
               <h1 className="text-lg font-mono font-bold">evaly</h1>
             </div>
             <div className="flex items-center gap-2">
-              <a href="https://github.com/fahreziadh/evaly" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm" className="font-mono">
-                  <Github className="h-4 w-4 mr-1" />
-                  star
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="font-mono">
+                    Use cases
+                    <ChevronDown className="h-3 w-3 ml-1" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <a href="/use-cases" className="font-mono text-sm">
+                      All use cases
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <a href="/use-cases#educators" className="font-mono text-sm">
+                      For educators
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <a href="/use-cases#companies" className="font-mono text-sm">
+                      For companies
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <a href="/use-cases#training-centers" className="font-mono text-sm">
+                      For training centers
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <a href="/use-cases#self-learners" className="font-mono text-sm">
+                      For self-learners
+                    </a>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
+              <a href="/pricing">
+                <Button variant="ghost" size="sm" className="font-mono">
+                  Pricing
                 </Button>
               </a>
-              <Button asChild className="font-mono">
-                <a href="/app">get started</a>
-              </Button>
+              
+              <a href="https://github.com/fahreziadh/evaly" target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="sm" className="font-mono">
+                  <GithubIcon className="h-4 w-4 mr-1" />
+                  Star
+                </Button>
+              </a>
+              
+              <a href="/app">
+                <Button size="sm" className="font-mono">Get started</Button>
+              </a>
             </div>
           </div>
         </div>
@@ -34,33 +84,33 @@ const Whistlist = () => {
 
       {/* Hero Section */}
       <section className="container max-w-4xl mx-auto px-4 py-16">
-        <div className="text-center space-y-6">
+        <div className="space-y-6">
           <div className="inline-block border px-3 py-1 text-xs font-mono text-muted-foreground">
             OPEN SOURCE • FREE • ALPHA
           </div>
           
-          <h1 className="text-4xl md:text-5xl font-mono font-bold tracking-tight">
-            test platform<br />
+          <h1 className="text-3xl md:text-4xl font-mono font-bold tracking-tight">
+            Test platform<br />
             for <span className="text-primary">educators</span>
           </h1>
           
-          <p className="text-lg text-muted-foreground max-w-xl mx-auto font-mono">
+          <p className="text-muted-foreground max-w-xl font-mono">
             create, distribute, and analyze tests with zero hassle.<br />
             built for classrooms, designed for simplicity.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
-            <Button asChild size="lg" className="font-mono">
-              <a href="/app">
-                start testing now
+          <div className="flex flex-col sm:flex-row items-start gap-3 pt-4">
+            <a href="/app">
+              <Button>
+                Start testing now
                 <ArrowRight className="h-4 w-4 ml-2" />
-              </a>
-            </Button>
-            <Button variant="outline" asChild className="font-mono">
-              <a href="https://github.com/fahreziadh/evaly" target="_blank" rel="noopener noreferrer">
-                view source
-              </a>
-            </Button>
+              </Button>
+            </a>
+            <a href="https://github.com/fahreziadh/evaly" target="_blank" rel="noopener noreferrer">
+              <Button variant="outline">
+                View source
+              </Button>
+            </a>
           </div>
         </div>
       </section>
@@ -150,12 +200,12 @@ const Whistlist = () => {
             start using evaly today - completely free during alpha
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
-            <Button asChild size="lg" className="font-mono">
-              <a href="/app">
+            <a href="/app">
+              <Button className="font-mono">
                 get started now
                 <ArrowRight className="h-4 w-4 ml-2" />
-              </a>
-            </Button>
+              </Button>
+            </a>
           </div>
         </div>
       </section>
@@ -181,4 +231,4 @@ const Whistlist = () => {
   );
 };
 
-export default Whistlist;
+export default LandingPage;

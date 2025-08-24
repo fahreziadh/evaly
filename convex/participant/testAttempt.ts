@@ -163,24 +163,68 @@ export const finish = mutation({
         let isCorrect = false;
 
         // Handle different question types
-        if (question.type === "multiple-choice" || question.type === "yes-or-no") {
-          if (question.options && answer.answerOptions) {
-            // Get correct option IDs
-            const correctOptionIds = question.options
-              .filter(opt => opt.isCorrect)
-              .map(opt => opt.id);
+        switch (question.type) {
+          case "multiple-choice":
+          case "yes-or-no":
+            if (question.options && answer.answerOptions) {
+              // Get correct option IDs
+              const correctOptionIds = question.options
+                .filter(opt => opt.isCorrect)
+                .map(opt => opt.id);
 
-            // Check if answer matches exactly (for single-answer questions)
-            if (!question.allowMultipleAnswers) {
-              isCorrect = correctOptionIds.length === answer.answerOptions.length &&
-                         correctOptionIds.every(id => answer.answerOptions!.includes(id));
-            } else {
-              // For multiple-answer questions, require all correct answers selected
-              isCorrect = correctOptionIds.length === answer.answerOptions.length &&
-                         correctOptionIds.every(id => answer.answerOptions!.includes(id)) &&
-                         answer.answerOptions.every(id => correctOptionIds.includes(id));
+              // Check if answer matches exactly
+              if (!question.allowMultipleAnswers) {
+                // Single answer: exactly one correct option selected
+                isCorrect = correctOptionIds.length === 1 &&
+                           answer.answerOptions.length === 1 &&
+                           correctOptionIds[0] === answer.answerOptions[0];
+              } else {
+                // Multiple answers: all and only correct options selected
+                isCorrect = correctOptionIds.length === answer.answerOptions.length &&
+                           correctOptionIds.every(id => answer.answerOptions!.includes(id)) &&
+                           answer.answerOptions.every(id => correctOptionIds.includes(id));
+              }
             }
-          }
+            break;
+
+          case "text-field":
+          case "fill-the-blank":
+            // For text questions, mark as manually graded for now
+            // Organizers will need to grade these manually
+            isCorrect = false;
+            break;
+
+          case "file-upload":
+          case "audio-response":
+          case "video-response":
+            // For media upload questions, mark as manually graded
+            // Organizers will need to grade these manually
+            isCorrect = false;
+            break;
+
+          case "dropdown":
+            // Dropdown works like single-choice multiple choice
+            if (question.options && answer.answerOptions) {
+              const correctOptionIds = question.options
+                .filter(opt => opt.isCorrect)
+                .map(opt => opt.id);
+              
+              isCorrect = correctOptionIds.length === 1 &&
+                         answer.answerOptions.length === 1 &&
+                         correctOptionIds[0] === answer.answerOptions[0];
+            }
+            break;
+
+          case "matching-pairs":
+          case "slider-scale":
+            // For complex question types, mark as manually graded for now
+            // Organizers will need to grade these manually
+            isCorrect = false;
+            break;
+
+          default:
+            // Unknown question type, needs manual grading
+            isCorrect = false;
         }
 
         // Update the answer with correctness

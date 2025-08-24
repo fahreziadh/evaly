@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ResultSectionSubmission from "./results.section-submission";
 import ResultsSectionSummary from "./results.section-summary";
 import ResultsLeaderboard from "./results.section-leaderboard";
+import { TestAnalytics } from "./results.section-analytics";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import type { Id } from "@convex/_generated/dataModel";
 const Results = () => {
@@ -21,7 +22,7 @@ const Results = () => {
           navigate({
             search: {
               ...search,
-              resultsTab: value as "leaderboard" | "submission" | "summary",
+              resultsTab: value as "leaderboard" | "submission" | "summary" | "analytics",
             },
           });
         }}
@@ -45,6 +46,12 @@ const Results = () => {
           >
             Submission
           </TabsTrigger>
+          <TabsTrigger
+            value="analytics"
+            className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground"
+          >
+            Analytics
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="leaderboard">
           <ResultsLeaderboard testId={search.testId as Id<"test">} />
@@ -54,6 +61,9 @@ const Results = () => {
         </TabsContent>
         <TabsContent value="summary">
           <ResultsSectionSummary />
+        </TabsContent>
+        <TabsContent value="analytics">
+          <TestAnalytics testId={search.testId as Id<"test">} />
         </TabsContent>
       </Tabs>
     </div>

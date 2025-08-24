@@ -77,100 +77,88 @@ function RouteComponent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Header */}
-        <div className="mb-6">
+    <div className="min-h-screen bg-gray-50 py-4">
+      <div className="max-w-5xl mx-auto px-4">
+        {/* Compact Header */}
+        <div className="mb-4">
           <Button 
             variant="ghost" 
             onClick={() => navigate({ to: "/s/$testId", params: { testId } })}
-            className="mb-4"
+            className="mb-3 -ml-2"
+            size="sm"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Test
           </Button>
           
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Test Results</h1>
-              <p className="text-gray-600 mt-1">Your performance summary</p>
+          <div className="flex items-center justify-between bg-white rounded-lg p-4 shadow-sm border">
+            <div className="flex items-center gap-4">
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">Test Results</h1>
+                <p className="text-sm text-gray-600">Your performance summary</p>
+              </div>
+              <div className="flex items-center gap-4 text-sm">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-primary">{results.totalScore}</div>
+                  <div className="text-xs text-muted-foreground">/ {results.maxPossibleScore}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-semibold">{results.percentage}%</div>
+                  <div className="text-xs text-muted-foreground">Score</div>
+                </div>
+              </div>
             </div>
-            <div className={`px-6 py-3 rounded-lg border-2 ${getGradeColor(results.grade)}`}>
+            <div className={`px-4 py-2 rounded-md border ${getGradeColor(results.grade)}`}>
               <div className="text-center">
-                <div className="text-2xl font-bold">{results.grade}</div>
-                <div className="text-sm font-medium">{results.percentage}%</div>
+                <div className="text-xl font-bold">{results.grade}</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Overall Results Card */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Trophy className="h-5 w-5" />
-              Overall Results
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-1">
-                  {results.totalScore}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  out of {results.maxPossibleScore} points
-                </div>
-                <Progress value={results.percentage} className="mt-2" />
+        {/* Compact Stats Bar */}
+        <div className="bg-white rounded-lg p-3 mb-4 shadow-sm border">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <Trophy className="h-4 w-4 text-amber-500" />
+                <span className="font-medium">Progress:</span>
+                <Progress value={results.percentage} className="w-20 h-2" />
+                <span className="text-xs text-muted-foreground">{results.percentage}%</span>
               </div>
-              
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-600 mb-1">
-                  {results.completedSectionsCount}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  of {results.sectionsCount} sections completed
-                </div>
-                <Badge variant={results.isCompleted ? "success" : "secondary"} className="mt-2">
-                  {results.isCompleted ? "Complete" : "In Progress"}
-                </Badge>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-4 w-4 text-green-500" />
+                <span>{results.completedSectionsCount}/{results.sectionsCount} sections</span>
               </div>
-              
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600 mb-1">
-                  {results.percentage}%
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Overall Score
-                </div>
-                <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mt-2 ${getGradeColor(results.grade)}`}>
-                  <Award className="w-4 h-4 mr-1" />
-                  Grade {results.grade}
-                </div>
-              </div>
+              <Badge variant={results.isCompleted ? "success" : "secondary"} className="text-xs">
+                {results.isCompleted ? "Complete" : "In Progress"}
+              </Badge>
             </div>
-          </CardContent>
-        </Card>
+            <div className="text-right">
+              <div className="text-xs text-muted-foreground">Grade Distribution</div>
+            </div>
+          </div>
+        </div>
 
         {/* Section Results */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5" />
+        <div className="bg-white rounded-lg shadow-sm border">
+          <div className="px-4 py-3 border-b">
+            <h2 className="font-semibold flex items-center gap-2">
+              <Target className="h-4 w-4" />
               Section Results
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </h2>
+          </div>
+          <div className="p-4">
             <Tabs value={selectedSection || results.sections[0]?.sectionId} onValueChange={setSelectedSection}>
-              <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
+              <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 h-auto p-1">
                 {results.sections.map((section: any) => (
                   <TabsTrigger 
                     key={section.sectionId} 
                     value={section.sectionId}
-                    className="flex flex-col items-center p-3"
+                    className="flex flex-col items-center p-2 h-auto data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                   >
-                    <div className="font-medium">{section.sectionTitle}</div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="font-medium text-sm">{section.sectionTitle}</div>
+                    <div className="text-xs opacity-80">
                       {section.score}/{section.maxScore} ({section.percentage}%)
                     </div>
                   </TabsTrigger>
@@ -178,95 +166,105 @@ function RouteComponent() {
               </TabsList>
               
               {results.sections.map((section: any) => (
-                <TabsContent key={section.sectionId} value={section.sectionId}>
-                  <div className="space-y-4 mt-4">
-                    {/* Section Summary */}
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <TabsContent key={section.sectionId} value={section.sectionId} className="mt-3">
+                  <div className="space-y-3">
+                    {/* Compact Section Summary */}
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
                       <div>
-                        <h3 className="font-semibold text-lg">{section.sectionTitle}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          Completed on {new Date(section.completedAt).toLocaleString()}
+                        <h3 className="font-medium">{section.sectionTitle}</h3>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(section.completedAt).toLocaleDateString()} • 
+                          <Clock className="inline w-3 h-3 mx-1" />
+                          {formatDuration(section.duration)}
                         </p>
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-bold">
+                        <div className="text-lg font-bold">
                           {section.score}/{section.maxScore}
                         </div>
-                        <div className="text-sm text-muted-foreground">
-                          <Clock className="inline w-4 h-4 mr-1" />
-                          {formatDuration(section.duration)}
+                        <div className="text-xs text-muted-foreground">
+                          {section.percentage}% score
                         </div>
                       </div>
                     </div>
 
-                    {/* Questions */}
-                    <div className="space-y-3">
+                    {/* Streamlined Questions */}
+                    <div className="space-y-2">
                       {section.questions.map((question: any, qIndex: number) => (
-                        <Card key={question.questionId} className="border-l-4 border-l-gray-200">
-                          <CardContent className="p-4">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <span className="text-sm font-medium text-muted-foreground">
-                                    Question {qIndex + 1}
-                                  </span>
-                                  <Badge variant="outline" className="text-xs">
+                        <div key={question.questionId} className={`border rounded-md p-3 ${question.isCorrect ? 'border-l-4 border-l-green-400 bg-green-50/30' : 'border-l-4 border-l-red-400 bg-red-50/30'}`}>
+                          <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0 mt-1">
+                              {question.isCorrect ? (
+                                <CheckCircle className="w-4 h-4 text-green-600" />
+                              ) : (
+                                <XCircle className="w-4 h-4 text-red-600" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm font-medium">Q{qIndex + 1}</span>
+                                  <Badge variant="outline" className="text-xs px-1 py-0">
                                     {question.type.replace('-', ' ')}
                                   </Badge>
                                   <span className="text-xs text-muted-foreground">
-                                    {question.pointValue} {question.pointValue === 1 ? 'point' : 'points'}
+                                    {question.pointValue}pt
                                   </span>
                                 </div>
-                                <div 
-                                  className="prose prose-sm mb-3" 
-                                  dangerouslySetInnerHTML={{ __html: question.question }}
-                                />
-                                
-                                {/* Show participant's answer */}
+                                <span className={`text-xs font-medium ${question.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                                  {question.isCorrect ? 'Correct' : 'Incorrect'}
+                                </span>
+                              </div>
+                              
+                              <div 
+                                className="prose prose-sm mb-2 text-sm" 
+                                dangerouslySetInnerHTML={{ __html: question.question }}
+                              />
+                              
+                              <div className="space-y-2">
+                                {/* Compact answer display */}
                                 {question.myAnswer && (
-                                  <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-                                    <div className="text-sm font-medium text-blue-900 mb-1">Your Answer:</div>
+                                  <div className="p-2 bg-blue-50 rounded text-xs">
+                                    <span className="font-medium text-blue-900">Your answer: </span>
                                     {question.myAnswer.answerText && (
-                                      <div className="text-sm">{question.myAnswer.answerText}</div>
+                                      <span>{question.myAnswer.answerText}</span>
                                     )}
                                     {question.myAnswer.answerOptions && question.options && (
-                                      <div className="space-y-1">
+                                      <span>
                                         {question.options
                                           .filter((opt: any) => question.myAnswer!.answerOptions!.includes(opt.id))
-                                          .map((opt: any) => (
-                                            <div key={opt.id} className="text-sm">• {opt.text}</div>
-                                          ))
+                                          .map((opt: any) => opt.text)
+                                          .join(', ')
                                         }
-                                      </div>
+                                      </span>
                                     )}
                                   </div>
                                 )}
-                              </div>
-                              
-                              <div className="ml-4">
-                                {question.isCorrect ? (
-                                  <div className="flex items-center text-green-600">
-                                    <CheckCircle className="w-5 h-5 mr-1" />
-                                    <span className="text-sm font-medium">Correct</span>
-                                  </div>
-                                ) : (
-                                  <div className="flex items-center text-red-600">
-                                    <XCircle className="w-5 h-5 mr-1" />
-                                    <span className="text-sm font-medium">Incorrect</span>
+
+                                {!question.isCorrect && question.options && (
+                                  <div className="p-2 bg-green-50 rounded text-xs">
+                                    <span className="font-medium text-green-900">Correct: </span>
+                                    <span className="text-green-700">
+                                      {question.options
+                                        .filter((opt: any) => opt.isCorrect)
+                                        .map((opt: any) => opt.text)
+                                        .join(', ')
+                                      }
+                                    </span>
                                   </div>
                                 )}
                               </div>
                             </div>
-                          </CardContent>
-                        </Card>
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </div>
                 </TabsContent>
               ))}
             </Tabs>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

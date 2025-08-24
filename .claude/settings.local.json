@@ -27,7 +27,8 @@
       "Bash(rg:*)",
       "mcp__ide__getDiagnostics",
       "Bash(grep:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(bunx tsc:*)"
     ],
     "deny": [],
     "ask": [],

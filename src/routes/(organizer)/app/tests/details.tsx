@@ -6,7 +6,7 @@ const searchSchema = z.object({
   testId: z.string().catch(""),
   tabs: z
     .enum(["questions", "results", "settings", "share"]).default("questions"),
-  resultsTab: z.enum(["leaderboard", "submission", "summary"]).optional().default("leaderboard"),
+  resultsTab: z.enum(["leaderboard", "submission", "summary", "analytics"]).optional().default("leaderboard"),
   selectedSection: z.string().optional(),
 });
 

@@ -79,16 +79,14 @@ export const getMyResults = query({
           questionId: question._id,
           question: question.question,
           type: question.type,
-          options: question.options?.map(opt => ({
-            ...opt,
-            isCorrect: false // Hide correct answers from participant view
-          })),
+          options: question.options, // Show correct answers for review
           myAnswer: answer ? {
             answerText: answer.answerText,
             answerOptions: answer.answerOptions,
           } : null,
           isCorrect,
           pointValue: questionScore,
+          scoreEarned: isCorrect ? questionScore : 0,
         });
       }
 

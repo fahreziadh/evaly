@@ -22,7 +22,7 @@ const LoginParticipantPage = () => {
             </div>
           </div>
 
-          <span className="text-xs text-muted-foreground mt-4 max-w-md  fixed bottom-4">
+          <span className="text-xs text-muted-foreground mt-4 max-w-md block">
             By continuing, you agree to our {" "}
             <Link to={"/"} className="underline">
               Terms of Use

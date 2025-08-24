@@ -80,7 +80,7 @@ function Section({
         </div>
       ) : null}
 
-      <div className={cn("flex flex-col gap-14 mt-4", show ? "" : "hidden")}>
+      <div className={cn("flex flex-col gap-14 border rounded-lg p-4", show ? "" : "hidden")}>
         {testSection.questions.map((q) => {
           const totalResponses = Object.values(
             summary?.[q._id].optionsAnswer ?? {}
@@ -88,12 +88,12 @@ function Section({
           return (
             <div key={q._id} className="w-full">
               <div
-                className="custom-prose max-w-full line-clamp-3 max-w-2xl"
-                dangerouslySetInnerHTML={{ __html: q.question }}
+                className="custom-prose line-clamp-3 max-w-2xl"
+                dangerouslySetInnerHTML={{ __html: "q.question" }}
               />
               <Label>{totalResponses} Response</Label>
               {q.options?.length ? (
-                <div className="mt-4 space-y-2">
+                <div className="space-y-2">
                   {q.options.map((o, i) => {
                     const totalResponse =
                       summary?.[q._id].optionsAnswer[o.id] ?? 0;
@@ -104,16 +104,16 @@ function Section({
                     return (
                       <div
                         key={o.id}
-                        className="flex flex-row items-center gap-4 w-full"
+                        className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 w-full"
                       >
                         <div
                           className={cn(
-                            "border overflow-clip py-1 px-2 flex-1 max-w-md flex flex-row items-center relative gap-2 rounded-md"
+                            "border overflow-clip p-1 flex-1 sm:max-w-md flex flex-row items-center relative gap-2 rounded-md"
                           )}
                         >
                           <motion.div
                             className={cn(
-                              "absolute left-0 h-full bg-secondary -z-10"
+                              "absolute left-0 h-full bg-foreground/10 -z-10"
                             )}
                             initial={{
                               width: 0,
@@ -140,10 +140,12 @@ function Section({
 
                           <Label>{totalPercentageResponse}%</Label>
                         </div>
-                        <Label>{totalResponse} Response</Label>
-                        {o.isCorrect ? (
-                          <CheckCircle2 className="size-4 text-muted-foreground" />
-                        ) : null}
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Label>{totalResponse} Response</Label>
+                          {o.isCorrect ? (
+                            <CheckCircle2 className="size-4 text-muted-foreground" />
+                          ) : null}
+                        </div>
                       </div>
                     );
                   })}

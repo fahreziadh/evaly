@@ -149,7 +149,7 @@ function RouteComponent() {
 
   return (
     <div>
-      <div className="flex flex-row items-center gap-3 mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
         <Button 
           variant="secondary" 
           size="icon-sm" 
@@ -172,11 +172,11 @@ function RouteComponent() {
                 placeholder="Optional description"
                 rows={2}
               />
-              <div className="flex gap-2">
-                <Button size="sm" onClick={handleSaveEdit}>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button size="sm" onClick={handleSaveEdit} className="w-full sm:w-auto">
                   Save
                 </Button>
-                <Button size="sm" variant="outline" onClick={handleCancelEdit}>
+                <Button size="sm" variant="outline" onClick={handleCancelEdit} className="w-full sm:w-auto">
                   Cancel
                 </Button>
               </div>
@@ -190,23 +190,29 @@ function RouteComponent() {
             </>
           )}
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => {
-              setEditedTitle(questionLibrary.title);
-              setEditedDescription(questionLibrary.description || "");
-              setIsEditing(true);
-            }}
-          >
-            <Settings className="mr-2 h-4 w-4" />
-            Edit Library
-          </Button>
-          <Button onClick={() => handleAddQuestion("multiple-choice")}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Question
-          </Button>
-        </div>
+        {!isEditing && (
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto"
+              onClick={() => {
+                setEditedTitle(questionLibrary.title);
+                setEditedDescription(questionLibrary.description || "");
+                setIsEditing(true);
+              }}
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              Edit Library
+            </Button>
+            <Button 
+              onClick={() => handleAddQuestion("multiple-choice")}
+              className="w-full sm:w-auto"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Question
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -269,7 +275,7 @@ function RouteComponent() {
               return (
                 <Card key={question._id} className="group hover:border-primary/30">
                   <CardContent className="p-4">
-                    <div className="flex justify-between items-start">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                       <div className="flex-1 cursor-pointer" 
                            onClick={() => navigate({
                              to: "/app/questions/details",
@@ -288,7 +294,7 @@ function RouteComponent() {
                         </h3>
                         <p className="text-sm text-muted-foreground">{preview}</p>
                       </div>
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                      <div className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity sm:ml-2 self-end sm:self-auto">
                         <Button
                           variant="ghost"
                           size="icon-sm"

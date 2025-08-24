@@ -56,9 +56,9 @@ const FirstSection = () => {
   }, [dataTest]);
 
   return (
-    <div className="flex md:flex-row flex-col-reverse gap-2 justify-between items-center bg-card">
+    <div className="flex flex-col sm:flex-row gap-3 sm:gap-2 justify-between sm:items-center bg-card">
       {/* Left */}
-      <div className="flex flex-row gap-3 items-center">
+      <div className="flex flex-row gap-2 sm:gap-3 items-center">
         <Button
           variant={"secondary"}
           size={"icon-sm"}
@@ -77,7 +77,7 @@ const FirstSection = () => {
       {!dataTest ? (
         <Skeleton className="w-24 h-8" />
       ) : (
-        <div className="flex flex-row gap-3 items-center">
+        <div className="flex flex-row gap-2 sm:gap-3 items-center flex-wrap justify-end sm:justify-start">
           {/* Status */}
           <Badge
             size={"lg"}

@@ -18,7 +18,7 @@ export default function ResultsLeaderboard({ testId }: Props) {
 
   if (!results || results.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
+      <div className="flex flex-col items-center justify-center py-12 border rounded-lg">
         <h3 className="text-lg font-medium mb-2">No Results Yet</h3>
         <p className="text-muted-foreground text-center">
           Results will appear here once participants complete the test.
@@ -28,24 +28,23 @@ export default function ResultsLeaderboard({ testId }: Props) {
   }
 
   return (
-    <div>
-      <div className="space-y-1">
+      <div className="space-y-1 border rounded-lg gap-2 divide-y">
         {results.map((result, index) => (
           <div
             key={result.participantId}
-            className="flex items-center justify-between py-3"
+            className="flex items-center justify-between py-3 px-4"
           >
             <div className="flex items-center space-x-3">
               <span className="w-8 text-left font-medium">
                 {index + 1}
               </span>
 
-              <div className="size-8 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+              <div className="size-7 rounded-full bg-muted flex items-center justify-center overflow-hidden">
                 {result.participantImage ? (
                   <img 
                     src={result.participantImage} 
                     alt={result.participantName || 'Participant'} 
-                    className="size-8 rounded-full object-cover"
+                    className="size-7 rounded-full object-cover"
                   />
                 ) : (
                   <span className="text-xs font-medium text-muted-foreground">
@@ -68,6 +67,5 @@ export default function ResultsLeaderboard({ testId }: Props) {
           </div>
         ))}
       </div>
-    </div>
   );
 }

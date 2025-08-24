@@ -5,7 +5,8 @@ import {
   Shield,
   ArrowRight,
   ChevronDown,
-  Star
+  Star,
+  Menu
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -15,8 +16,18 @@ import {
 } from "../ui/dropdown-menu";
 import { useLoaderData } from "@tanstack/react-router";
 
+import { useState } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet";
+
 const LandingPage = () => {
   const { stars } = useLoaderData({ from: "/" });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -26,7 +37,8 @@ const LandingPage = () => {
             <div className="flex items-center gap-2">
               <h1 className="text-lg  font-bold">evaly</h1>
             </div>
-            <div className="flex items-center gap-2">
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" >
@@ -79,6 +91,43 @@ const LandingPage = () => {
               <a href="/app">
                 <Button size="sm" >Get started</Button>
               </a>
+            </div>
+
+            {/* Mobile Navigation */}
+            <div className="flex md:hidden items-center gap-2">
+              <a href="/app">
+                <Button size="sm" >Get started</Button>
+              </a>
+              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[280px]">
+                  <SheetHeader>
+                    <SheetTitle>Menu</SheetTitle>
+                  </SheetHeader>
+                  <div className="flex flex-col gap-4 mt-6">
+                    <a href="/use-cases" onClick={() => setMobileMenuOpen(false)}>
+                      <Button variant="ghost" className="w-full justify-start">
+                        Use cases
+                      </Button>
+                    </a>
+                    <a href="/pricing" onClick={() => setMobileMenuOpen(false)}>
+                      <Button variant="ghost" className="w-full justify-start">
+                        Pricing
+                      </Button>
+                    </a>
+                    <a href="https://github.com/fahreziadh/evaly" target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)}>
+                      <Button variant="outline" className="w-full justify-start">
+                        <Star className="h-4 w-4 mr-2" />
+                        Star on GitHub {stars > 0 && `(${stars.toLocaleString()})`}
+                      </Button>
+                    </a>
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
         </div>

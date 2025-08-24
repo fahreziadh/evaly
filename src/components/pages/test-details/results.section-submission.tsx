@@ -329,14 +329,14 @@ export default function ResultSectionSubmission({ testId }: ResultSectionSubmiss
 
   return (
     <div className="w-full space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
         <Input
           placeholder="Search participants..."
           value={(table.getColumn("participantId")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("participantId")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="w-full sm:max-w-sm"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -362,8 +362,8 @@ export default function ResultSectionSubmission({ testId }: ResultSectionSubmiss
         </DropdownMenu>
       </div>
 
-      <div className="rounded-lg border bg-card">
-        <Table>
+      <div className="rounded-lg border bg-card overflow-x-auto">
+        <Table className="min-w-[640px]">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="border-b bg-muted/50 hover:bg-muted/50">

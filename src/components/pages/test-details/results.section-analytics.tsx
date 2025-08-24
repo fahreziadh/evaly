@@ -2,8 +2,6 @@ import { useQuery } from "convex-helpers/react/cache";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
 import { Progress } from "@/components/ui/progress";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   BarChart3,
   TrendingUp,
@@ -14,15 +12,15 @@ import {
   Target,
   AlertCircle,
   CheckCircle,
-  Activity,
-  Zap
+  Activity
 } from "lucide-react";
 
 interface TestAnalyticsProps {
   testId: Id<"test">;
+  onQuestionClick?: (questionId: Id<"question">) => void;
 }
 
-export function TestAnalytics({ testId }: TestAnalyticsProps) {
+export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
   const analytics = useQuery(api.organizer.testResult.getComprehensiveAnalytics, {
     testId,
   });
@@ -208,14 +206,24 @@ export function TestAnalytics({ testId }: TestAnalyticsProps) {
           
           <div className="space-y-2">
             {analytics.hardestQuestions.map((q, index) => (
-              <div key={q.questionId} className="border-l-2 border-l-destructive pl-2 py-1">
+              <div 
+                key={q.questionId} 
+                className="border-l-2 border-l-destructive pl-2 py-1 cursor-pointer hover:bg-muted/30 transition-colors"
+                onClick={() => onQuestionClick?.(q.questionId)}
+              >
                 <div className="flex items-start gap-2">
                   <span className="text-xs font-mono bg-muted px-1 text-center min-w-[16px]">
                     {index + 1}
                   </span>
                   <div className="flex-1 min-w-0">
                     <div 
-                      className="text-xs font-mono line-clamp-1"
+                      className="text-xs font-mono line-clamp-2 custom-prose"
+                      style={{ 
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                      }}
                       dangerouslySetInnerHTML={{ __html: q.question }}
                     />
                     <div className="flex items-center justify-between mt-1">
@@ -245,14 +253,24 @@ export function TestAnalytics({ testId }: TestAnalyticsProps) {
           
           <div className="space-y-2">
             {analytics.easiestQuestions.map((q, index) => (
-              <div key={q.questionId} className="border-l-2 border-l-green-600 pl-2 py-1">
+              <div 
+                key={q.questionId} 
+                className="border-l-2 border-l-green-600 pl-2 py-1 cursor-pointer hover:bg-muted/30 transition-colors"
+                onClick={() => onQuestionClick?.(q.questionId)}
+              >
                 <div className="flex items-start gap-2">
                   <span className="text-xs font-mono bg-muted px-1 text-center min-w-[16px]">
                     {index + 1}
                   </span>
                   <div className="flex-1 min-w-0">
                     <div 
-                      className="text-xs font-mono line-clamp-1"
+                      className="text-xs font-mono line-clamp-2 custom-prose"
+                      style={{ 
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                      }}
                       dangerouslySetInnerHTML={{ __html: q.question }}
                     />
                     <div className="flex items-center justify-between mt-1">

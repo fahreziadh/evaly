@@ -31,7 +31,7 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
         {/* Stats Grid Skeleton */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="border p-3 animate-pulse">
+            <div key={i} className="border p-3 animate-pulse rounded-lg">
               <div className="space-y-2">
                 <div className="h-3 w-16 bg-muted"></div>
                 <div className="h-6 w-12 bg-muted"></div>
@@ -42,7 +42,7 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
         </div>
         
         {/* Chart Skeleton */}
-        <div className="border p-3 animate-pulse">
+        <div className="border p-3 animate-pulse rounded-lg">
           <div className="space-y-3">
             <div className="h-3 w-24 bg-muted"></div>
             <div className="space-y-1">
@@ -77,7 +77,7 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
       {/* Overview Stats - Classic Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {/* Participants */}
-        <div className="border p-3">
+        <div className="border p-3 rounded-lg">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs  text-muted-foreground">PARTICIPANTS</span>
             <Users className="h-3 w-3 text-muted-foreground" />
@@ -92,7 +92,7 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
         </div>
 
         {/* Average Score */}
-        <div className="border p-3">
+        <div className="border p-3 rounded-lg">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs  text-muted-foreground">AVG SCORE</span>
             <Trophy className="h-3 w-3 text-muted-foreground" />
@@ -106,7 +106,7 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
         </div>
 
         {/* Score Range */}
-        <div className="border p-3">
+        <div className="border p-3 rounded-lg">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs  text-muted-foreground">RANGE</span>
             <Target className="h-3 w-3 text-muted-foreground" />
@@ -125,7 +125,7 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
         </div>
 
         {/* Average Time */}
-        <div className="border p-3">
+        <div className="border p-3 rounded-lg">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs  text-muted-foreground">AVG TIME</span>
             <Clock className="h-3 w-3 text-muted-foreground" />
@@ -140,7 +140,7 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
       </div>
 
       {/* Score Distribution - Classic */}
-      <div className="border p-3">
+      <div className="border p-3 rounded-lg">
         <div className="flex items-center gap-2 mb-3">
           <BarChart3 className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm  font-medium text-foreground">SCORE DISTRIBUTION</span>
@@ -195,7 +195,7 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
         {/* Hardest Questions - Classic */}
-        <div className="border p-3">
+        <div className="border p-3 rounded-lg">
           <div className="flex items-center gap-2 mb-3">
             <AlertCircle className="h-4 w-4 text-destructive" />
             <span className="text-sm  font-medium text-foreground">CHALLENGING QUESTIONS</span>
@@ -242,7 +242,7 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
         </div>
 
         {/* Easiest Questions - Classic */}
-        <div className="border p-3">
+        <div className="border p-3 rounded-lg">
           <div className="flex items-center gap-2 mb-3">
             <CheckCircle className="h-4 w-4 text-green-600" />
             <span className="text-sm  font-medium text-foreground">HIGH-PERFORMING QUESTIONS</span>
@@ -290,7 +290,7 @@ export function TestAnalytics({ testId, onQuestionClick }: TestAnalyticsProps) {
       </div>
 
       {/* Section Performance - Classic */}
-      <div className="border p-3">
+      <div className="border p-3 rounded-lg">
         <div className="flex items-center gap-2 mb-3">
           <Activity className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm  font-medium text-foreground">SECTION PERFORMANCE</span>

@@ -11,12 +11,11 @@ const Results = () => {
   const navigate = useNavigate({ from: "/app/tests/details" });
 
   return (
-    <div className="grid grid-cols-6 gap-4">
-      <SectionStats className="col-span-6" />
+    <div className="flex flex-col gap-4">
+      <SectionStats />
       {/* <SectionProgress className="col-span-4" />
       <SectionLeaderboards className="col-span-2" /> */}
       <Tabs
-        className="col-span-6 mt-4"
         value={search.resultsTab || "leaderboard"}
         onValueChange={(value) => {
           navigate({

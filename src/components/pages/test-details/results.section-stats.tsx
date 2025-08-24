@@ -34,7 +34,7 @@ const SectionStats = ({ className }: { className?: string }) => {
   }, [progress?.averageTime]);
 
   return (
-    <Card className={cn("grid grid-cols-4 gap-3 divide-x", className)}>
+    <Card className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:divide-x", className)}>
       <div className="p-4 flex flex-row justify-between">
         <div>
           <h1 className="font-medium text-sm">Working in progress</h1>

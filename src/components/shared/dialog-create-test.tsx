@@ -51,7 +51,7 @@ const DialogCreateTest = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={"default"} className="w-max"><PlusCircle /> Create Test</Button>
+        <Button variant={"default"} className="w-full sm:w-max"><PlusCircle /> Create Test</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

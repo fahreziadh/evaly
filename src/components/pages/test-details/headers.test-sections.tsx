@@ -53,7 +53,7 @@ const TestSections = ({ className }: { className?: string }) => {
   }
 
   return (
-    <div className="flex flex-row-reverse md:flex-row gap-2 items-center">
+    <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
       <DialogDeleteSection
         onDelete={() => {
           navigate({

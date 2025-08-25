@@ -39,8 +39,7 @@
       "Bash(bunx convex:*)",
       "Bash(npx:*)",
       "Bash(bun add:*)",
-      "Read(//Users/fahreziadh/work/**)",
-      "WebFetch(domain:dub.co)"
+      "Read(//Users/fahreziadh/work/**)"
     ],
     "deny": [],
     "ask": [],

@@ -13,6 +13,7 @@ import { GenericError } from "@/components/pages/error-pages.tsx";
 import { QueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils.ts";
 import type { ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/react";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
@@ -85,9 +86,12 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <head>
         <HeadContent />
       </head>
-      <body className={cn("antialiased ",status.isLoading ? "animate-pulse" : "")}>
+      <body
+        className={cn("antialiased ", status.isLoading ? "animate-pulse" : "")}
+      >
         {children}
         <Toaster position="top-center" />
+        <Analytics />
         {/* <TanStackRouterDevtools /> */}
         <Scripts />
       </body>
